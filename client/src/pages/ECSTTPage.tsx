@@ -415,12 +415,12 @@ export default function ECSTTPage() {
                     </button>
                     
                     {/* Animated Ray Line */}
-                    <div 
+                    {/* <div 
                       className={`absolute w-1 h-32 md:w-2 md:h-48 ${item.color} origin-bottom z-20 transition-all duration-500 ${isSelected ? 'opacity-100' : 'opacity-20'}`}
                       style={{ 
                         transform: `rotate(${angle + 90}deg) translate(0, -140px) md:translate(0, -220px)`
                       }}
-                    ></div>
+                    ></div> */}
                   </div>
                 );
               })}
