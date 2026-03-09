@@ -1,3 +1,6 @@
+import { FaTiktok, FaInstagram, FaFacebookF, FaLinkedinIn } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
 const footerLinks = [
   {
     title: "الشركة",
@@ -20,16 +23,33 @@ const footerLinks = [
   {
     title: "التحميلات",
     links: [
-      { label: "الملف التعريفي", href: "https://drive.google.com/file/d/1zxp5_YorOLzBk0mPqkzPlZgzu0h3rrZW/view?usp=sharing" },
-      { label: "التقرير السنوي", href: "https://drive.google.com/file/d/1uumhRJM4GnTlmoLR4B3KhCezHabnEaSN/view?usp=sharing" },
+      {
+        label: "الملف التعريفي",
+        href: "https://drive.google.com/file/d/1zxp5_YorOLzBk0mPqkzPlZgzu0h3rrZW/view?usp=sharing",
+      },
+      {
+        label: "التقرير السنوي",
+        href: "https://drive.google.com/file/d/1uumhRJM4GnTlmoLR4B3KhCezHabnEaSN/view?usp=sharing",
+      },
     ],
   },
 ];
 
-const socials = [
-  { alt: "Twitter", href: "https://x.com", icon: "/figmaAssets/twitter.svg" },
-  { alt: "Facebook", href: "https://facebook.com", icon: "/figmaAssets/facebook.svg" },
-  { alt: "LinkedIn", href: "https://www.linkedin.com", icon: "/figmaAssets/linkedin.svg" },
+const socialLinks = [
+  { alt: "TikTok", href: "https://www.tiktok.com/@birthofdream", icon: FaTiktok },
+  { alt: "Instagram", href: "https://www.instagram.com/birthofdream/", icon: FaInstagram },
+  { alt: "X", href: "https://x.com/birthofdream", icon: FaXTwitter },
+  {
+    alt: "Facebook",
+    href: "https://www.facebook.com/people/%D8%B4%D8%B1%D9%83%D8%A9-%D9%88%D9%84%D8%A7%D8%AF%D8%A9-%D8%AD%D9%84%D9%85-%D9%84%D9%84%D8%A7%D8%B3%D8%AA%D8%B4%D8%A7%D8%B1%D8%A7%D8%AA-%D9%88%D8%A7%D9%84%D8%A3%D8%A8%D8%AD%D8%A7%D8%AB/100035121164830/?modal=admin_todo_tour",
+    icon: FaFacebookF,
+    isCircle: true,
+  },
+  {
+    alt: "LinkedIn",
+    href: "https://www.linkedin.com/company/%D8%B4%D8%B1%D9%83%D8%A9-%D9%88%D9%84%D8%A7%D8%AF%D8%A9-%D8%AD%D9%84%D9%85-%D9%84%D9%84%D8%A5%D8%B3%D8%AA%D8%B4%D8%A7%D8%B1%D8%A7%D8%AA-%D9%88%D8%A7%D9%84%D8%A3%D8%A8%D8%AD%D8%A7%D8%AB/posts/?feedView=all",
+    icon: FaLinkedinIn,
+  },
 ];
 
 export function Footer() {
@@ -48,6 +68,7 @@ export function Footer() {
               شركة استشارية متخصصة في تمكين المنظمات غير الربحية عبر حلول استراتيجية مبتكرة واستشارات مهنية.
             </p>
           </div>
+
           {footerLinks.map((section) => (
             <div key={section.title}>
               <h4 className="font-almarai font-bold text-base mb-4">{section.title}</h4>
@@ -75,19 +96,28 @@ export function Footer() {
             &copy; {new Date().getFullYear()} ولادة حلم للاستشارات والأبحاث. جميع الحقوق محفوظة.
           </p>
 
-          <div className="flex items-center gap-4">
-            {socials.map((social) => (
-              <a
-                key={social.alt}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="opacity-80 hover:opacity-100 transition-opacity"
-                data-testid={`footer-social-${social.alt}`}
-              >
-                <img src={social.icon} alt={social.alt} className="w-5 h-5" loading="lazy" />
-              </a>
-            ))}
+          <div className="flex items-center gap-4 text-brand-gold">
+            {socialLinks.map((social) => {
+              const Icon = social.icon;
+              return (
+                <a
+                  key={social.alt}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="opacity-90 hover:opacity-100 transition-opacity"
+                  data-testid={`footer-social-${social.alt}`}
+                >
+                  {social.isCircle ? (
+                    <span className="w-8 h-8 rounded-full bg-brand-gold text-brand-dark inline-flex items-center justify-center">
+                      <Icon size={18} />
+                    </span>
+                  ) : (
+                    <Icon size={36} />
+                  )}
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>
