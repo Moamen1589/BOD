@@ -21,10 +21,19 @@ const navItems: NavItem[] = [
     label: "مكتبة الأعمال",
     href: "/work-library",
     dropdown: [
-      { label: "إعداد الخطط الاستراتيجية", href: "/work-library?cat=strategic-planning" },
-      { label: "الأدلة الإجرائية", href: "/work-library?cat=procedural-guides" },
+      {
+        label: "إعداد الخطط الاستراتيجية",
+        href: "/work-library?cat=strategic-planning",
+      },
+      {
+        label: "الأدلة الإجرائية",
+        href: "/work-library?cat=procedural-guides",
+      },
       { label: "الخطط السنوية", href: "/work-library?cat=annual-plans" },
-      { label: "المبادرات المجتمعية", href: "/work-library?cat=community-initiatives" },
+      {
+        label: "المبادرات المجتمعية",
+        href: "/work-library?cat=community-initiatives",
+      },
       { label: "الموشن جرافيك", href: "/work-library?cat=motion-graphics" },
       { label: "عرض جميع الأعمال", href: "/work-library" },
     ],
@@ -62,7 +71,14 @@ function isInternalLink(href: string) {
   return href.startsWith("/");
 }
 
-function NavLink({ href, className, children, onClick, testId, openInNewTab }: {
+function NavLink({
+  href,
+  className,
+  children,
+  onClick,
+  testId,
+  openInNewTab,
+}: {
   href: string;
   className: string;
   children: React.ReactNode;
@@ -71,19 +87,37 @@ function NavLink({ href, className, children, onClick, testId, openInNewTab }: {
 }) {
   if (isInternalLink(href)) {
     return (
-      <Link href={href} onClick={onClick} className={className} data-testid={testId}>
+      <Link
+        href={href}
+        onClick={onClick}
+        className={className}
+        data-testid={testId}
+      >
         {children}
       </Link>
     );
   }
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer"  onClick={onClick} className={className} data-testid={testId}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={onClick}
+      className={className}
+      data-testid={testId}
+    >
       {children}
     </a>
   );
 }
 
-function DropdownMenu({ items, onClose }: { items: DropdownItem[]; onClose: () => void }) {
+function DropdownMenu({
+  items,
+  onClose,
+}: {
+  items: DropdownItem[];
+  onClose: () => void;
+}) {
   return (
     <div className="absolute top-full right-0 mt-2 w-64 bg-brand-dark rounded-lg shadow-xl border border-white/10 py-2 z-50 animate-fade-in">
       {items.map((item) => (
@@ -121,7 +155,11 @@ export function Navbar() {
     <header className="fixed top-4 left-4 right-4 z-50" ref={navRef}>
       <div className="container mx-auto">
         <div className="bg-brand-dark/95 backdrop-blur-md rounded-2xl px-6 h-16 flex items-center justify-between gap-4 shadow-lg border border-white/5">
-          <Link href="/" className="flex items-center gap-3 shrink-0" data-testid="link-logo">
+          <Link
+            href="/"
+            className="flex items-center gap-3 shrink-0"
+            data-testid="link-logo"
+          >
             <img
               src="https://bod.com.sa/wp-content/uploads/2024/07/logo11581.png"
               alt="ولادة حلم"
@@ -135,15 +173,25 @@ export function Navbar() {
                 {item.dropdown ? (
                   <>
                     <button
-                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                      onClick={() =>
+                        setOpenDropdown(
+                          openDropdown === item.label ? null : item.label,
+                        )
+                      }
                       className="flex items-center gap-1 px-3 py-2 text-sm font-almarai text-white/70 hover:text-white transition-colors rounded-md"
                       data-testid={`nav-${item.label}`}
                     >
                       {item.label}
-                      <ChevronDown size={14} className={`transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`} />
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`}
+                      />
                     </button>
                     {openDropdown === item.label && (
-                      <DropdownMenu items={item.dropdown} onClose={() => setOpenDropdown(null)} />
+                      <DropdownMenu
+                        items={item.dropdown}
+                        onClose={() => setOpenDropdown(null)}
+                      />
                     )}
                   </>
                 ) : (
@@ -160,8 +208,13 @@ export function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Button asChild className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold">
-              <a href="#contact" data-testid="nav-cta">أنا مهتم بالخدمات</a>
+            <Button
+              asChild
+              className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold"
+            >
+              <a href="#contact" data-testid="nav-cta">
+                أنا مهتم بالخدمات
+              </a>
             </Button>
           </div>
 
@@ -183,12 +236,19 @@ export function Navbar() {
                 {item.dropdown ? (
                   <>
                     <button
-                      onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
+                      onClick={() =>
+                        setMobileExpanded(
+                          mobileExpanded === item.label ? null : item.label,
+                        )
+                      }
                       className="w-full flex items-center justify-between gap-4 py-3 font-almarai text-sm font-bold text-white/80 border-b border-white/10"
                       data-testid={`mobile-nav-${item.label}`}
                     >
                       {item.label}
-                      <ChevronDown size={16} className={`transition-transform text-white/50 ${mobileExpanded === item.label ? "rotate-180" : ""}`} />
+                      <ChevronDown
+                        size={16}
+                        className={`transition-transform text-white/50 ${mobileExpanded === item.label ? "rotate-180" : ""}`}
+                      />
                     </button>
                     {mobileExpanded === item.label && (
                       <div className="pr-4 bg-white/5 rounded-md my-1">
@@ -218,8 +278,15 @@ export function Navbar() {
                 )}
               </div>
             ))}
-            <Button asChild className="w-full mt-4 bg-brand-gold text-white font-almarai rounded-lg font-bold">
-              <a href="#contact" onClick={() => setMobileOpen(false)} data-testid="mobile-nav-cta">
+            <Button
+              asChild
+              className="w-full mt-4 bg-brand-gold text-white font-almarai rounded-lg font-bold"
+            >
+              <a
+                href="#contact"
+                onClick={() => setMobileOpen(false)}
+                data-testid="mobile-nav-cta"
+              >
                 أنا مهتم بالخدمات
               </a>
             </Button>
