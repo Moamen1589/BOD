@@ -31,13 +31,13 @@ const navItems: NavItem[] = [
   },
   {
     label: "حلولنا الرقمية",
-    href: "/solutions",
+    href: "#solutions",
     dropdown: [
-      { label: 'منصة "أداء" لقياس الأداء', href: "/solutions/adaa-platform" },
-      { label: "مختبرات حقّق الاجتماعية", href: "/solutions/haqqiq-labs" },
-      { label: "مسرعة أثر وريادة", href: "/solutions/athar-accelerator" },
-      { label: "أكاديمية حقّق 360", href: "/solutions/haqqiq-academy" },
-      { label: "بودكاست حقّق", href: "/solutions/haqqiq-podcast" },
+      { label: 'منصة "أداء" لقياس الأداء', href: "https://adaa.pro/" },
+      { label: "مختبرات حقّق الاجتماعية", href: "https://haqqeq-lab.com/home" },
+      { label: "مسرعة أثر وريادة", href: "https://athar-riyada.com/" },
+      { label: "أكاديمية حقّق 360", href: "https://www.hqq360.com/" },
+      { label: "بودكاست حقّق", href: "https://podcast.bod.com.sa/" },
       { label: "دراسات الحالة", href: "/solutions?type=case-study" },
       { label: "إصدارات حقّق", href: "/solutions?type=publication" },
       { label: "عرض الكل", href: "/solutions" },
@@ -62,7 +62,7 @@ function isInternalLink(href: string) {
   return href.startsWith("/");
 }
 
-function NavLink({ href, className, children, onClick, testId }: {
+function NavLink({ href, className, children, onClick, testId, openInNewTab }: {
   href: string;
   className: string;
   children: React.ReactNode;
@@ -77,7 +77,7 @@ function NavLink({ href, className, children, onClick, testId }: {
     );
   }
   return (
-    <a href={href} onClick={onClick} className={className} data-testid={testId}>
+    <a href={href} target="_blank" rel="noopener noreferrer"  onClick={onClick} className={className} data-testid={testId}>
       {children}
     </a>
   );

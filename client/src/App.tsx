@@ -15,15 +15,6 @@ import WorkLibraryPage from "@/pages/WorkLibraryPage";
 import WorkItemDetailPage from "@/pages/WorkItemDetailPage";
 import SolutionsPage from "@/pages/SolutionsPage";
 import SolutionDetailPage from "@/pages/SolutionDetailPage";
-import AdminLogin from "@/pages/admin/Login";
-import AdminLayout from "@/pages/admin/AdminLayout";
-import AdminDashboard from "@/pages/admin/Dashboard";
-import AdminMessages from "@/pages/admin/Messages";
-import AdminSettings from "@/pages/admin/Settings";
-import AdminServices from "@/pages/admin/Services";
-import AdminBlog from "@/pages/admin/Blog";
-import AdminWorkLibrary from "@/pages/admin/WorkLibrary";
-import AdminSolutions from "@/pages/admin/Solutions";
 
 function Router() {
   return (
@@ -38,42 +29,6 @@ function Router() {
       <Route path="/work-library/:slug" component={WorkItemDetailPage} />
       <Route path="/solutions" component={SolutionsPage} />
       <Route path="/solutions/:slug" component={SolutionDetailPage} />
-      <Route path="/admin/login" component={AdminLogin} />
-      <Route path="/admin">
-        <AdminLayout>
-          <AdminDashboard />
-        </AdminLayout>
-      </Route>
-      <Route path="/admin/messages">
-        <AdminLayout>
-          <AdminMessages />
-        </AdminLayout>
-      </Route>
-      <Route path="/admin/settings">
-        <AdminLayout>
-          <AdminSettings />
-        </AdminLayout>
-      </Route>
-      <Route path="/admin/services">
-        <AdminLayout>
-          <AdminServices />
-        </AdminLayout>
-      </Route>
-      <Route path="/admin/blog">
-        <AdminLayout>
-          <AdminBlog />
-        </AdminLayout>
-      </Route>
-      <Route path="/admin/work-library">
-        <AdminLayout>
-          <AdminWorkLibrary />
-        </AdminLayout>
-      </Route>
-      <Route path="/admin/solutions">
-        <AdminLayout>
-          <AdminSolutions />
-        </AdminLayout>
-      </Route>
       <Route component={NotFound} />
     </Switch>
   );
