@@ -2,10 +2,10 @@ import { Eye, Target, Gem, Handshake, Lightbulb, ShieldCheck } from "lucide-reac
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const values = [
-  { icon: ShieldCheck, label: "احترافية", desc: "في التنفيذ", color: "bg-brand-gold/15 text-brand-gold-dark" },
-  { icon: Lightbulb, label: "إبداع", desc: "في الحلول", color: "bg-brand-gold/15 text-brand-gold-dark" },
-  { icon: Gem, label: "التزام", desc: "بالجودة والمواعيد", color: "bg-brand-gold/15 text-brand-gold-dark" },
-  { icon: Handshake, label: "شراكة فاعلة", desc: "لنجاح مستدام", color: "bg-brand-gold/15 text-brand-gold-dark" },
+  { icon: ShieldCheck, label: "احترافية", desc: "في التنفيذ", color: "bg-brand-gold/20 text-brand-gold-dark" },
+  { icon: Lightbulb, label: "إبداع", desc: "في الحلول", color: "bg-brand-gold/20 text-brand-gold-dark" },
+  { icon: Gem, label: "التزام", desc: "بالجودة والمواعيد", color: "bg-brand-gold/20 text-brand-gold-dark" },
+  { icon: Handshake, label: "شراكة فاعلة", desc: "لنجاح مستدام", color: "bg-brand-gold/20 text-brand-gold-dark" },
 ];
 
 export function AboutSection() {
@@ -24,37 +24,37 @@ export function AboutSection() {
             شركة ولادة حلم للاستشارات والأبحاث
           </h2>
           <p className="font-almarai text-brand-gray max-w-3xl mx-auto text-lg leading-relaxed">
-            شركة استشارية متخصصة في تمكين المنظمات غير الربحية عبر حلول استراتيجية مبتكرة واستشارات مهنية. منذ تأسيسنا في عام 2017، فريقنا يمتلك خبرة أكثر من 13 عامًا في مجالات استشارية متنوعة تشمل الإدارة، الإعلام، المالية، والتقنية.
+            شركة استشارية متخصصة في تمكين المنظمات غير الربحية عبر حلول استراتيجية مبتكرة واستشارات مهنية.
           </p>
         </div>
 
         <div ref={cards.ref} className="grid md:grid-cols-2 gap-8 mb-20">
-          <div className={`bg-gradient-to-br from-brand-light-gold to-white rounded-md p-8 border border-brand-gold/15 scroll-hidden stagger-1 ${cards.isVisible ? "scroll-visible" : ""}`}>
+          <div className={`bg-gradient-to-br from-[#fff7ef] via-[#ffeedc] to-white rounded-md p-8 border border-brand-gold/20 shadow-sm scroll-hidden stagger-1 ${cards.isVisible ? "scroll-visible" : ""}`}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-brand-gold/15 rounded-md flex items-center justify-center">
+              <div className="w-12 h-12 bg-brand-gold/20 rounded-md flex items-center justify-center">
                 <Eye size={22} className="text-brand-gold-dark" />
               </div>
               <h3 className="font-almarai font-extrabold text-xl text-brand-dark">الرؤية</h3>
             </div>
-            <p className="font-almarai text-brand-dark/70 text-lg leading-relaxed" data-testid="text-vision">
-              أن نكون الحاضن الأول للقطاع الثالث
+            <p className="font-almarai text-brand-dark/80 text-lg leading-relaxed" data-testid="text-vision">
+              أن نكون الحاضن الأول للقطاع الثالث.
             </p>
           </div>
 
-          <div className={`bg-gradient-to-br from-brand-light-gold to-white rounded-md p-8 border border-brand-gold/15 scroll-hidden stagger-2 ${cards.isVisible ? "scroll-visible" : ""}`}>
+          <div className={`bg-gradient-to-br from-[#fff7ef] via-[#ffe8d1] to-white rounded-md p-8 border border-brand-gold/20 shadow-sm scroll-hidden stagger-2 ${cards.isVisible ? "scroll-visible" : ""}`}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-brand-gold/15 rounded-md flex items-center justify-center">
+              <div className="w-12 h-12 bg-brand-gold/20 rounded-md flex items-center justify-center">
                 <Target size={22} className="text-brand-gold-dark" />
               </div>
               <h3 className="font-almarai font-extrabold text-xl text-brand-dark">الرسالة</h3>
             </div>
-            <p className="font-almarai text-brand-dark/70 leading-relaxed mb-4">
+            <p className="font-almarai text-brand-dark/80 leading-relaxed mb-4">
               تقديم خدمات التطوير للقطاع غير الربحي في:
             </p>
-            <ul className="font-almarai text-brand-dark/60 space-y-2">
+            <ul className="font-almarai text-brand-dark/70 space-y-2">
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-brand-gold rounded-full shrink-0" />
-                أربع مجالات أساسية (الإداري - الإعلامي - المالي - التقني)
+                المجالات الإدارية والإعلامية والمالية والتقنية
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-brand-gold rounded-full shrink-0" />
@@ -75,7 +75,7 @@ export function AboutSection() {
           {values.map((v, i) => (
             <div
               key={v.label}
-              className={`text-center p-6 bg-white rounded-md border border-gray-100 hover:shadow-md transition-shadow scroll-hidden stagger-${i + 1} ${valuesAnim.isVisible ? "scroll-visible" : ""}`}
+              className={`text-center p-6 rounded-md border border-brand-gold/20 bg-gradient-to-br from-white via-[#fff5eb] to-[#ffe8d1] hover:shadow-md transition-shadow scroll-hidden stagger-${i + 1} ${valuesAnim.isVisible ? "scroll-visible" : ""}`}
               data-testid={`value-${v.label}`}
             >
               <div className={`w-14 h-14 rounded-md flex items-center justify-center mx-auto mb-4 ${v.color}`}>

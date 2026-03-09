@@ -48,7 +48,7 @@ export function ContactSection() {
             تواصل معنا
           </span>
           <h2 className="font-almarai font-extrabold text-3xl md:text-4xl text-brand-dark mt-6 mb-4" data-testid="text-contact-title">
-            فى انتظار تواصلك معنا
+            في انتظار تواصلك معنا
           </h2>
           <p className="font-almarai text-brand-gray max-w-2xl mx-auto text-lg">
             نحن هنا للإجابة على جميع استفساراتك وتقديم الدعم في كل خطوة
@@ -75,7 +75,7 @@ export function ContactSection() {
               <div className="bg-brand-dark rounded-md p-6">
                 <FileDown size={24} className="text-brand-gold mb-3" />
                 <h4 className="font-almarai font-bold text-white text-sm mb-2">الملف التعريفي</h4>
-                <Button asChild variant="outline" size="sm" className="border-white/20 text-white font-almarai rounded-md w-full">
+                <Button asChild variant="outline" size="sm" className="border-white/20 text-brand-gold font-almarai rounded-md w-full hover:bg-brand-gold hover:text-white">
                   <a href="https://drive.google.com/file/d/1zxp5_YorOLzBk0mPqkzPlZgzu0h3rrZW/view?usp=sharing" target="_blank" rel="noopener noreferrer" data-testid="link-profile-download">
                     تحميل
                   </a>
@@ -84,7 +84,7 @@ export function ContactSection() {
               <div className="bg-brand-dark rounded-md p-6">
                 <FileDown size={24} className="text-brand-gold mb-3" />
                 <h4 className="font-almarai font-bold text-white text-sm mb-2">التقرير السنوي</h4>
-                <Button asChild variant="outline" size="sm" className="border-white/20 text-white font-almarai rounded-md w-full">
+                <Button asChild variant="outline" size="sm" className="border-white/20 text-brand-gold font-almarai rounded-md w-full hover:bg-brand-gold hover:text-white">
                   <a href="https://drive.google.com/file/d/1uumhRJM4GnTlmoLR4B3KhCezHabnEaSN/view?usp=sharing" target="_blank" rel="noopener noreferrer" data-testid="link-report-download">
                     تحميل
                   </a>

@@ -1,60 +1,77 @@
-import { ExternalLink, BarChart3, FlaskConical, Rocket, GraduationCap, Brain, MonitorSmartphone } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
-const solutions = [
+type Solution = {
+  title: string;
+  desc: string;
+  link?: string;
+  available: boolean;
+  logoUrl?: string;
+  logoText?: string;
+};
+
+const solutions: Solution[] = [
   {
-    icon: BarChart3,
-    title: 'منصة "أداء" لقياس الأداء المؤسسي',
-    desc: "منصة مبتكرة لقياس أداء المنظمات وتحليل نتائج المشاريع بشكل دقيق باستخدام أدوات متقدمة. تشمل التقييم ومنح الشهادات ودرع أداء.",
+    title: "منصة أداء لقياس الأداء المؤسسي",
+    desc: "منصة لقياس أداء المنظمات وتحليل نتائج المشاريع بشكل دقيق.",
     link: "https://adaa.pro",
-    color: "bg-brand-gold/10",
-    iconColor: "text-brand-gold-dark bg-brand-gold/20",
+    logoUrl: "https://www.google.com/s2/favicons?domain=adaa.pro&sz=128",
     available: true,
   },
   {
-    icon: FlaskConical,
     title: "مختبرات حقّق الاجتماعية",
-    desc: "منصة تقدم استشارات تخصصية ودراسات ميدانية للمشاريع الاجتماعية باستخدام منهجية ميل دي برو.",
+    desc: "منصة تقدم استشارات تخصصية ودراسات ميدانية للمشاريع الاجتماعية.",
     link: "https://haqqeq-lab.com",
-    color: "bg-brand-gold/10",
-    iconColor: "text-brand-gold-dark bg-brand-gold/20",
+    logoUrl: "https://www.google.com/s2/favicons?domain=haqqeq-lab.com&sz=128",
     available: true,
   },
   {
-    icon: Rocket,
     title: "مسرعة أثر وريادة",
-    desc: "منصة لتصميم الخطط الاستراتيجية والتشغيلية ومتابعة الأداء عبر تقارير تقييمية.",
+    desc: "منصة لتصميم الخطط الاستراتيجية والتشغيلية ومتابعة الأداء.",
     link: "https://athar-riyada.com",
-    color: "bg-brand-gold/10",
-    iconColor: "text-brand-gold-dark bg-brand-gold/20",
+    logoUrl: "https://www.google.com/s2/favicons?domain=athar-riyada.com&sz=128",
     available: true,
   },
   {
-    icon: GraduationCap,
     title: "أكاديمية حقّق 360",
-    desc: "منصة تدريبية تدمج بين الاستشارات والتدريب المؤسسي عبر دورات تدريبية وورش عمل موجهة إلى المنظمات غير الربحية.",
-    color: "bg-brand-gold/10",
-    iconColor: "text-brand-gold-dark bg-brand-gold/20",
+    desc: "منصة تدريبية تجمع بين الاستشارات والتدريب المؤسسي.",
+    link: "https://www.hqq360.com",
+    logoUrl: "https://www.google.com/s2/favicons?domain=hqq360.com&sz=128",
     available: true,
   },
   {
-    icon: Brain,
     title: "أثر 360",
-    desc: "منصة لقياس الأثر التسويقي وتحليل نتائج الحملات التسويقية باستخدام الذكاء الاصطناعي.",
-    color: "bg-brand-gold/10",
-    iconColor: "text-brand-gold-dark bg-brand-gold/20",
+    desc: "منصة لقياس الأثر التسويقي وتحليل نتائج الحملات التسويقية.",
     available: false,
+    logoText: "A360",
   },
   {
-    icon: MonitorSmartphone,
-    title: 'منصة "إسهام"',
-    desc: "منصة تفاعلية تهدف إلى زيادة الشفافية بين الجمعيات والجهات المانحة، مما يسهل تقديم التبرعات وتتبعها.",
-    color: "bg-brand-gold/10",
-    iconColor: "text-brand-gold-dark bg-brand-gold/20",
+    title: "منصة عباق",
+    desc: "منصة تفاعلية تدعم التحول المؤسسي وتربط بين التشغيل وقياس الأثر.",
     available: false,
+    logoText: "عباق",
   },
 ];
+
+function PlatformLogo({ solution }: { solution: Solution }) {
+  if (solution.logoUrl) {
+    return (
+      <img
+        src={solution.logoUrl}
+        alt={solution.title}
+        className="w-8 h-8 object-contain"
+        loading="lazy"
+      />
+    );
+  }
+
+  return (
+    <span className="font-almarai font-extrabold text-sm text-brand-gold-dark">
+      {solution.logoText}
+    </span>
+  );
+}
 
 export function SolutionsSection() {
   const header = useScrollAnimation();
@@ -79,7 +96,7 @@ export function SolutionsSection() {
           {solutions.map((s, i) => (
             <div
               key={s.title}
-              className={`relative rounded-md p-6 ${s.color} border border-gray-100 hover:shadow-md transition-shadow scroll-hidden stagger-${i + 1} ${grid.isVisible ? "scroll-visible" : ""}`}
+              className={`relative rounded-md p-6 bg-brand-gold/10 border border-gray-100 hover:shadow-md transition-shadow scroll-hidden stagger-${i + 1} ${grid.isVisible ? "scroll-visible" : ""}`}
               data-testid={`solution-card-${s.title}`}
             >
               {!s.available && (
@@ -87,8 +104,8 @@ export function SolutionsSection() {
                   قريبًا
                 </span>
               )}
-              <div className={`w-12 h-12 rounded-md flex items-center justify-center mb-4 ${s.iconColor}`}>
-                <s.icon size={22} />
+              <div className="w-12 h-12 rounded-md flex items-center justify-center mb-4 bg-brand-gold/20">
+                <PlatformLogo solution={s} />
               </div>
               <h4 className="font-almarai font-bold text-lg text-brand-dark mb-2">{s.title}</h4>
               <p className="font-almarai text-brand-gray text-sm leading-relaxed mb-4">{s.desc}</p>

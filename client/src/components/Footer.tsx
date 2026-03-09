@@ -14,7 +14,7 @@ const footerLinks = [
       { label: "منصة أداء", href: "https://adaa.pro" },
       { label: "مختبرات حقّق", href: "https://haqqeq-lab.com" },
       { label: "مسرعة أثر وريادة", href: "https://athar-riyada.com" },
-      { label: "أكاديمية حقّق 360", href: "#solutions" },
+      { label: "أكاديمية حقّق 360", href: "https://www.hqq360.com" },
     ],
   },
   {
@@ -24,6 +24,12 @@ const footerLinks = [
       { label: "التقرير السنوي", href: "https://drive.google.com/file/d/1uumhRJM4GnTlmoLR4B3KhCezHabnEaSN/view?usp=sharing" },
     ],
   },
+];
+
+const socials = [
+  { alt: "Twitter", href: "https://x.com", icon: "/figmaAssets/twitter.svg" },
+  { alt: "Facebook", href: "https://facebook.com", icon: "/figmaAssets/facebook.svg" },
+  { alt: "LinkedIn", href: "https://www.linkedin.com", icon: "/figmaAssets/linkedin.svg" },
 ];
 
 export function Footer() {
@@ -68,15 +74,21 @@ export function Footer() {
           <p className="font-almarai text-sm text-white/40" data-testid="text-copyright">
             &copy; {new Date().getFullYear()} ولادة حلم للاستشارات والأبحاث. جميع الحقوق محفوظة.
           </p>
-          <a
-            href="https://bod.com.sa"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-almarai text-sm text-white/40 hover:text-white transition-colors"
-            data-testid="link-footer-website"
-          >
-            bod.com.sa
-          </a>
+
+          <div className="flex items-center gap-4">
+            {socials.map((social) => (
+              <a
+                key={social.alt}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-80 hover:opacity-100 transition-opacity"
+                data-testid={`footer-social-${social.alt}`}
+              >
+                <img src={social.icon} alt={social.alt} className="w-5 h-5" loading="lazy" />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

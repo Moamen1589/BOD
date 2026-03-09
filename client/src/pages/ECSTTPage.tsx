@@ -255,17 +255,17 @@ export default function ECSTTPage() {
       >
         <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
           <img src="/images/cstt-logo.jpg" alt="CSTT Logo" className="h-40 w-auto mb-10 rounded-full shadow-2xl border-4 border-white transition-transform hover:scale-105" />
-          <h1 className="text-4xl md:text-7xl font-black mb-8 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
             حوّل جمعيتك إلى مؤسسة تُدار بالأثر، لا بالاجتهاد
           </h1>
           <p className="text-xl md:text-2xl text-white/70 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
             رحلة متكاملة تبدأ بالتشخيص وتنتهي بالجاهزية التمويلية، عبر منظومة واحدة تجمع التخطيط، التشغيل، القياس، والحوكمة.
           </p>
           <div className="flex flex-col sm:flex-row gap-6">
-            <Button onClick={() => document.getElementById('assessment')?.scrollIntoView({ behavior: 'smooth' })} size="lg" className="bg-brand-gold hover:bg-brand-gold-dark text-white px-12 py-8 rounded-2xl font-bold shadow-2xl shadow-brand-gold/30 text-xl">
+            <Button onClick={() => document.getElementById('assessment')?.scrollIntoView({ behavior: 'smooth' })} size="lg" className="bg-brand-gold hover:bg-transparent hover:border-white/20 hover:border text-white px-12 py-8 rounded-2xl font-bold shadow-2xl shadow-brand-gold/30 text-xl">
               قيّم جاهزية جمعيتك الآن
             </Button>
-            <Button variant="outline" size="lg" className="border-white/20 text-white px-12 py-8 rounded-2xl font-bold text-xl hover:bg-white/10 transition-all">
+            <Button variant="outline" size="lg" className="border-white/20 text-white bg-transparent px-12 py-8 rounded-2xl font-bold text-xl hover:bg-brand-gold transition-all">
               تحدث مع مستشار المنظومة
             </Button>
           </div>
@@ -370,8 +370,8 @@ export default function ECSTTPage() {
                 </div>
                 <h4 className="text-xl font-black mb-4 text-brand-dark">{step.title}</h4>
                 <p className="text-brand-gray text-sm mb-6 leading-relaxed">{step.desc}</p>
-                <div className="bg-brand-dark text-white p-4 rounded-xl text-xs font-bold mt-auto">
-                  📌 المخرج: {step.output}
+                <div className="bg-brand-dark text-white text-center py-3  rounded-xl text-xs font-bold mt-auto">
+                   المخرج: {step.output}
                 </div>
               </div>
             ))}

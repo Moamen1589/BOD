@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  FileText, Settings, Award, DollarSign, BarChart3,
+  FileText, Settings, DollarSign, BarChart3,
   Heart, BookOpen, Palette, ChevronDown
 } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -10,51 +10,39 @@ const serviceCategories = [
     id: "plans",
     title: "إعداد وتصميم الخطط",
     icon: FileText,
-    color: "bg-brand-gold/15 text-brand-gold-dark",
-    accentBorder: "border-brand-gold/20",
     services: [
       { title: "الخطط الاستراتيجية", desc: "تطوير رؤى واضحة لتحقيق الأهداف طويلة المدى." },
       { title: "الخطط السنوية", desc: "تنظيم العمليات لضمان تنفيذ فعّال على مدار العام." },
-      { title: "الخطط التسويقية", desc: "وضع استراتيجيات متكاملة لزيادة التأثير والوصول للجمهور المستهدف." },
-      { title: "خطط الاتصال", desc: "تحسين قنوات التواصل الداخلي والخارجي." },
-      { title: "خطط الاستدامة المالية", desc: "تصميم حلول مبتكرة لتحقيق الاستقرار المالي." },
-      { title: "خطط الإعلام", desc: "إنشاء استراتيجيات إعلامية تبرز رسالة المؤسسة." },
+      { title: "الخطط التسويقية", desc: "وضع استراتيجيات متكاملة لزيادة التأثير والوصول للجمهور." },
     ],
   },
   {
     id: "initiatives",
     title: "تصميم المبادرات والحملات",
     icon: Heart,
-    color: "bg-brand-gold/15 text-brand-gold-dark",
-    accentBorder: "border-brand-gold/20",
     services: [
-      { title: "المبادرات المجتمعية", desc: "تطوير أفكار مبتكرة تخدم المجتمع وتعزز دور المؤسسة." },
-      { title: "الحملات التسويقية", desc: "تنفيذ حملات إبداعية تحقق أهدافك الترويجية." },
+      { title: "المبادرات المجتمعية", desc: "تصميم مبادرات تخدم المجتمع وتعزز دور المؤسسة." },
+      { title: "الحملات التسويقية", desc: "تنفيذ حملات إبداعية تحقق الأهداف الترويجية." },
     ],
   },
   {
     id: "guides",
     title: "إعداد الأدلة والتقارير",
     icon: BookOpen,
-    color: "bg-brand-gold/15 text-brand-gold-dark",
-    accentBorder: "border-brand-gold/20",
     services: [
-      { title: "الأدلة الإجرائية", desc: "تنظيم العمليات المؤسسية عبر توثيقها في أدلة شاملة." },
-      { title: "التقارير السنوية", desc: "إبراز إنجازات المؤسسة بأسلوب احترافي." },
-      { title: "دليل البرامج", desc: "توثيق وإدارة البرامج والمبادرات بفعالية." },
+      { title: "الأدلة الإجرائية", desc: "توثيق العمليات في أدلة شاملة وسهلة التطبيق." },
+      { title: "التقارير السنوية", desc: "عرض الإنجازات بأسلوب احترافي ومقنع." },
+      { title: "دليل البرامج", desc: "تنظيم إدارة البرامج والمبادرات بفعالية." },
     ],
   },
   {
     id: "media",
-    title: "تعزيز الهوية البصرية والإعلام الرقمي",
+    title: "الهوية البصرية والإعلام الرقمي",
     icon: Palette,
-    color: "bg-brand-gold/15 text-brand-gold-dark",
-    accentBorder: "border-brand-gold/20",
     services: [
-      { title: "تصميم الهوية البصرية", desc: "إنشاء هوية مميزة تعكس قيم المؤسسة وأهدافها." },
-      { title: "فيديوهات موشن جرافيك", desc: "تصميم مقاطع مرئية مبتكرة تجذب الجمهور." },
-      { title: "المواقع الإلكترونية", desc: "تطوير مواقع إلكترونية متكاملة تعكس احترافية المؤسسة." },
-      { title: "المتاجر الإلكترونية", desc: "إنشاء منصات تفاعلية تدعم أهداف المؤسسة التجارية أو الخدمية." },
+      { title: "تصميم الهوية البصرية", desc: "هوية مميزة تعكس قيم المؤسسة." },
+      { title: "فيديوهات موشن جرافيك", desc: "محتوى مرئي جذاب برسائل واضحة." },
+      { title: "المواقع الإلكترونية", desc: "مواقع احترافية تعكس حضور المؤسسة." },
     ],
   },
 ];
@@ -81,39 +69,42 @@ export function ServicesSection() {
         </div>
 
         <div ref={accordion.ref} className="space-y-4 max-w-4xl mx-auto">
-          {serviceCategories.map((cat, i) => (
-            <div
-              key={cat.id}
-              className={`bg-white rounded-md border ${expandedCategory === cat.id ? cat.accentBorder : "border-gray-100"} transition-all scroll-hidden stagger-${i + 1} ${accordion.isVisible ? "scroll-visible" : ""}`}
-            >
-              <button
-                onClick={() => setExpandedCategory(expandedCategory === cat.id ? null : cat.id)}
-                className="w-full flex items-center justify-between gap-4 p-5"
-                data-testid={`button-service-category-${cat.id}`}
+          {serviceCategories.map((cat, i) => {
+            const isOpen = expandedCategory === cat.id;
+            return (
+              <div
+                key={cat.id}
+                className={`rounded-md border transition-all scroll-hidden stagger-${i + 1} ${accordion.isVisible ? "scroll-visible" : ""} ${isOpen ? "border-brand-gold/40 shadow-md" : "border-gray-100 bg-white"}`}
               >
-                <div className="flex items-center gap-4">
-                  <div className={`w-11 h-11 rounded-md flex items-center justify-center shrink-0 ${cat.color}`}>
-                    <cat.icon size={20} />
-                  </div>
-                  <span className="font-almarai font-bold text-lg text-brand-dark text-right">{cat.title}</span>
-                </div>
-                <ChevronDown
-                  size={20}
-                  className={`text-brand-gray shrink-0 transition-transform ${expandedCategory === cat.id ? "rotate-180" : ""}`}
-                />
-              </button>
-              {expandedCategory === cat.id && (
-                <div className="px-5 pb-5 grid sm:grid-cols-2 gap-4 animate-fade-up">
-                  {cat.services.map((s) => (
-                    <div key={s.title} className="p-4 rounded-md bg-gray-50/70 border border-gray-100" data-testid={`service-${s.title}`}>
-                      <h4 className="font-almarai font-bold text-brand-dark mb-1.5">{s.title}</h4>
-                      <p className="font-almarai text-sm text-brand-gray leading-relaxed">{s.desc}</p>
+                <button
+                  onClick={() => setExpandedCategory(isOpen ? null : cat.id)}
+                  className={`w-full flex items-center justify-between gap-4 p-5 rounded-md transition-colors ${isOpen ? "bg-brand-gold text-white" : "bg-white text-brand-dark"}`}
+                  data-testid={`button-service-category-${cat.id}`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-11 h-11 rounded-md flex items-center justify-center shrink-0 ${isOpen ? "bg-white/20 text-white" : "bg-brand-gold/15 text-brand-gold-dark"}`}>
+                      <cat.icon size={20} />
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+                    <span className="font-almarai font-bold text-lg text-right">{cat.title}</span>
+                  </div>
+                  <ChevronDown
+                    size={20}
+                    className={`shrink-0 transition-transform ${isOpen ? "rotate-180 text-white" : "text-brand-gray"}`}
+                  />
+                </button>
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-4 grid sm:grid-cols-2 gap-4 animate-fade-up bg-white">
+                    {cat.services.map((s) => (
+                      <div key={s.title} className="p-4 rounded-md bg-gray-50 border border-gray-100" data-testid={`service-${s.title}`}>
+                        <h4 className="font-almarai font-bold text-brand-dark mb-1.5">{s.title}</h4>
+                        <p className="font-almarai text-sm text-brand-gray leading-relaxed">{s.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <div ref={counters.ref} className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
