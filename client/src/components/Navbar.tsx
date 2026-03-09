@@ -15,7 +15,8 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "الرئيسية", href: "#hero" },
+  { label: "الرئيسية", href: "/" },
+  { label: "المنظومة االجتماعية", href: "/ecstt" },
   {
     label: "مكتبة الأعمال",
     href: "/work-library",
