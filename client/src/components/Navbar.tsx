@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Link } from "wouter";
+﻿import { useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
 
@@ -16,7 +16,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "الرئيسية", href: "/" },
-  { label: "المنظومة المجتمعية ", href: "/ecstt" },
+  { label: "المنظومة المجتمعية", href: "/ecstt" },
   {
     label: "مكتبة الأعمال",
     href: "/work-library",
@@ -55,7 +55,7 @@ const navItems: NavItem[] = [
   },
   { label: "المدونة", href: "/blog" },
   { label: "عملاؤنا", href: "#testimonials" },
-  { label: "تواصل معنا", href: "#contact" },
+  { label: "تواصل معنا", href: "/#contact" },
 ];
 
 function isInternalLink(href: string) {
@@ -77,7 +77,12 @@ function NavLink({
 }) {
   if (isInternalLink(href)) {
     return (
-      <Link href={href} onClick={onClick} className={className} data-testid={testId}>
+      <Link
+        href={href}
+        onClick={onClick}
+        className={className}
+        data-testid={testId}
+      >
         {children}
       </Link>
     );
@@ -126,6 +131,7 @@ export function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const [location] = useLocation();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -137,11 +143,41 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!location.includes("#contact")) return;
+    let attempts = 0;
+    const maxAttempts = 60;
+    const interval = setInterval(() => {
+      const section = document.getElementById("contact");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+        clearInterval(interval);
+        return;
+      }
+      attempts += 1;
+      if (attempts >= maxAttempts) clearInterval(interval);
+    }, 50);
+    return () => clearInterval(interval);
+  }, [location]);
+
+  const handleContactClick = (e: React.MouseEvent) => {
+    setMobileOpen(false);
+    const section = document.getElementById("contact");
+    if (section) {
+      e.preventDefault();
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <header className="fixed top-4 left-4 right-4 z-50" ref={navRef}>
       <div className="container mx-auto">
         <div className="bg-brand-dark/95 backdrop-blur-md rounded-2xl px-6 h-16 flex items-center justify-between gap-4 shadow-lg border border-white/5">
-          <Link href="/" className="flex items-center gap-3 shrink-0" data-testid="link-logo">
+          <Link
+            href="/"
+            className="flex items-center gap-3 shrink-0"
+            data-testid="link-logo"
+          >
             <img
               src="https://bod.com.sa/wp-content/uploads/2024/07/logo11581.png"
               alt="ولادة حلم"
@@ -155,7 +191,11 @@ export function Navbar() {
                 {item.dropdown ? (
                   <>
                     <button
-                      onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                      onClick={() =>
+                        setOpenDropdown(
+                          openDropdown === item.label ? null : item.label,
+                        )
+                      }
                       className="flex items-center gap-1 px-3 py-2 text-sm font-almarai text-white/70 hover:text-white transition-colors rounded-md"
                       data-testid={`nav-${item.label}`}
                     >
@@ -166,7 +206,10 @@ export function Navbar() {
                       />
                     </button>
                     {openDropdown === item.label && (
-                      <DropdownMenu items={item.dropdown} onClose={() => setOpenDropdown(null)} />
+                      <DropdownMenu
+                        items={item.dropdown}
+                        onClose={() => setOpenDropdown(null)}
+                      />
                     )}
                   </>
                 ) : (
@@ -183,10 +226,17 @@ export function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Button asChild className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold">
-              <a href="#contact" data-testid="nav-cta">
+            <Button
+              
+              className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold"
+            >
+              <Link
+                to="/#contact"
+                onClick={handleContactClick}
+                data-testid="nav-cta"
+              >
                 تواصل معنا
-              </a>
+              </Link>
             </Button>
           </div>
 
@@ -208,7 +258,11 @@ export function Navbar() {
                 {item.dropdown ? (
                   <>
                     <button
-                      onClick={() => setMobileExpanded(mobileExpanded === item.label ? null : item.label)}
+                      onClick={() =>
+                        setMobileExpanded(
+                          mobileExpanded === item.label ? null : item.label,
+                        )
+                      }
                       className="w-full flex items-center justify-between gap-4 py-3 font-almarai text-sm font-bold text-white/80 border-b border-white/10"
                       data-testid={`mobile-nav-${item.label}`}
                     >
@@ -246,10 +300,17 @@ export function Navbar() {
                 )}
               </div>
             ))}
-            <Button asChild className="w-full mt-4 bg-brand-gold text-white font-almarai rounded-lg font-bold">
-              <a href="#contact" onClick={() => setMobileOpen(false)} data-testid="mobile-nav-cta">
+            <Button
+              asChild
+              className="w-full mt-4 bg-brand-gold text-white font-almarai rounded-lg font-bold"
+            >
+              <Link
+                to="/#contact"
+                onClick={handleContactClick}
+                data-testid="mobile-nav-cta"
+              >
                 تواصل معنا
-              </a>
+              </Link>
             </Button>
           </div>
         </div>
@@ -257,3 +318,4 @@ export function Navbar() {
     </header>
   );
 }
+

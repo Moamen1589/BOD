@@ -18,9 +18,9 @@ export const Box = (): JSX.Element => {
       <HeroSection />
 
       {/* Simplified CTA Section for the Standalone Module */}
-      <section className="py-20 bg-brand-light-gold">
-        <div className="container mx-auto px-6">
-          <div className="bg-brand-dark rounded-[2.5rem] p-10 md:p-20 text-center relative overflow-hidden group border-b-8 border-brand-gold/30">
+      <section className="py-14 md:py-20 bg-brand-light-gold">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="bg-brand-dark rounded-[2.5rem] p-8 md:p-20 text-center relative overflow-hidden group border-b-8 border-brand-gold/30">
             <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold opacity-10 rounded-full -mr-32 -mt-32 transition-transform duration-700 group-hover:scale-150"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-gold opacity-10 rounded-full -ml-32 -mb-32 transition-transform duration-700 group-hover:scale-150"></div>
             

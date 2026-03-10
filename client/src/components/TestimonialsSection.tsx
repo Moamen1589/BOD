@@ -38,8 +38,8 @@ export function TestimonialsSection() {
   }, []);
 
   return (
-    <section ref={scrollRef.ref} className={`py-24 bg-brand-light transition-all duration-1000 ${scrollRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} id="testimonials">
-      <div className="container mx-auto px-6">
+    <section ref={scrollRef.ref} className={`py-16 md:py-24 bg-brand-light transition-all duration-1000 ${scrollRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} id="testimonials">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
           <span className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/15 px-4 py-1.5 rounded-md">
             عملائنا
@@ -74,12 +74,12 @@ export function TestimonialsSection() {
             ))}
           </div>
 
-          <div className="flex justify-center mt-12 gap-6">
+          <div className="flex justify-center mt-10 md:mt-12 gap-4 md:gap-6">
             <Button 
               variant="outline" 
               size="icon" 
               onClick={prev}
-              className="rounded-full border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white w-14 h-14 shadow-lg transition-all"
+              className="rounded-full border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white w-12 h-12 md:w-14 md:h-14 shadow-lg transition-all"
             >
               <ChevronRight size={28} />
             </Button>
@@ -87,7 +87,7 @@ export function TestimonialsSection() {
               variant="outline" 
               size="icon" 
               onClick={next}
-              className="rounded-full border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white w-14 h-14 shadow-lg transition-all"
+              className="rounded-full border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white w-12 h-12 md:w-14 md:h-14 shadow-lg transition-all"
             >
               <ChevronLeft size={28} />
             </Button>

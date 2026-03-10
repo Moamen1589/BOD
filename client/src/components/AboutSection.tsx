@@ -14,7 +14,7 @@ export function AboutSection() {
   const valuesAnim = useScrollAnimation();
 
   return (
-    <section id="about" className="py-24 bg-white">
+    <section id="about" className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         <div ref={header.ref} className={`text-center mb-16 scroll-hidden ${header.isVisible ? "scroll-visible" : ""}`}>
           <span className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/10 px-4 py-1.5 rounded-md" data-testid="badge-about">

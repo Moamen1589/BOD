@@ -41,7 +41,7 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-24 bg-brand-light">
+    <section id="contact" className="py-16 md:py-24 bg-brand-light">
       <div className="container mx-auto px-4">
         <div ref={header.ref} className={`text-center mb-16 scroll-hidden ${header.isVisible ? "scroll-visible" : ""}`}>
           <span className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/10 px-4 py-1.5 rounded-md" data-testid="badge-contact">
@@ -71,7 +71,7 @@ export function ContactSection() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-brand-dark rounded-md p-6">
                 <FileDown size={24} className="text-brand-gold mb-3" />
                 <h4 className="font-almarai font-bold text-white text-sm mb-2">الملف التعريفي</h4>

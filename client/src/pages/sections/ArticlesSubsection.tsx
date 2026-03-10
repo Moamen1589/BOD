@@ -1,98 +1,98 @@
-import { ChevronLeftIcon, ChevronRightIcon, MailIcon } from "lucide-react";
+﻿import { ChevronLeftIcon, ChevronRightIcon, MailIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 const navItems = [
-  { label: "الرئيسية", active: false },
-  { label: "من نحن", active: false },
-  { label: "خدماتنا", active: false },
-  { label: "مقالات", active: true },
-  { label: "تواصل معنا", active: false },
+  { label: "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", active: false },
+  { label: "Ù…Ù† Ù†Ø­Ù†", active: false },
+  { label: "Ø®Ø¯Ù…Ø§ØªÙ†Ø§", active: false },
+  { label: "Ù…Ù‚Ø§Ù„Ø§Øª", active: true },
+  { label: "ØªÙˆØ§ØµÙ„ Ù…Ø¹Ù†Ø§", active: false },
 ];
 
 const filterTags = [
-  { label: "الكل", active: true },
-  { label: "القيادة", active: false },
-  { label: "التقييم", active: false },
-  { label: "الشراكات", active: false },
-  { label: "التسويق", active: false },
-  { label: "تحليل البيانات", active: false },
-  { label: "إدارة المشاريع", active: false },
-  { label: "دراسات حالة", active: false },
-  { label: "المنظمات غير الربحية", active: false },
-  { label: "ريادة الأعمال", active: false },
-  { label: "التكنولوجيا", active: false },
+  { label: "Ø§Ù„ÙƒÙ„", active: true },
+  { label: "Ø§Ù„Ù‚ÙŠØ§Ø¯Ø©", active: false },
+  { label: "Ø§Ù„ØªÙ‚ÙŠÙŠÙ…", active: false },
+  { label: "Ø§Ù„Ø´Ø±Ø§ÙƒØ§Øª", active: false },
+  { label: "Ø§Ù„ØªØ³ÙˆÙŠÙ‚", active: false },
+  { label: "ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª", active: false },
+  { label: "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ø´Ø§Ø±ÙŠØ¹", active: false },
+  { label: "Ø¯Ø±Ø§Ø³Ø§Øª Ø­Ø§Ù„Ø©", active: false },
+  { label: "Ø§Ù„Ù…Ù†Ø¸Ù…Ø§Øª ØºÙŠØ± Ø§Ù„Ø±Ø¨Ø­ÙŠØ©", active: false },
+  { label: "Ø±ÙŠØ§Ø¯Ø© Ø§Ù„Ø£Ø¹Ù…Ø§Ù„", active: false },
+  { label: "Ø§Ù„ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§", active: false },
 ];
 
 const featuredArticle = {
-  category: "ريادة الأعمال",
-  title: "كيف تطلق مشروعك الناجح في السوق العربي؟",
+  category: "Ø±ÙŠØ§Ø¯Ø© Ø§Ù„Ø£Ø¹Ù…Ø§Ù„",
+  title: "ÙƒÙŠÙ ØªØ·Ù„Ù‚ Ù…Ø´Ø±ÙˆØ¹Ùƒ Ø§Ù„Ù†Ø§Ø¬Ø­ ÙÙŠ Ø§Ù„Ø³ÙˆÙ‚ Ø§Ù„Ø¹Ø±Ø¨ÙŠØŸ",
   description:
-    "دليل شامل للمبتدئين ورواد الأعمال لتحديد الفكرة وبناء الخطة والتغلب على التحديات المحلية.",
+    "Ø¯Ù„ÙŠÙ„ Ø´Ø§Ù…Ù„ Ù„Ù„Ù…Ø¨ØªØ¯Ø¦ÙŠÙ† ÙˆØ±ÙˆØ§Ø¯ Ø§Ù„Ø£Ø¹Ù…Ø§Ù„ Ù„ØªØ­Ø¯ÙŠØ¯ Ø§Ù„ÙÙƒØ±Ø© ÙˆØ¨Ù†Ø§Ø¡ Ø§Ù„Ø®Ø·Ø© ÙˆØ§Ù„ØªØºÙ„Ø¨ Ø¹Ù„Ù‰ Ø§Ù„ØªØ­Ø¯ÙŠØ§Øª Ø§Ù„Ù…Ø­Ù„ÙŠØ©.",
   date: "2024-10-27",
 };
 
 const articles = [
   {
-    category: "المنظمات غير الربحية",
-    title: "أهمية التخطيط الاستراتيجي للمؤسسات غير الربحية",
+    category: "Ø§Ù„Ù…Ù†Ø¸Ù…Ø§Øª ØºÙŠØ± Ø§Ù„Ø±Ø¨Ø­ÙŠØ©",
+    title: "Ø£Ù‡Ù…ÙŠØ© Ø§Ù„ØªØ®Ø·ÙŠØ· Ø§Ù„Ø§Ø³ØªØ±Ø§ØªÙŠØ¬ÙŠ Ù„Ù„Ù…Ø¤Ø³Ø³Ø§Øª ØºÙŠØ± Ø§Ù„Ø±Ø¨Ø­ÙŠØ©",
     description:
-      "تعرف على كيفية صياغة رؤية ورسالة واضحة وتحويلها إلى أهداف قابلة للتحقيق.",
+      "ØªØ¹Ø±Ù Ø¹Ù„Ù‰ ÙƒÙŠÙÙŠØ© ØµÙŠØ§ØºØ© Ø±Ø¤ÙŠØ© ÙˆØ±Ø³Ø§Ù„Ø© ÙˆØ§Ø¶Ø­Ø© ÙˆØªØ­ÙˆÙŠÙ„Ù‡Ø§ Ø¥Ù„Ù‰ Ø£Ù‡Ø¯Ø§Ù Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„ØªØ­Ù‚ÙŠÙ‚.",
     date: "2024-10-25",
   },
   {
-    category: "دراسات حالة",
-    title: "دراسة حالة: عباق وتمكين المجتمعات الريفية",
+    category: "Ø¯Ø±Ø§Ø³Ø§Øª Ø­Ø§Ù„Ø©",
+    title: "Ø¯Ø±Ø§Ø³Ø© Ø­Ø§Ù„Ø©: Ø¹Ø¨Ø§Ù‚ ÙˆØªÙ…ÙƒÙŠÙ† Ø§Ù„Ù…Ø¬ØªÙ…Ø¹Ø§Øª Ø§Ù„Ø±ÙŠÙÙŠØ©",
     description:
-      "نستعرض في هذه الدراسة كيف ساهمت مبادرات عباق في تحسين سبل عيش الأسر في المناطق الريفية.",
+      "Ù†Ø³ØªØ¹Ø±Ø¶ ÙÙŠ Ù‡Ø°Ù‡ Ø§Ù„Ø¯Ø±Ø§Ø³Ø© ÙƒÙŠÙ Ø³Ø§Ù‡Ù…Øª Ù…Ø¨Ø§Ø¯Ø±Ø§Øª Ø¹Ø¨Ø§Ù‚ ÙÙŠ ØªØ­Ø³ÙŠÙ† Ø³Ø¨Ù„ Ø¹ÙŠØ´ Ø§Ù„Ø£Ø³Ø± ÙÙŠ Ø§Ù„Ù…Ù†Ø§Ø·Ù‚ Ø§Ù„Ø±ÙŠÙÙŠØ©.",
     date: "2024-10-22",
   },
   {
-    category: "إدارة المشاريع",
-    title: "بناء فريق عمل فعال: نصائح وإرشادات",
-    description: "كيف تختار الأعضاء المناسبين وتحفزهم لتحقيق أهداف مشتركة.",
+    category: "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ø´Ø§Ø±ÙŠØ¹",
+    title: "Ø¨Ù†Ø§Ø¡ ÙØ±ÙŠÙ‚ Ø¹Ù…Ù„ ÙØ¹Ø§Ù„: Ù†ØµØ§Ø¦Ø­ ÙˆØ¥Ø±Ø´Ø§Ø¯Ø§Øª",
+    description: "ÙƒÙŠÙ ØªØ®ØªØ§Ø± Ø§Ù„Ø£Ø¹Ø¶Ø§Ø¡ Ø§Ù„Ù…Ù†Ø§Ø³Ø¨ÙŠÙ† ÙˆØªØ­ÙØ²Ù‡Ù… Ù„ØªØ­Ù‚ÙŠÙ‚ Ø£Ù‡Ø¯Ø§Ù Ù…Ø´ØªØ±ÙƒØ©.",
     date: "2024-10-20",
   },
   {
-    category: "المنظمات غير الربحية",
-    title: "أفضل الممارسات في إدارة المتطوعين",
+    category: "Ø§Ù„Ù…Ù†Ø¸Ù…Ø§Øª ØºÙŠØ± Ø§Ù„Ø±Ø¨Ø­ÙŠØ©",
+    title: "Ø£ÙØ¶Ù„ Ø§Ù„Ù…Ù…Ø§Ø±Ø³Ø§Øª ÙÙŠ Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…ØªØ·ÙˆØ¹ÙŠÙ†",
     description:
-      "استراتيجيات لتوظيف المتطوعين وتدريبهم والاحتفاظ بهم بشكل فعال.",
+      "Ø§Ø³ØªØ±Ø§ØªÙŠØ¬ÙŠØ§Øª Ù„ØªÙˆØ¸ÙŠÙ Ø§Ù„Ù…ØªØ·ÙˆØ¹ÙŠÙ† ÙˆØªØ¯Ø±ÙŠØ¨Ù‡Ù… ÙˆØ§Ù„Ø§Ø­ØªÙØ§Ø¸ Ø¨Ù‡Ù… Ø¨Ø´ÙƒÙ„ ÙØ¹Ø§Ù„.",
     date: "2024-10-18",
   },
   {
-    category: "تحليل البيانات",
-    title: "تحليل البيانات لتحسين الأداء المؤسسي",
-    description: "كيف تستخدم البيانات لاتخاذ قرارات مستنيرة وتحقيق نتائج أفضل.",
+    category: "ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª",
+    title: "ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù„ØªØ­Ø³ÙŠÙ† Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ø¤Ø³Ø³ÙŠ",
+    description: "ÙƒÙŠÙ ØªØ³ØªØ®Ø¯Ù… Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù„Ø§ØªØ®Ø§Ø° Ù‚Ø±Ø§Ø±Ø§Øª Ù…Ø³ØªÙ†ÙŠØ±Ø© ÙˆØªØ­Ù‚ÙŠÙ‚ Ù†ØªØ§Ø¦Ø¬ Ø£ÙØ¶Ù„.",
     date: "2024-10-15",
   },
   {
-    category: "التسويق",
-    title: "التسويق الرقمي للمبادرات الاجتماعية",
+    category: "Ø§Ù„ØªØ³ÙˆÙŠÙ‚",
+    title: "Ø§Ù„ØªØ³ÙˆÙŠÙ‚ Ø§Ù„Ø±Ù‚Ù…ÙŠ Ù„Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª Ø§Ù„Ø§Ø¬ØªÙ…Ø§Ø¹ÙŠØ©",
     description:
-      "استغل قوة الأدوات الرقمية للوصول إلى جمهور أوسع وتعزيز رسالتك.",
+      "Ø§Ø³ØªØºÙ„ Ù‚ÙˆØ© Ø§Ù„Ø£Ø¯ÙˆØ§Øª Ø§Ù„Ø±Ù‚Ù…ÙŠØ© Ù„Ù„ÙˆØµÙˆÙ„ Ø¥Ù„Ù‰ Ø¬Ù…Ù‡ÙˆØ± Ø£ÙˆØ³Ø¹ ÙˆØªØ¹Ø²ÙŠØ² Ø±Ø³Ø§Ù„ØªÙƒ.",
     date: "2024-10-13",
   },
 ];
 
 const footerSections = [
   {
-    title: "عباق",
-    links: ["الرئيسية", "من نحن", "فريقنا"],
+    title: "Ø¹Ø¨Ø§Ù‚",
+    links: ["Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", "Ù…Ù† Ù†Ø­Ù†", "ÙØ±ÙŠÙ‚Ù†Ø§"],
   },
   {
-    title: "خدمات",
-    links: ["استشارات", "مقالات", "تواصل"],
+    title: "Ø®Ø¯Ù…Ø§Øª",
+    links: ["Ø§Ø³ØªØ´Ø§Ø±Ø§Øª", "Ù…Ù‚Ø§Ù„Ø§Øª", "ØªÙˆØ§ØµÙ„"],
   },
   {
-    title: "دعم",
-    links: ["الأسئلة الشائعة", "سياسة الخصوصية", "شروط الخدمة"],
+    title: "Ø¯Ø¹Ù…",
+    links: ["Ø§Ù„Ø£Ø³Ø¦Ù„Ø© Ø§Ù„Ø´Ø§Ø¦Ø¹Ø©", "Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø®ØµÙˆØµÙŠØ©", "Ø´Ø±ÙˆØ· Ø§Ù„Ø®Ø¯Ù…Ø©"],
   },
   {
-    title: "المجتمع",
-    links: ["المدونة", "الندوات", "الفعاليات"],
+    title: "Ø§Ù„Ù…Ø¬ØªÙ…Ø¹",
+    links: ["Ø§Ù„Ù…Ø¯ÙˆÙ†Ø©", "Ø§Ù„Ù†Ø¯ÙˆØ§Øª", "Ø§Ù„ÙØ¹Ø§Ù„ÙŠØ§Øª"],
   },
 ];
 
@@ -100,7 +100,7 @@ export const ArticlesSubsection = (): JSX.Element => {
   return (
     <div className="w-full bg-white overflow-hidden">
       <nav className="flex items-center justify-center h-14 bg-white border-b shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f]">
-        <div className="flex items-center gap-6 [direction:rtl]">
+        <div className="flex flex-wrap items-center gap-3 px-4 [direction:rtl]">
           {navItems.map((item, index) => (
             <a
               key={index}
@@ -112,20 +112,20 @@ export const ArticlesSubsection = (): JSX.Element => {
               {item.label}
             </a>
           ))}
-          <div className="ml-[438px] text-lg font-medium text-[#242524] [font-family:'Inter',Helvetica] [direction:rtl]">
-            Ibaaq-عباق
+          <div className="ml-auto w-full sm:w-auto text-center sm:text-right text-lg font-medium text-[#242524] [font-family:'Inter',Helvetica] [direction:rtl]">
+            Ibaaq-Ø¹Ø¨Ø§Ù‚
           </div>
         </div>
       </nav>
 
       <main className="max-w-[1184px] mx-auto px-4 py-12">
-        <h1 className="text-5xl font-bold text-[#242524] text-center mb-6 [font-family:'Cairo',Helvetica] [direction:rtl]">
-          مقالات ومدونات عباق
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#242524] text-center mb-6 [font-family:'Cairo',Helvetica] [direction:rtl]">
+          Ù…Ù‚Ø§Ù„Ø§Øª ÙˆÙ…Ø¯ÙˆÙ†Ø§Øª Ø¹Ø¨Ø§Ù‚
         </h1>
 
         <p className="text-lg text-[#8c8d8b] text-center mb-12 [font-family:'Inter',Helvetica] [direction:rtl]">
-          استكشف أحدث المقالات، دراسات الحالة، والموارد التي تساعدك في رحلتك نحو
-          التنمية المستدامة.
+          Ø§Ø³ØªÙƒØ´Ù Ø£Ø­Ø¯Ø« Ø§Ù„Ù…Ù‚Ø§Ù„Ø§ØªØŒ Ø¯Ø±Ø§Ø³Ø§Øª Ø§Ù„Ø­Ø§Ù„Ø©ØŒ ÙˆØ§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„ØªÙŠ ØªØ³Ø§Ø¹Ø¯Ùƒ ÙÙŠ Ø±Ø­Ù„ØªÙƒ Ù†Ø­Ùˆ
+          Ø§Ù„ØªÙ†Ù…ÙŠØ© Ø§Ù„Ù…Ø³ØªØ¯Ø§Ù…Ø©.
         </p>
 
         <div className="flex flex-wrap gap-2 justify-center mb-12 [direction:rtl]">
@@ -235,44 +235,44 @@ export const ArticlesSubsection = (): JSX.Element => {
         </div>
 
         <Card className="overflow-hidden border-0 shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f] bg-gradient-to-r from-[#2563eb] to-[#22c55e]">
-          <CardContent className="p-12 text-center [direction:rtl]">
+          <CardContent className="p-6 sm:p-8 md:p-12 text-center [direction:rtl]">
             <h2 className="text-4xl font-bold text-white mb-4 [font-family:'Cairo',Helvetica]">
-              اشترك في نشرتنا الإخبارية
+              Ø§Ø´ØªØ±Ùƒ ÙÙŠ Ù†Ø´Ø±ØªÙ†Ø§ Ø§Ù„Ø¥Ø®Ø¨Ø§Ø±ÙŠØ©
             </h2>
             <p className="text-lg text-white/90 mb-8 [font-family:'Inter',Helvetica]">
-              كن أول من يعلم بأحدث مقالاتنا وأخبارنا.
+              ÙƒÙ† Ø£ÙˆÙ„ Ù…Ù† ÙŠØ¹Ù„Ù… Ø¨Ø£Ø­Ø¯Ø« Ù…Ù‚Ø§Ù„Ø§ØªÙ†Ø§ ÙˆØ£Ø®Ø¨Ø§Ø±Ù†Ø§.
             </p>
-            <div className="flex gap-2 max-w-md mx-auto">
+            <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
               <Input
                 type="email"
-                placeholder="أدخل بريدك الإلكتروني"
+                placeholder="Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ"
                 className="flex-1 bg-white/20 border-white/30 text-white placeholder:text-white [font-family:'Inter',Helvetica] h-auto py-2"
               />
               <Button className="bg-white text-[#171a1f] hover:bg-white/90 [font-family:'Inter',Helvetica] h-auto px-6">
-                اشترك
+                Ø§Ø´ØªØ±Ùƒ
               </Button>
             </div>
           </CardContent>
         </Card>
       </main>
 
-      <footer className="bg-white border-t shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f] py-16">
+      <footer className="bg-white border-t shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f] py-12 md:py-16">
         <div className="max-w-[1232px] mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold text-[#242524] mb-6 [font-family:'Inter',Helvetica] [direction:rtl]">
-              Ibaaq-عباق
+              Ibaaq-Ø¹Ø¨Ø§Ù‚
             </h2>
             <p className="text-lg font-semibold text-[#242524] mb-4 [font-family:'Cairo',Helvetica] [direction:rtl]">
-              اشترك في نشرتنا الإخبارية
+              Ø§Ø´ØªØ±Ùƒ ÙÙŠ Ù†Ø´Ø±ØªÙ†Ø§ Ø§Ù„Ø¥Ø®Ø¨Ø§Ø±ÙŠØ©
             </p>
-            <div className="flex gap-2 max-w-md mx-auto [direction:rtl]">
+            <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto [direction:rtl]">
               <Button className="bg-[#636ae8] text-white hover:bg-[#636ae8]/90 [font-family:'Inter',Helvetica] h-auto px-6">
-                اشترك
+                Ø§Ø´ØªØ±Ùƒ
               </Button>
               <div className="relative flex-1">
                 <Input
                   type="email"
-                  placeholder="أدخل بريدك الإلكتروني"
+                  placeholder="Ø£Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ"
                   className="border-[#ebebea] [font-family:'Inter',Helvetica] h-auto py-2 pr-10"
                 />
                 <MailIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8c8d8b]" />
@@ -311,14 +311,14 @@ export const ArticlesSubsection = (): JSX.Element => {
             </Button>
 
             <div className="flex items-center gap-2 text-sm text-[#8c8d8b] [font-family:'Inter',Helvetica] [direction:rtl]">
-              <span>© 2025 Ibbaaq-عباق.</span>
-              <span>•</span>
+              <span>Â© 2025 Ibbaaq-Ø¹Ø¨Ø§Ù‚.</span>
+              <span>â€¢</span>
               <a href="#" className="hover:text-[#242524]">
-                سياسة الخصوصية
+                Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø®ØµÙˆØµÙŠØ©
               </a>
-              <span>•</span>
+              <span>â€¢</span>
               <a href="#" className="hover:text-[#242524]">
-                شروط الخدمة
+                Ø´Ø±ÙˆØ· Ø§Ù„Ø®Ø¯Ù…Ø©
               </a>
             </div>
 
@@ -351,3 +351,4 @@ export const ArticlesSubsection = (): JSX.Element => {
     </div>
   );
 };
+

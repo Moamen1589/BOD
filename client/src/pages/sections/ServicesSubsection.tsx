@@ -1,4 +1,4 @@
-import {
+﻿import {
   CheckCircle2Icon,
   FileTextIcon,
   MailIcon,
@@ -21,41 +21,41 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 const navigationItems = [
-  { label: "الرئيسية", active: false },
-  { label: "من نحن", active: false },
-  { label: "خدماتنا", active: true },
-  { label: "مقالات", active: false },
-  { label: "تواصل معنا", active: false },
+  { label: "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", active: false },
+  { label: "Ù…Ù† Ù†Ø­Ù†", active: false },
+  { label: "Ø®Ø¯Ù…Ø§ØªÙ†Ø§", active: true },
+  { label: "Ù…Ù‚Ø§Ù„Ø§Øª", active: false },
+  { label: "ØªÙˆØ§ØµÙ„ Ù…Ø¹Ù†Ø§", active: false },
 ];
 
 const serviceCards = [
   {
     icon: "/figmaAssets/container.svg",
     image: "",
-    title: "الاتصال المؤسسي",
+    title: "Ø§Ù„Ø§ØªØµØ§Ù„ Ø§Ù„Ù…Ø¤Ø³Ø³ÙŠ",
     description:
-      "بناء وتعزيز صورة شركتك، وإدارة سمعتها، وتحقيق تواصل فعال مع الجمهور الداخلي والخارجي.",
+      "Ø¨Ù†Ø§Ø¡ ÙˆØªØ¹Ø²ÙŠØ² ØµÙˆØ±Ø© Ø´Ø±ÙƒØªÙƒØŒ ÙˆØ¥Ø¯Ø§Ø±Ø© Ø³Ù…Ø¹ØªÙ‡Ø§ØŒ ÙˆØªØ­Ù‚ÙŠÙ‚ ØªÙˆØ§ØµÙ„ ÙØ¹Ø§Ù„ Ù…Ø¹ Ø§Ù„Ø¬Ù…Ù‡ÙˆØ± Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ ÙˆØ§Ù„Ø®Ø§Ø±Ø¬ÙŠ.",
   },
   {
     icon: "/figmaAssets/container-3.svg",
     image: "",
-    title: "ادارة الهوية الرقمية",
+    title: "Ø§Ø¯Ø§Ø±Ø© Ø§Ù„Ù‡ÙˆÙŠØ© Ø§Ù„Ø±Ù‚Ù…ÙŠØ©",
     description:
-      "تشكيل وتحسين حضورك الرقمي، وإدارة سمعتك عبر الإنترنت، وضمان تميزك في الفضاء الرقمي.",
+      "ØªØ´ÙƒÙŠÙ„ ÙˆØªØ­Ø³ÙŠÙ† Ø­Ø¶ÙˆØ±Ùƒ Ø§Ù„Ø±Ù‚Ù…ÙŠØŒ ÙˆØ¥Ø¯Ø§Ø±Ø© Ø³Ù…Ø¹ØªÙƒ Ø¹Ø¨Ø± Ø§Ù„Ø¥Ù†ØªØ±Ù†ØªØŒ ÙˆØ¶Ù…Ø§Ù† ØªÙ…ÙŠØ²Ùƒ ÙÙŠ Ø§Ù„ÙØ¶Ø§Ø¡ Ø§Ù„Ø±Ù‚Ù…ÙŠ.",
   },
   {
     icon: "/figmaAssets/container-2.svg",
     image: "",
-    title: "العلاقات العامة",
+    title: "Ø§Ù„Ø¹Ù„Ø§Ù‚Ø§Øª Ø§Ù„Ø¹Ø§Ù…Ø©",
     description:
-      "تطوير استراتيجيات علاقات عامة قوية، وبناء علاقات إيجابية مع وسائل الإعلام وأصحاب المصلحة.",
+      "ØªØ·ÙˆÙŠØ± Ø§Ø³ØªØ±Ø§ØªÙŠØ¬ÙŠØ§Øª Ø¹Ù„Ø§Ù‚Ø§Øª Ø¹Ø§Ù…Ø© Ù‚ÙˆÙŠØ©ØŒ ÙˆØ¨Ù†Ø§Ø¡ Ø¹Ù„Ø§Ù‚Ø§Øª Ø¥ÙŠØ¬Ø§Ø¨ÙŠØ© Ù…Ø¹ ÙˆØ³Ø§Ø¦Ù„ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù… ÙˆØ£ØµØ­Ø§Ø¨ Ø§Ù„Ù…ØµÙ„Ø­Ø©.",
   },
   {
     icon: "/figmaAssets/container-1.svg",
     image: "",
-    title: "طلبات الجوائز",
+    title: "Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¬ÙˆØ§Ø¦Ø²",
     description:
-      "إعداد طلبات جوائز احترافية تبرز إنجازاتك وتزيد من فرص فوزك في المسابقات المرموقة.",
+      "Ø¥Ø¹Ø¯Ø§Ø¯ Ø·Ù„Ø¨Ø§Øª Ø¬ÙˆØ§Ø¦Ø² Ø§Ø­ØªØ±Ø§ÙÙŠØ© ØªØ¨Ø±Ø² Ø¥Ù†Ø¬Ø§Ø²Ø§ØªÙƒ ÙˆØªØ²ÙŠØ¯ Ù…Ù† ÙØ±Øµ ÙÙˆØ²Ùƒ ÙÙŠ Ø§Ù„Ù…Ø³Ø§Ø¨Ù‚Ø§Øª Ø§Ù„Ù…Ø±Ù…ÙˆÙ‚Ø©.",
   },
 ];
 
@@ -63,46 +63,46 @@ const processSteps = [
   {
     number: "1",
     icon: FileTextIcon,
-    title: "تقديم الطلب",
-    description: "املأ نموذج الطلب عبر الإنترنت مع تحديد الخدمة المطلوبة.",
+    title: "ØªÙ‚Ø¯ÙŠÙ… Ø§Ù„Ø·Ù„Ø¨",
+    description: "Ø§Ù…Ù„Ø£ Ù†Ù…ÙˆØ°Ø¬ Ø§Ù„Ø·Ù„Ø¨ Ø¹Ø¨Ø± Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª Ù…Ø¹ ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ø®Ø¯Ù…Ø© Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©.",
   },
   {
     number: "2",
     icon: MessageSquareIcon,
-    title: "المراجعة والتواصل",
-    description: "سيقوم فريقنا بمراجعة طلبك والتواصل معك لمزيد من التفاصيل.",
+    title: "Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© ÙˆØ§Ù„ØªÙˆØ§ØµÙ„",
+    description: "Ø³ÙŠÙ‚ÙˆÙ… ÙØ±ÙŠÙ‚Ù†Ø§ Ø¨Ù…Ø±Ø§Ø¬Ø¹Ø© Ø·Ù„Ø¨Ùƒ ÙˆØ§Ù„ØªÙˆØ§ØµÙ„ Ù…Ø¹Ùƒ Ù„Ù…Ø²ÙŠØ¯ Ù…Ù† Ø§Ù„ØªÙØ§ØµÙŠÙ„.",
   },
   {
     number: "3",
     icon: StepForwardIcon,
-    title: "بدء العمل",
+    title: "Ø¨Ø¯Ø¡ Ø§Ù„Ø¹Ù…Ù„",
     description:
-      "بعد الاتفاق، نبدأ في تنفيذ الخدمة وفقا للجدول الزمني المتفق عليه.",
+      "Ø¨Ø¹Ø¯ Ø§Ù„Ø§ØªÙØ§Ù‚ØŒ Ù†Ø¨Ø¯Ø£ ÙÙŠ ØªÙ†ÙÙŠØ° Ø§Ù„Ø®Ø¯Ù…Ø© ÙˆÙÙ‚Ø§ Ù„Ù„Ø¬Ø¯ÙˆÙ„ Ø§Ù„Ø²Ù…Ù†ÙŠ Ø§Ù„Ù…ØªÙÙ‚ Ø¹Ù„ÙŠÙ‡.",
   },
   {
     number: "4",
     icon: CheckCircle2Icon,
-    title: "التسليم والمتابعة",
-    description: "نقدم لك النتائج النهائية ونتابع معك لضمان رضاك التام.",
+    title: "Ø§Ù„ØªØ³Ù„ÙŠÙ… ÙˆØ§Ù„Ù…ØªØ§Ø¨Ø¹Ø©",
+    description: "Ù†Ù‚Ø¯Ù… Ù„Ùƒ Ø§Ù„Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠØ© ÙˆÙ†ØªØ§Ø¨Ø¹ Ù…Ø¹Ùƒ Ù„Ø¶Ù…Ø§Ù† Ø±Ø¶Ø§Ùƒ Ø§Ù„ØªØ§Ù….",
   },
 ];
 
 const footerSections = [
   {
-    title: "عباق",
-    links: ["الرئيسية", "من نحن", "فريقنا"],
+    title: "Ø¹Ø¨Ø§Ù‚",
+    links: ["Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", "Ù…Ù† Ù†Ø­Ù†", "ÙØ±ÙŠÙ‚Ù†Ø§"],
   },
   {
-    title: "خدمات",
-    links: ["استشارات", "مقالات", "تواصل"],
+    title: "Ø®Ø¯Ù…Ø§Øª",
+    links: ["Ø§Ø³ØªØ´Ø§Ø±Ø§Øª", "Ù…Ù‚Ø§Ù„Ø§Øª", "ØªÙˆØ§ØµÙ„"],
   },
   {
-    title: "دعم",
-    links: ["الأسئلة الشائعة", "سياسة الخصوصية", "شروط الخدمة"],
+    title: "Ø¯Ø¹Ù…",
+    links: ["Ø§Ù„Ø£Ø³Ø¦Ù„Ø© Ø§Ù„Ø´Ø§Ø¦Ø¹Ø©", "Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø®ØµÙˆØµÙŠØ©", "Ø´Ø±ÙˆØ· Ø§Ù„Ø®Ø¯Ù…Ø©"],
   },
   {
-    title: "المجتمع",
-    links: ["المدونة", "الندوات", "الفعاليات"],
+    title: "Ø§Ù„Ù…Ø¬ØªÙ…Ø¹",
+    links: ["Ø§Ù„Ù…Ø¯ÙˆÙ†Ø©", "Ø§Ù„Ù†Ø¯ÙˆØ§Øª", "Ø§Ù„ÙØ¹Ø§Ù„ÙŠØ§Øª"],
   },
 ];
 
@@ -110,7 +110,7 @@ export const ServicesSubsection = (): JSX.Element => {
   return (
     <div className="w-full bg-white" dir="rtl">
       <nav className="w-full h-14 bg-white shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f] flex items-center justify-center px-4">
-        <div className="flex items-center gap-6 max-w-[1440px] w-full justify-center">
+        <div className="flex flex-wrap items-center gap-3 max-w-[1440px] w-full justify-center">
           {navigationItems.map((item, index) => (
             <a
               key={index}
@@ -123,27 +123,27 @@ export const ServicesSubsection = (): JSX.Element => {
             </a>
           ))}
           <div className="mr-auto text-lg font-medium [font-family:'Inter',Helvetica] text-[#242524]">
-            Ibaaq-عباق
+            Ibaaq-Ø¹Ø¨Ø§Ù‚
           </div>
         </div>
       </nav>
 
-      <section className="relative w-full h-[280px] flex items-center justify-center">
+      <section className="relative w-full min-h-[220px] sm:h-[280px] flex items-center justify-center">
         <div className="absolute inset-0 bg-[#8c8d8b] opacity-20" />
         <div className="relative z-10 text-center px-4 max-w-[1216px] w-full mx-auto">
-          <h1 className="text-5xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] leading-[48px] mb-[39px]">
-            خدماتنا
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] leading-[48px] mb-[39px]">
+            Ø®Ø¯Ù…Ø§ØªÙ†Ø§
           </h1>
           <p className="text-xl [font-family:'Inter',Helvetica] text-[#8c8d8b] leading-7 max-w-[768px] mx-auto">
-            نقدم مجموعة شاملة من خدمات الاتصال والعلاقات العامة المصممة لمساعدتك
-            على تحقيق أهدافك.
+            Ù†Ù‚Ø¯Ù… Ù…Ø¬Ù…ÙˆØ¹Ø© Ø´Ø§Ù…Ù„Ø© Ù…Ù† Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ø§ØªØµØ§Ù„ ÙˆØ§Ù„Ø¹Ù„Ø§Ù‚Ø§Øª Ø§Ù„Ø¹Ø§Ù…Ø© Ø§Ù„Ù…ØµÙ…Ù…Ø© Ù„Ù…Ø³Ø§Ø¹Ø¯ØªÙƒ
+            Ø¹Ù„Ù‰ ØªØ­Ù‚ÙŠÙ‚ Ø£Ù‡Ø¯Ø§ÙÙƒ.
           </p>
         </div>
       </section>
 
       <section className="max-w-[1216px] mx-auto px-4 py-16">
-        <h2 className="text-4xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] text-center mb-[102px]">
-          اكتشف خدماتنا المتخصصة
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] text-center mb-8 sm:mb-12 md:mb-[102px]">
+          Ø§ÙƒØªØ´Ù Ø®Ø¯Ù…Ø§ØªÙ†Ø§ Ø§Ù„Ù…ØªØ®ØµØµØ©
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
@@ -160,7 +160,7 @@ export const ServicesSubsection = (): JSX.Element => {
                     className="w-14 h-14"
                   />
                 </div>
-                <div className="mx-[25px] mt-4 h-32 bg-[#c4c4c4] rounded-md" />
+                <div className="mx-[25px] mt-4 h-24 sm:h-32 bg-[#c4c4c4] rounded-md" />
                 <h3 className="text-lg font-semibold [font-family:'Cairo',Helvetica] text-[#242524] text-center mt-[21px] px-4">
                   {service.title}
                 </h3>
@@ -175,8 +175,8 @@ export const ServicesSubsection = (): JSX.Element => {
         <Separator className="my-16" />
 
         <div className="py-16">
-          <h2 className="text-4xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] text-center mb-[102px]">
-            كيف يعمل طلب الخدمة؟
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] text-center mb-8 sm:mb-12 md:mb-[102px]">
+            ÙƒÙŠÙ ÙŠØ¹Ù…Ù„ Ø·Ù„Ø¨ Ø§Ù„Ø®Ø¯Ù…Ø©ØŸ
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -209,26 +209,26 @@ export const ServicesSubsection = (): JSX.Element => {
         <Card className="border-[#ebebea] shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f] mt-16">
           <CardContent className="p-6">
             <h2 className="text-2xl font-bold [font-family:'Cairo',Helvetica] text-[#242524] text-center mb-[61px]">
-              قدم طلب خدمة
+              Ù‚Ø¯Ù… Ø·Ù„Ø¨ Ø®Ø¯Ù…Ø©
             </h2>
 
             <form className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label className="text-sm font-medium [font-family:'Inter',Helvetica] text-[#242524]">
-                    الاسم الكامل
+                    Ø§Ù„Ø§Ø³Ù… Ø§Ù„ÙƒØ§Ù…Ù„
                   </Label>
                   <Input
-                    placeholder="ادخل اسمك"
+                    placeholder="Ø§Ø¯Ø®Ù„ Ø§Ø³Ù…Ùƒ"
                     className="h-[41px] border-[#ebebea] [font-family:'Inter',Helvetica] text-sm"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-sm font-medium [font-family:'Inter',Helvetica] text-[#242524]">
-                    البريد الالكتروني
+                    Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø§Ù„ÙƒØªØ±ÙˆÙ†ÙŠ
                   </Label>
                   <Input
-                    placeholder="ادخل بريدك الالكتروني"
+                    placeholder="Ø§Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø§Ù„ÙƒØªØ±ÙˆÙ†ÙŠ"
                     className="h-[41px] border-[#ebebea] [font-family:'Inter',Helvetica] text-sm"
                   />
                 </div>
@@ -236,35 +236,35 @@ export const ServicesSubsection = (): JSX.Element => {
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium [font-family:'Inter',Helvetica] text-[#242524]">
-                  الخدمة المطلوبة
+                  Ø§Ù„Ø®Ø¯Ù…Ø© Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©
                 </Label>
                 <Select>
                   <SelectTrigger className="h-10 border-[#ebebea]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="service1">الاتصال المؤسسي</SelectItem>
+                    <SelectItem value="service1">Ø§Ù„Ø§ØªØµØ§Ù„ Ø§Ù„Ù…Ø¤Ø³Ø³ÙŠ</SelectItem>
                     <SelectItem value="service2">
-                      ادارة الهوية الرقمية
+                      Ø§Ø¯Ø§Ø±Ø© Ø§Ù„Ù‡ÙˆÙŠØ© Ø§Ù„Ø±Ù‚Ù…ÙŠØ©
                     </SelectItem>
-                    <SelectItem value="service3">العلاقات العامة</SelectItem>
-                    <SelectItem value="service4">طلبات الجوائز</SelectItem>
+                    <SelectItem value="service3">Ø§Ù„Ø¹Ù„Ø§Ù‚Ø§Øª Ø§Ù„Ø¹Ø§Ù…Ø©</SelectItem>
+                    <SelectItem value="service4">Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¬ÙˆØ§Ø¦Ø²</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium [font-family:'Inter',Helvetica] text-[#242524]">
-                  رسالة
+                  Ø±Ø³Ø§Ù„Ø©
                 </Label>
                 <Textarea
-                  placeholder="صف طلبك بالتفصيل"
+                  placeholder="ØµÙ Ø·Ù„Ø¨Ùƒ Ø¨Ø§Ù„ØªÙØµÙŠÙ„"
                   className="min-h-[81px] border-[#ebebea] [font-family:'Inter',Helvetica] text-sm resize-none"
                 />
               </div>
 
               <Button className="w-full h-10 bg-[#636ae8] hover:bg-[#5159d1] text-white [font-family:'Inter',Helvetica] text-sm">
-                إرسال الطلب
+                Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨
                 <SendIcon className="w-4 h-4 mr-2" />
               </Button>
             </form>
@@ -275,19 +275,19 @@ export const ServicesSubsection = (): JSX.Element => {
       <footer className="w-full bg-white shadow-[0px_0px_1px_#171a1f12,0px_0px_2px_#171a1f1f] py-16">
         <div className="max-w-[1440px] mx-auto px-4">
           <div className="text-center mb-12">
-            <h3 className="text-2xl font-bold [font-family:'Inter',Helvetica] text-[#242524] mb-[76px]">
-              Ibaaq-عباق
+            <h3 className="text-2xl font-bold [font-family:'Inter',Helvetica] text-[#242524] mb-10 md:mb-[76px]">
+              Ibaaq-Ø¹Ø¨Ø§Ù‚
             </h3>
-            <p className="text-lg font-semibold [font-family:'Cairo',Helvetica] text-[#242524] mb-[47px]">
-              اشترك في نشرتنا الإخبارية
+            <p className="text-lg font-semibold [font-family:'Cairo',Helvetica] text-[#242524] mb-6 md:mb-[47px]">
+              Ø§Ø´ØªØ±Ùƒ ÙÙŠ Ù†Ø´Ø±ØªÙ†Ø§ Ø§Ù„Ø¥Ø®Ø¨Ø§Ø±ÙŠØ©
             </p>
             <div className="flex justify-center items-center gap-2 max-w-md mx-auto">
               <Button className="h-10 bg-[#636ae8] hover:bg-[#5159d1] text-white text-sm [font-family:'Inter',Helvetica] px-4">
-                اشترك
+                Ø§Ø´ØªØ±Ùƒ
               </Button>
               <div className="relative flex-1">
                 <Input
-                  placeholder="ادخل بريدك الالكتروني"
+                  placeholder="Ø§Ø¯Ø®Ù„ Ø¨Ø±ÙŠØ¯Ùƒ Ø§Ù„Ø§Ù„ÙƒØªØ±ÙˆÙ†ÙŠ"
                   className="h-[41px] border-[#ebebea] pr-10 [font-family:'Inter',Helvetica] text-sm"
                 />
                 <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#242524]" />
@@ -326,14 +326,14 @@ export const ServicesSubsection = (): JSX.Element => {
             </Button>
 
             <div className="flex items-center gap-2 text-sm [font-family:'Inter',Helvetica] text-[#8c8d8b]">
-              <span>© 2025 Ibbaaq-عباق.</span>
-              <span>•</span>
+              <span>Â© 2025 Ibbaaq-Ø¹Ø¨Ø§Ù‚.</span>
+              <span>â€¢</span>
               <a href="#" className="hover:text-[#242524]">
-                سياسة الخصوصية
+                Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø®ØµÙˆØµÙŠØ©
               </a>
-              <span>•</span>
+              <span>â€¢</span>
               <a href="#" className="hover:text-[#242524]">
-                شروط الخدمة
+                Ø´Ø±ÙˆØ· Ø§Ù„Ø®Ø¯Ù…Ø©
               </a>
             </div>
 
@@ -366,3 +366,4 @@ export const ServicesSubsection = (): JSX.Element => {
     </div>
   );
 };
+

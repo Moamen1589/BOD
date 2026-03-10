@@ -14,7 +14,7 @@ const heroBackgrounds = [
 
 export function HeroSection() {
   return (
-    <section id="hero" className="relative min-h-screen flex items-center overflow-hidden pt-24">
+    <section id="hero" className="relative min-h-screen flex items-center overflow-hidden pt-20 md:pt-24">
       <div className="absolute inset-0">
         {heroBackgrounds.map((image, index) => (
           <div
@@ -68,7 +68,7 @@ export function HeroSection() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 mt-16 max-w-lg mx-auto animate-fade-up" style={{ animationDelay: "0.4s" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-16 max-w-lg mx-auto animate-fade-up" style={{ animationDelay: "0.4s" }}>
             {stats.map((s) => (
               <div key={s.label} className="text-center" data-testid={`stat-${s.label}`}>
                 <div className={`flex items-center justify-center w-12 h-12 ${s.color} rounded-md mx-auto mb-2`}>
