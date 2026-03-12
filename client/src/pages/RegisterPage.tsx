@@ -69,7 +69,7 @@ export default function RegisterPage() {
       <div className="flex-1 mt-10 bg-brand-light-gold py-16">
         <div className="container mx-auto px-6 max-w-2xl">
           <div className="bg-white rounded-[3rem] shadow-2xl p-12 border-t-8 border-brand-gold">
-            <h1 className="text-4xl font-black text-brand-dark mb-2 text-center">اختبار المنظومة الاجتماعية</h1>
+            <h1 className="text-4xl font-black text-brand-dark mb-2 text-center">اختبار المنظومة المجتمعية</h1>
             <p className="text-center text-brand-gray mb-12 text-lg">يرجى تسجيل بيانات مؤسستكم لبدء الاختبار</p>
 
             <form onSubmit={handleSubmit} className="space-y-8">
