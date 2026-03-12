@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -199,6 +200,7 @@ const assessmentAxes = [
 ];
 
 export default function ECSTTPage() {
+  const [, setLocation] = useLocation();
   const [step, setStep] = useState<"intro" | "assessment" | "result">("intro");
   const [activeAxisIndex, setActiveAxisIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, number>>({});
@@ -725,7 +727,10 @@ export default function ECSTTPage() {
               </p>
               <div className="flex w-full max-w-3xl mx-auto flex-col md:flex-row gap-3 sm:gap-4 md:gap-5 lg:gap-6 justify-center items-stretch">
                 <Button
-                  onClick={() => setStep("assessment")}
+                  onClick={() => {
+                    setLocation("/register");
+                    scroll(0, 0);
+                  }}
                   size="lg"
                   className="bg-brand-dark text-white px-5 sm:px-8 md:px-8 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-10 !h-auto min-h-12 sm:min-h-14 rounded-2xl sm:rounded-3xl text-sm sm:text-base md:text-lg lg:text-2xl font-black shadow-2xl w-full md:flex-1 lg:flex-none md:w-auto whitespace-normal leading-tight text-center"
                 >
@@ -734,6 +739,10 @@ export default function ECSTTPage() {
                 <Button
                   variant="outline"
                   size="lg"
+                  onClick={() => {
+                    setLocation("/register");
+                    scroll(0, 0);
+                  }}
                   className="border-brand-dark text-brand-dark px-5 sm:px-8 md:px-5 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-10 !h-auto min-h-12 sm:min-h-14 rounded-2xl sm:rounded-3xl text-sm sm:text-base md:text-lg lg:text-2xl font-black w-full md:flex-1 lg:flex-none md:w-auto whitespace-normal leading-tight text-center"
                 >
                   📋 احصل على تقييم مجاني

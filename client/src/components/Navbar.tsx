@@ -19,15 +19,7 @@ const navItems: NavItem[] = [
   { label: "المنظومة المجتمعية", href: "/ecstt" },
   {
     label: "مكتبة الأعمال",
-    href: "/work-library",
-    dropdown: [
-      { label: "إعداد الخطط الاستراتيجية", href: "/work-library?cat=strategic-planning" },
-      { label: "الأدلة الإجرائية", href: "/work-library?cat=procedural-guides" },
-      { label: "الخطط السنوية", href: "/work-library?cat=annual-plans" },
-      { label: "المبادرات المجتمعية", href: "/work-library?cat=community-initiatives" },
-      { label: "الموشن جرافيك", href: "/work-library?cat=motion-graphics" },
-      { label: "عرض جميع الأعمال", href: "/work-library" },
-    ],
+    href: "/work-library"
   },
   {
     label: "حلولنا الرقمية",
