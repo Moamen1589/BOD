@@ -35,7 +35,7 @@ export const Box = (): JSX.Element => {
                 هل تريد بناء جمعية تُدار بالاحتراف؟
               </h2>
               <p className="text-xl md:text-2xl text-white/70 mb-12 leading-relaxed">
-                اكتشف "المنظومة الاجتماعية" - الحل المتكامل للتحول المؤسسي
+                اكتشف "المنظومة المجتمعية" - الحل المتكامل للتحول المؤسسي
                 المستدام وتوثيق الأثر.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -63,12 +63,12 @@ export const Box = (): JSX.Element => {
         </div>
       </section>
       <VideoSection />
-      <PartnersSection />
-      <ClientsSection />
       <AboutSection />
       <ServicesSection />
       <SolutionsSection />
       <WhyUsSection />
+      <ClientsSection />
+      <PartnersSection />
       <TestimonialsSection />
       <ContactSection />
       <Footer />

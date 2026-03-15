@@ -13,14 +13,18 @@ export function VideoSection() {
 
         <div className="max-w-5xl mx-auto">
           <div className="relative w-full pt-[56.25%] bg-brand-dark rounded-[3rem] overflow-hidden shadow-2xl">
-            <iframe
+            <video
               className="absolute inset-0 w-full h-full"
-              src="https://bod.com.sa/wp-content/uploads/2025/01/Website-Bod-New-Version-1.mp4#5340"
-              title="Birth of a Dream - Introduction"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+              controls
+              preload="metadata"
+              playsInline
+              aria-label="Birth of a Dream - Introduction"
+            >
+              <source
+                src="https://bod.com.sa/wp-content/uploads/2025/01/Website-Bod-New-Version-1.mp4#5340"
+                type="video/mp4"
+              />
+            </video>
           </div>
         </div>
       </div>

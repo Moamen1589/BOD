@@ -88,20 +88,31 @@ export default function WorkItemDetailPage() {
               {item.title}
             </h1>
 
+            {item.description && (
+              <p className="font-almarai text-brand-gray text-lg leading-relaxed mb-6" data-testid="text-work-description">
+                {item.description}
+              </p>
+            )}
+
+
             <div className="font-almarai text-brand-dark/80 text-lg leading-relaxed whitespace-pre-line mb-8" data-testid="text-work-content">
               {item.content}
             </div>
 
-            {item.fileUrl && (
-              <div className="p-6 bg-brand-light-gold/50 rounded-md border border-brand-gold/10">
+            <div className="p-6 bg-brand-light-gold/50 rounded-md border border-brand-gold/10">
+              <h2 className="font-almarai font-extrabold text-xl text-brand-dark mb-4" data-testid="text-work-files-title">
+                ÙÙÙØ§Øª Ø§ÙØ¹ÙÙ</h2>
+              {item.fileUrl ? (
                 <a href={item.fileUrl} target="_blank" rel="noopener noreferrer">
                   <Button className="bg-brand-gold text-white font-almarai gap-2" data-testid="button-download-file">
                     <Download size={16} />
-                    تحميل الملف
-                  </Button>
+                    ØªØ­ÙÙÙ Ø§ÙÙÙÙ</Button>
                 </a>
-              </div>
-            )}
+              ) : (
+                <p className="font-almarai text-brand-gray" data-testid="text-work-no-files">
+                  ÙØ§ ØªÙØ¬Ø¯ ÙÙÙØ§Øª ÙÙØ°Ø§ Ø§ÙØ¹ÙÙ Ø­Ø§ÙÙØ§.</p>
+              )}
+            </div>
           </article>
         </div>
       </main>

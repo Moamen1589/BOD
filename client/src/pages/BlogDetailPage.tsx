@@ -14,6 +14,8 @@ const categoryLabels: Record<string, string> = {
   newsletter: "نشرة بريدية",
 };
 
+const fallbackCardImage = "/figmaAssets/homepage.png";
+
 export default function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>();
 
@@ -72,9 +74,12 @@ export default function BlogDetailPage() {
           </div>
 
           <article className="max-w-3xl">
-            {post.imageUrl && (
-              <img src={post.imageUrl} alt={post.title} className="w-full h-64 md:h-80 object-cover rounded-md mb-8" data-testid="img-blog-cover" />
-            )}
+            <img
+              src={post.imageUrl || fallbackCardImage}
+              alt={post.title}
+              className="w-full h-64 md:h-80 object-cover rounded-md mb-8"
+              data-testid="img-blog-cover"
+            />
 
             <div className="flex items-center gap-3 mb-4 flex-wrap">
               <Badge variant="outline" className="text-brand-gold-dark border-brand-gold/30 font-almarai">

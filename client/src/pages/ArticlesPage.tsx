@@ -5,6 +5,8 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Article } from "@shared/schema";
 
+const fallbackCardImage = "/figmaAssets/homepage.png";
+
 export default function ArticlesPage() {
   const { data: articles, isLoading } = useQuery<Article[]>({
     queryKey: ["/api/articles"],
@@ -41,14 +43,12 @@ export default function ArticlesPage() {
                     className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full"
                     data-testid={`card-article-${article.slug}`}
                   >
-                    {article.imageUrl && (
-                      <img
-                        src={article.imageUrl}
+                    <img
+                        src={article.imageUrl || fallbackCardImage}
                         alt={article.title}
                         className="w-full h-48 object-cover"
                         loading="lazy"
                       />
-                    )}
                     <div className="p-5">
                       <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">{article.title}</h3>
                       <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-2">{article.excerpt}</p>
@@ -67,3 +67,4 @@ export default function ArticlesPage() {
     </div>
   );
 }
+

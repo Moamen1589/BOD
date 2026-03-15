@@ -29,6 +29,7 @@ export default function RegisterPage() {
     onSuccess: (data) => {
       setOrgId(data.id);
       setSubmitted(true);
+      localStorage.setItem("orgId", data.id);
       setTimeout(() => {
         setLocation(`/ecstt?orgId=${data.id}`);
       }, 2000);

@@ -202,6 +202,7 @@ const assessmentAxes = [
 export default function ECSTTPage() {
   const [, setLocation] = useLocation();
   const [step, setStep] = useState<"intro" | "assessment" | "result">("intro");
+  const [hasRegistration, setHasRegistration] = useState(false);
   const [activeAxisIndex, setActiveAxisIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [selectedRukn, setSelectedRukn] = useState<string | null>("purpose");
@@ -224,6 +225,19 @@ export default function ECSTTPage() {
     updateRadius();
     window.addEventListener("resize", updateRadius);
     return () => window.removeEventListener("resize", updateRadius);
+  }, []);
+
+  useEffect(() => {
+    const storedOrgId = localStorage.getItem("orgId");
+    const urlOrgId = new URLSearchParams(window.location.search).get("orgId");
+
+    if (urlOrgId && urlOrgId !== storedOrgId) {
+      localStorage.setItem("orgId", urlOrgId);
+      setHasRegistration(true);
+      return;
+    }
+
+    setHasRegistration(Boolean(storedOrgId));
   }, []);
 
   const handleScoreChange = (
@@ -312,6 +326,19 @@ export default function ECSTTPage() {
   };
 
   const recommendation = getRecommendation();
+
+  const handleAssessmentEntry = () => {
+    if (hasRegistration) {
+      setStep("assessment");
+      document
+        .getElementById("assessment")
+        ?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    setLocation("/register");
+    scroll(0, 0);
+  };
 
   return (
     <div
@@ -727,25 +754,19 @@ export default function ECSTTPage() {
               </p>
               <div className="flex w-full max-w-3xl mx-auto flex-col md:flex-row gap-3 sm:gap-4 md:gap-5 lg:gap-6 justify-center items-stretch">
                 <Button
-                  onClick={() => {
-                    setLocation("/register");
-                    scroll(0, 0);
-                  }}
+                  onClick={handleAssessmentEntry}
                   size="lg"
                   className="bg-brand-dark text-white px-5 sm:px-8 md:px-8 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-10 !h-auto min-h-12 sm:min-h-14 rounded-2xl sm:rounded-3xl text-sm sm:text-base md:text-lg lg:text-2xl font-black shadow-2xl w-full md:flex-1 lg:flex-none md:w-auto whitespace-normal leading-tight text-center"
                 >
-                  🚀 ابدأ رحلة جمعيتك الآن
+                  {hasRegistration ? "ابدأ التقييم" : "🚀 ابدأ رحلة جمعيتك الآن"}
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
-                  onClick={() => {
-                    setLocation("/register");
-                    scroll(0, 0);
-                  }}
+                  onClick={handleAssessmentEntry}
                   className="border-brand-dark text-brand-dark px-5 sm:px-8 md:px-5 lg:px-16 py-3 sm:py-4 md:py-5 lg:py-10 !h-auto min-h-12 sm:min-h-14 rounded-2xl sm:rounded-3xl text-sm sm:text-base md:text-lg lg:text-2xl font-black w-full md:flex-1 lg:flex-none md:w-auto whitespace-normal leading-tight text-center"
                 >
-                  📋 احصل على تقييم مجاني
+                  {hasRegistration ? "ابدأ التقييم الآن" : "📋 احصل على تقييم مجاني"}
                 </Button>
               </div>
             </div>

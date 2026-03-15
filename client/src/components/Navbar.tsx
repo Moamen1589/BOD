@@ -54,6 +54,30 @@ function isInternalLink(href: string) {
   return href.startsWith("/");
 }
 
+function isActiveHref(href: string, location: string) {
+  if (href.startsWith("#")) {
+    return location.includes(href);
+  }
+  if (!isInternalLink(href)) {
+    return false;
+  }
+  if (href === "/") {
+    return location === "/" || location.startsWith("/#");
+  }
+  return (
+    location === href ||
+    location.startsWith(`${href}/`) ||
+    location.startsWith(`${href}?`) ||
+    location.startsWith(`${href}#`)
+  );
+}
+
+function isNavItemActive(item: NavItem, location: string) {
+  if (isActiveHref(item.href, location)) return true;
+  if (!item.dropdown) return false;
+  return item.dropdown.some((subItem) => isActiveHref(subItem.href, location));
+}
+
 function NavLink({
   href,
   className,
@@ -178,7 +202,17 @@ export function Navbar() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
+            {navItems.map((item) => {
+              const isActive = isNavItemActive(item, location);
+              const baseClasses =
+                "px-3 py-2 text-sm font-almarai transition-colors rounded-md";
+              const activeClasses = "text-white font-bold";
+              const inactiveClasses = "text-white/70 hover:text-white font-normal";
+              const itemClasses = `${baseClasses} ${
+                isActive ? activeClasses : inactiveClasses
+              }`;
+
+              return (
               <div key={item.label} className="relative">
                 {item.dropdown ? (
                   <>
@@ -188,7 +222,7 @@ export function Navbar() {
                           openDropdown === item.label ? null : item.label,
                         )
                       }
-                      className="flex items-center gap-1 px-3 py-2 text-sm font-almarai text-white/70 hover:text-white transition-colors rounded-md"
+                      className={`flex items-center gap-1 ${itemClasses}`}
                       data-testid={`nav-${item.label}`}
                     >
                       {item.label}
@@ -207,14 +241,15 @@ export function Navbar() {
                 ) : (
                   <NavLink
                     href={item.href}
-                    className="px-3 py-2 text-sm font-almarai text-white/70 hover:text-white transition-colors rounded-md"
+                    className={itemClasses}
                     testId={`nav-${item.label}`}
                   >
                     {item.label}
                   </NavLink>
                 )}
               </div>
-            ))}
+              );
+            })}
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
@@ -245,7 +280,17 @@ export function Navbar() {
       {mobileOpen && (
         <div className="lg:hidden mt-2 mx-auto container">
           <div className="bg-brand-dark/95 backdrop-blur-md rounded-2xl px-4 py-4 max-h-[75vh] overflow-y-auto shadow-lg border border-white/5">
-            {navItems.map((item) => (
+            {navItems.map((item) => {
+              const isActive = isNavItemActive(item, location);
+              const baseClasses =
+                "font-almarai text-sm border-b border-white/10 transition-colors";
+              const activeClasses = "text-white font-bold";
+              const inactiveClasses = "text-white/70 hover:text-white font-normal";
+              const itemClasses = `${baseClasses} ${
+                isActive ? activeClasses : inactiveClasses
+              }`;
+
+              return (
               <div key={item.label}>
                 {item.dropdown ? (
                   <>
@@ -255,7 +300,7 @@ export function Navbar() {
                           mobileExpanded === item.label ? null : item.label,
                         )
                       }
-                      className="w-full flex items-center justify-between gap-4 py-3 font-almarai text-sm font-bold text-white/80 border-b border-white/10"
+                      className={`w-full flex items-center justify-between gap-4 py-3 ${itemClasses}`}
                       data-testid={`mobile-nav-${item.label}`}
                     >
                       {item.label}
@@ -284,14 +329,15 @@ export function Navbar() {
                   <NavLink
                     href={item.href}
                     onClick={() => setMobileOpen(false)}
-                    className="block py-3 font-almarai text-sm font-bold text-white/80 border-b border-white/10"
+                    className={`block py-3 ${itemClasses}`}
                     testId={`mobile-nav-${item.label}`}
                   >
                     {item.label}
                   </NavLink>
                 )}
               </div>
-            ))}
+              );
+            })}
             <Button
               asChild
               className="w-full mt-4 bg-brand-gold text-white font-almarai rounded-lg font-bold"
@@ -310,4 +356,3 @@ export function Navbar() {
     </header>
   );
 }
-

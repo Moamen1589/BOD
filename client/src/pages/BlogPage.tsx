@@ -20,6 +20,8 @@ const categoryLabels: Record<string, string> = {
   newsletter: "نشرة بريدية",
 };
 
+const fallbackCardImage = "/figmaAssets/homepage.png";
+
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -81,9 +83,12 @@ export default function BlogPage() {
                     className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
                     data-testid={`card-blog-${post.slug}`}
                   >
-                    {post.imageUrl && (
-                      <img src={post.imageUrl} alt={post.title} className="w-full h-48 object-cover" loading="lazy" />
-                    )}
+                    <img
+                      src={post.imageUrl || fallbackCardImage}
+                      alt={post.title}
+                      className="w-full h-48 object-cover"
+                      loading="lazy"
+                    />
                     <div className="p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-2 mb-3 flex-wrap">
                         <Badge variant="outline" className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs">
@@ -111,3 +116,5 @@ export default function BlogPage() {
     </div>
   );
 }
+
+
