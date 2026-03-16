@@ -133,7 +133,7 @@ export default function BlogPage() {
               الأخبار والمقالات والنشرات
             </h1>
             <p className="font-almarai text-brand-gray max-w-2xl mx-auto text-lg">
-              آخر الأخبار والمقالات المتخصصة والنشرات البريدية من ولادة حلم
+              آخر الأخبار والمقالات المتخصصة من ولادة حلم
             </p>
           </div>
 
