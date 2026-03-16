@@ -225,7 +225,7 @@ export function installMockApi() {
         : input.url;
     const requestUrl = new URL(inputUrl, window.location.origin);
 
-    if (!requestUrl.pathname.startsWith("/api/")) {
+    if (requestUrl.origin !== window.location.origin || !requestUrl.pathname.startsWith("/api/")) {
       return originalFetch(input, init);
     }
 

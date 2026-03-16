@@ -1,17 +1,48 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import type { Article } from "@shared/schema";
+type ApiCategory = {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+};
+
+type ApiBlog = {
+  id: number;
+  title: string;
+  slug: string;
+  short_description: string | null;
+  content: string | null;
+  author: string | null;
+  blog_category_id: number | null;
+  image_path: string | null;
+  published_at: string | null;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+  category?: ApiCategory | null;
+};
+
+type ApiResponse = {
+  data: ApiBlog[];
+  current_page?: number;
+  last_page?: number;
+  per_page?: number;
+  total?: number;
+  next_page_url?: string | null;
+  prev_page_url?: string | null;
+};
+
 
 const categories = [
   { key: "all", label: "الكل" },
   { key: "news", label: "أخبار" },
   { key: "article", label: "مقالات" },
-  { key: "newsletter", label: "نشرات بريدية" },
 ];
 
 const categoryLabels: Record<string, string> = {
@@ -21,19 +52,73 @@ const categoryLabels: Record<string, string> = {
 };
 
 const fallbackCardImage = "/figmaAssets/homepage.png";
+const blogApiBase = "https://gold-weasel-489740.hostingersite.com";
+
+const mapCategory = (categoryName?: string | null): Article["category"] => {
+  if (!categoryName) return "article";
+  const normalized = categoryName.toLowerCase();
+  if (normalized.includes("news")) return "news";
+  if (normalized.includes("newsletter")) return "newsletter";
+  return "article";
+};
+
+const toImageUrl = (imagePath?: string | null) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith("http")) return imagePath;
+  const trimmed = imagePath.replace(/^\/+/, "");
+  return `${blogApiBase}/storage/blogs/${trimmed}`;
+};
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [posts, setPosts] = useState<Article[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 15;
 
-  const { data: posts, isLoading } = useQuery<Article[]>({
-    queryKey: ["/api/blog", activeCategory],
-    queryFn: async () => {
-      const url = activeCategory === "all" ? "/api/blog" : `/api/blog?category=${activeCategory}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch");
-      return res.json();
-    },
-  });
+  useEffect(() => {
+    let isMounted = true;
+    const load = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch(`${blogApiBase}/api/blogs?page=${currentPage}`);
+        if (!res.ok) throw new Error("Failed to fetch");
+        const payload = (await res.json()) as ApiResponse;
+        const items = payload?.data ?? [];
+        const mapped = items.map((item) => ({
+          id: item.id,
+          title: item.title,
+          slug: item.slug,
+          excerpt: item.short_description || item.content || "",
+          content: item.content || "",
+          category: mapCategory(item.category?.name),
+          imageUrl: toImageUrl(item.image_path),
+          publishDate: item.published_at,
+          published: item.is_published,
+          createdAt: new Date(item.created_at),
+        }));
+        if (isMounted) {
+          setPosts(mapped);
+          setTotalPages(payload.last_page ?? Math.max(1, Math.ceil((payload.total ?? mapped.length) / (payload.per_page ?? pageSize))));
+        }
+      } catch {
+        if (isMounted) setPosts([]);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, [currentPage]);
+
+  const visiblePosts =
+    activeCategory === "all"
+      ? posts
+      : posts?.filter((post) => post.category === activeCategory);
+
 
   return (
     <div className="w-full min-h-screen flex flex-col">
@@ -56,7 +141,7 @@ export default function BlogPage() {
             {categories.map((cat) => (
               <button
                 key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
+                onClick={() => { setActiveCategory(cat.key); setCurrentPage(1); }}
                 className={`px-5 py-2 rounded-md font-almarai text-sm font-bold transition-colors ${
                   activeCategory === cat.key
                     ? "bg-brand-gold text-white"
@@ -77,8 +162,18 @@ export default function BlogPage() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts?.map((post) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
+              {visiblePosts?.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem(`blog_post_${post.slug}`, JSON.stringify(post));
+                    } catch {
+                      // ignore storage errors
+                    }
+                  }}
+                >
                   <div
                     className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
                     data-testid={`card-blog-${post.slug}`}
@@ -107,8 +202,49 @@ export default function BlogPage() {
             </div>
           )}
 
-          {!isLoading && posts?.length === 0 && (
+          {!isLoading && (!visiblePosts || visiblePosts.length === 0) && (
             <p className="text-center text-muted-foreground py-12 font-almarai text-lg">لا توجد منشورات في هذا التصنيف</p>
+          )}
+          
+          {!isLoading && visiblePosts && visiblePosts.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-10 flex-wrap">
+              <span className="text-xs font-almarai text-brand-gray/70 ml-2">
+                إجمالي الصفحات: {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 rounded-md font-almarai text-sm font-bold border border-brand-gold/30 text-brand-gold-dark disabled:opacity-40"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const page = idx + 1;
+                const start = Math.max(1, Math.min(currentPage - 1, totalPages - 3));
+                const end = Math.min(totalPages, start + 3);
+                if (page < start || page > end) return null;
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 rounded-md font-almarai text-sm font-bold ${
+                      currentPage === page
+                        ? "bg-brand-gold text-white"
+                        : "bg-brand-light-gold text-brand-gold-dark hover:bg-brand-gold/20"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 rounded-md font-almarai text-sm font-bold border border-brand-gold/30 text-brand-gold-dark disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
           )}
         </div>
       </main>
@@ -116,5 +252,3 @@ export default function BlogPage() {
     </div>
   );
 }
-
-

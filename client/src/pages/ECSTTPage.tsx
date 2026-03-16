@@ -537,15 +537,17 @@ export default function ECSTTPage() {
               { title: "القياس والأثر", desc: "مؤشرات الأداء وتقارير الأثر", output: "أثر موثق بالأرقام", icon: TrendingUp },
               { title: "الجاهزية التمويلية", desc: "ملف تمويلي وشفافية مالية", output: "جاهزية حقيقية للتمويل", icon: Shield }
             ].map((step, idx) => (
-              <div key={idx} className="relative p-8 bg-brand-light-gold rounded-[2.5rem] border border-brand-gold/10 hover:shadow-2xl transition-all group overflow-hidden">
+                <div key={idx} className="relative p-5 bg-brand-light-gold rounded-[2.5rem] border border-brand-gold/10 hover:shadow-2xl transition-all group overflow-hidden flex flex-col">
                 <div className="absolute top-0 right-0 bg-brand-gold text-white w-10 h-10 flex items-center justify-center font-black rounded-bl-2xl">{idx + 1}</div>
                 <div className="bg-white p-4 rounded-2xl w-fit mb-6 text-brand-gold group-hover:bg-brand-gold group-hover:text-white transition-colors shadow-sm">
                   <step.icon size={28} />
                 </div>
                 <h4 className="text-xl font-black mb-4 text-brand-dark">{step.title}</h4>
                 <p className="text-brand-gray text-sm mb-6 leading-relaxed">{step.desc}</p>
-                <div className="bg-brand-dark text-white p-4 rounded-xl text-xs font-bold mt-auto">
-                  📌 المخرج: {step.output}
+                <div className="bg-brand-dark text-white px-4 py-3  rounded-2xl  font-bold mt-auto  w-full  mx-auto">
+                  <span className="flex items-center justify-center gap-2 mb-1 ">
+                    <span className="text-xs">المخرج: {step.output}</span>
+                  </span>
                 </div>
               </div>
             ))}
@@ -561,31 +563,44 @@ export default function ECSTTPage() {
             <p className="text-brand-gray text-xl max-w-2xl mx-auto">تكامل الأركان الستة لتحقيق التحول المجتمعي المستدام</p>
           </div>
           
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-20">
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20">
             {/* The Cycle Circle - FIXED AND FUNCTIONAL */}
-            <div className="relative w-[350px] h-[350px] md:w-[550px] md:h-[550px] shrink-0">
+            <div
+              className="relative shrink-0"
+              style={{ width: `${cycleRadius * 2}px`, height: `${cycleRadius * 2}px` }}
+            >
               {/* Main Outer Path Ring */}
-              <div className="absolute inset-0 border-[20px] md:border-[30px] border-white rounded-full shadow-inner"></div>
+              <div
+                className="absolute inset-0 border-white rounded-full shadow-inner"
+                style={{
+                  borderWidth: `${cycleRadius < 150 ? 10 : cycleRadius < 220 ? 16 : 28}px`,
+                }}
+              ></div>
               
               {arkan.map((item, idx) => {
                 const angle = (idx * 60) - 90; // Start from top
                 const isSelected = selectedRukn === item.id;
+                const nodeSize = cycleRadius < 150 ? 52 : cycleRadius < 220 ? 64 : 96;
+                const iconSize = cycleRadius < 150 ? 22 : cycleRadius < 220 ? 26 : 36;
+                const ringThickness = cycleRadius < 150 ? 10 : cycleRadius < 220 ? 16 : 28;
+                const orbitRadius = cycleRadius - ringThickness / 2 - nodeSize / 2;
                 
                 // Calculate position on the circle
-                const radius = 275; // for 550px width
-                const x = Math.cos(angle * (Math.PI / 180)) * (radius - 15);
-                const y = Math.sin(angle * (Math.PI / 180)) * (radius - 15);
+                const x = Math.cos(angle * (Math.PI / 180)) * orbitRadius;
+                const y = Math.sin(angle * (Math.PI / 180)) * orbitRadius;
 
                 return (
                   <div key={item.id} className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <button 
                       onClick={() => setSelectedRukn(item.id)}
-                      className={`pointer-events-auto absolute w-16 h-16 md:w-28 md:h-28 rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl border-4 border-white z-30 ${isSelected ? 'scale-125 ring-8 ring-brand-gold/20' : 'hover:scale-115 opacity-90'} ${item.color}`}
+                      className={`pointer-events-auto absolute rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl border-4 border-white z-30 ${isSelected ? 'scale-125 ring-8 ring-brand-gold/20' : 'hover:scale-115 opacity-90'} ${item.color}`}
                       style={{ 
-                        transform: `translate(${x}px, ${y}px)` 
+                        width: `${nodeSize}px`,
+                        height: `${nodeSize}px`,
+                        transform: `translate(${x}px, ${y}px)`,
                       }}
                     >
-                      <item.icon className="text-white w-7 h-7 md:w-12 md:h-12" />
+                      <item.icon className="text-white" style={{ width: `${iconSize}px`, height: `${iconSize}px` }} />
                     </button>
                     
            
@@ -594,7 +609,13 @@ export default function ECSTTPage() {
               })}
               
               {/* Central Hub with Logo */}
-              <div className="absolute inset-0 m-auto w-32 h-32 md:w-56 md:h-56 bg-white rounded-full flex items-center justify-center z-10 shadow-2xl border-4  p-6 overflow-hidden">
+              <div
+                className="absolute inset-0 m-auto bg-white rounded-full flex items-center justify-center z-10 shadow-2xl border-4 p-4 sm:p-5 overflow-hidden"
+                style={{
+                  width: `${cycleRadius < 150 ? 110 : cycleRadius < 220 ? 150 : 220}px`,
+                  height: `${cycleRadius < 150 ? 110 : cycleRadius < 220 ? 150 : 220}px`,
+                }}
+              >
                 <img src="/images/cstt-logo.jpg" alt="Logo" className="w-full h-auto rounded-full" />
               </div>
             </div>
@@ -609,7 +630,7 @@ export default function ECSTTPage() {
                       return <RuknIcon size={40} />;
                     })()}
                   </div>
-                  <h3 className="text-4xl font-black mb-6 text-brand-dark">{arkan.find(r => r.id === selectedRukn)?.title}</h3>
+                  <h3 className="text-[clamp(1.5rem,2.6vw,2.25rem)] font-black mb-6 text-brand-dark">{arkan.find(r => r.id === selectedRukn)?.title}</h3>
                   <div className={`w-20 h-1.5 ${arkan.find(r => r.id === selectedRukn)?.color} mb-8 rounded-full`}></div>
                   <p className="text-2xl text-brand-gray mb-10 leading-relaxed font-medium">{arkan.find(r => r.id === selectedRukn)?.description}</p>
                   
