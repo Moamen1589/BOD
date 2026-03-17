@@ -1,7 +1,6 @@
 import {
   Mail,
   Phone,
-  Globe,
   Send,
   FileDown,
   Loader2,
@@ -18,6 +17,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -33,29 +35,62 @@ const contactInfo = [
   },
 ];
 
+const contactSchema = z.object({
+  name: z.string().min(1, { message: "برجاء إدخال الاسم" }),
+  phone: z
+    .string()
+    .min(1, { message: "برجاء إدخال رقم الجوال" })
+    .refine((value) => value.replace(/\D/g, "").length >= 7, {
+      message: "رقم الجوال غير صحيح",
+    }),
+  email: z
+    .string()
+    .min(1, { message: "برجاء إدخال البريد الإلكتروني" })
+    .email({ message: "البريد الإلكتروني غير صحيح" }),
+  subject: z.string().min(1, { message: "برجاء اختيار الغرض" }),
+  message: z.string().min(1, { message: "برجاء كتابة الرسالة" }),
+});
+
+type ContactForm = z.infer<typeof contactSchema>;
+
 export function ContactSection() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [purpose, setPurpose] = useState("inquiry");
-  const [message, setMessage] = useState("");
   const header = useScrollAnimation();
   const content = useScrollAnimation();
   const { toast } = useToast();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, touchedFields, isSubmitted },
+  } = useForm<ContactForm>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      phone: "",
+      email: "",
+      subject: "General Inquiry",
+      message: "",
+    },
+    mode: "onBlur",
+  });
+
+  const shouldShowError = (field: keyof ContactForm) =>
+    (touchedFields[field] || isSubmitted) && Boolean(errors[field]);
+
+  const getError = (field: keyof ContactForm) =>
+    errors[field]?.message as string | undefined;
+
+  const onSubmit = async (data: ContactForm) => {
     setLoading(true);
     try {
-      await apiRequest("POST", "/api/contact", {
-        name,
-        phone,
-        email,
-        purpose,
-        message,
-      });
+      await apiRequest(
+        "POST",
+        "https://gold-weasel-489740.hostingersite.com/api/contact-us",
+        data
+      );
       setSubmitted(true);
     } catch {
       toast({
@@ -66,7 +101,7 @@ export function ContactSection() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <section id="contact" className="py-16 md:py-24 bg-brand-light">
@@ -182,79 +217,113 @@ export function ContactSection() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                 <div>
                   <label className="font-almarai text-sm font-bold text-brand-dark mb-1.5 block">
                     الاسم / الجهة
                   </label>
                   <Input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    {...register("name")}
                     placeholder="أدخل اسمك أو اسم الجهة"
                     className="font-almarai rounded-md"
                     required
                     data-testid="input-name"
                   />
+                  {shouldShowError("name") && (
+                    <p className="font-almarai text-xs text-red-600 mt-1">
+                      {getError("name")}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="font-almarai text-sm font-bold text-brand-dark mb-1.5 block">
                     الجوال
                   </label>
                   <Input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    dir="rtl"
+                    {...register("phone")}
                     type="tel"
                     placeholder="أدخل رقم الجوال"
                     className="font-almarai rounded-md"
                     required
                     data-testid="input-phone"
                   />
+                  {shouldShowError("phone") && (
+                    <p className="font-almarai text-xs text-red-600 mt-1">
+                      {getError("phone")}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="font-almarai text-sm font-bold text-brand-dark mb-1.5 block">
                     البريد الإلكتروني
                   </label>
                   <Input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                     type="email"
                     placeholder="أدخل بريدك الإلكتروني"
                     className="font-almarai rounded-md"
                     required
                     data-testid="input-email"
                   />
+                  {shouldShowError("email") && (
+                    <p className="font-almarai text-xs text-red-600 mt-1">
+                      {getError("email")}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="font-almarai text-sm font-bold text-brand-dark mb-1.5 block">
                     الغرض من الاتصال
                   </label>
-                  <Select value={purpose} onValueChange={setPurpose}>
-                    <SelectTrigger
-                      className="font-almarai rounded-md"
-                      data-testid="select-purpose"
-                    >
-                      <SelectValue placeholder="اختر الغرض" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="inquiry">استفسار عام</SelectItem>
-                      <SelectItem value="complaint">شكوى</SelectItem>
-                      <SelectItem value="callback">طلب تواصل معك</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    control={control}
+                    name="subject"
+                    render={({ field }) => (
+                      <Select
+                        dir="rtl"
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger
+                          className="font-almarai rounded-md"
+                          data-testid="select-purpose"
+                        >
+                          <SelectValue placeholder="اختر الغرض" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="General Inquiry">
+                            استفسار عام
+                          </SelectItem>
+                          <SelectItem value="Feedback">شكوى</SelectItem>
+                          <SelectItem value="Support">طلب تواصل معك</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {shouldShowError("subject") && (
+                    <p className="font-almarai text-xs text-red-600 mt-1">
+                      {getError("subject")}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="font-almarai text-sm font-bold text-brand-dark mb-1.5 block">
                     محتوى الرسالة
                   </label>
                   <Textarea
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    {...register("message")}
                     placeholder="كيف يمكننا مساعدتك؟"
                     rows={4}
                     className="font-almarai rounded-md resize-none"
                     required
                     data-testid="textarea-message"
                   />
+                  {shouldShowError("message") && (
+                    <p className="font-almarai text-xs text-red-600 mt-1">
+                      {getError("message")}
+                    </p>
+                  )}
                 </div>
                 <Button
                   type="submit"

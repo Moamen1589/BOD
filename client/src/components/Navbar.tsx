@@ -46,8 +46,7 @@ const navItems: NavItem[] = [
     ],
   },
   { label: "المدونة", href: "/blog" },
-  { label: "عملاؤنا", href: "#testimonials" },
-  { label: "تواصل معنا", href: "/#contact" },
+  { label: "عملاؤنا", href: "#testimonials" }
 ];
 
 function isInternalLink(href: string) {

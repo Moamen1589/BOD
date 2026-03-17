@@ -13,6 +13,7 @@ import { Footer } from "@/components/Footer";
 import { VideoSection } from "@/components/VideoSection";
 import { PartnersSection } from "@/components/PartnersSection";
 import { ClientsSection } from "@/components/ClientsSection";
+import { NewsletterSection } from "@/components/NewsletterSection";
 
 export const Box = (): JSX.Element => {
   return (
@@ -70,6 +71,7 @@ export const Box = (): JSX.Element => {
       <ClientsSection />
       <PartnersSection />
       <TestimonialsSection />
+      <NewsletterSection />
       <ContactSection />
       <Footer />
     </div>
