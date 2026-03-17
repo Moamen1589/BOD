@@ -149,7 +149,7 @@ export default function BlogPage() {
               className="font-almarai font-extrabold text-3xl md:text-4xl text-brand-dark mt-6 mb-4"
               data-testid="text-blog-page-title"
             >
-              الأخبار والمقالات والنشرات
+              الأخبار والمقالات 
             </h1>
             <p className="font-almarai text-brand-gray max-w-2xl mx-auto text-lg">
               آخر الأخبار والمقالات المتخصصة من ولادة حلم
