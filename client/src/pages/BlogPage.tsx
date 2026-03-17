@@ -62,28 +62,17 @@ const mapCategory = (categoryName?: string | null): Article["category"] => {
 
 const toImageUrl = (imagePath?: string | null): string | null => {
   if (!imagePath) return null;
-
   const trimmed = imagePath.trim();
   if (!trimmed) return null;
 
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    if (!trimmed.includes("drive.google.com")) return trimmed;
-    const driveMatch =
-      trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
-      trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (!driveMatch) return trimmed;
-    const fileId = driveMatch[1];
-    return `https://drive.google.com/uc?export=view&id=${fileId}`;
-  }
+  const match =
+    trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+    trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
 
-  if (trimmed.startsWith("drive:")) {
-    const fileId = trimmed.replace("drive:", "").trim();
-    if (fileId) return `https://drive.google.com/uc?export=view&id=${fileId}`;
-  }
-
-  return `${blogApiBase}/storage/${trimmed}`;
+  if (!match) return trimmed;
+  const fileId = match[1];
+  return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
 };
-
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [posts, setPosts] = useState<Article[]>([]);
@@ -142,7 +131,7 @@ export default function BlogPage() {
     activeCategory === "all"
       ? posts
       : posts?.filter((post) => post.category === activeCategory);
-console.log(posts);
+  console.log(posts);
 
   return (
     <div className="w-full min-h-screen flex flex-col">
@@ -221,7 +210,6 @@ console.log(posts);
                         className="w-full h-48 object-cover"
                         loading="lazy"
                         referrerPolicy="no-referrer"
-                        crossOrigin="anonymous"
                       />
                     ) : (
                       <div className="relative w-full h-48 overflow-hidden bg-gradient-to-br from-brand-gold/15 via-white to-brand-gold/10">
