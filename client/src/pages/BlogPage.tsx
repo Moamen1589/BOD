@@ -276,7 +276,10 @@ export default function BlogPage() {
                   return (
                     <button
                       key={page}
-                      onClick={() => setCurrentPage(page)}
+                      onClick={() =>{
+                         setCurrentPage(page)
+                         scroll(0,0)
+                      }}
                       className={`w-10 h-10 rounded-md font-almarai text-sm font-bold ${
                         currentPage === page
                           ? "bg-brand-gold text-white"
@@ -288,8 +291,10 @@ export default function BlogPage() {
                   );
                 })}
                 <button
-                  onClick={() =>
+                  onClick={() =>{
                     setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    scroll(0,0)
+                  }
                   }
                   disabled={currentPage === totalPages}
                   className="px-4 py-2 rounded-md font-almarai text-sm font-bold border border-brand-gold/30 text-brand-gold-dark disabled:opacity-40"
