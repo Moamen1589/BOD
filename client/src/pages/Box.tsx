@@ -56,7 +56,14 @@ export const Box = (): JSX.Element => {
                   size="lg"
                   className="border-white/20 hover:bg-white/10 px-12 py-10 rounded-3xl text-xl font-bold text-[#ff6900]"
                 >
-                  <a href="#contact">تحدث مع خبير</a>
+                  <a
+                    href="https://wa.me/966920031323"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="WhatsApp"
+                  >
+                    تحدث مع مستشار المنظومة
+                  </a>
                 </Button>
               </div>
             </div>
@@ -67,29 +74,55 @@ export const Box = (): JSX.Element => {
       <AboutSection />
       <ServicesSection />
       <SolutionsSection />
-            <section className="py-20 bg-brand-dark relative overflow-hidden">
+      <section className="py-20 bg-brand-dark relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-gold/10 rounded-full blur-[120px] -mr-60 -mt-60 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px] -ml-40 -mb-40 pointer-events-none" />
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-4">
-            <span className="bg-brand-gold/20 text-brand-gold px-5 py-2 rounded-full text-xs font-black tracking-wider">المنظومة الاجتماعية</span>
+            <span className="bg-brand-gold/20 text-brand-gold px-5 py-2 rounded-full text-xs font-black tracking-wider">
+              المنظومة الاجتماعية
+            </span>
           </div>
           <h2 className="text-center text-white text-3xl md:text-5xl font-black mb-4 leading-tight">
             منصة التقييم والتوصيات المجتمعية
           </h2>
           <p className="text-center text-white/50 mb-14 text-base max-w-2xl mx-auto">
-            منصة تفاعلية تمكّن الجمعيات من التصويت على المبادرات، تقييم البرامج، ومشاركة التوصيات مع المجتمع غير الربحي
+            منصة تفاعلية تمكّن الجمعيات من التصويت على المبادرات، تقييم البرامج،
+            ومشاركة التوصيات مع المجتمع غير الربحي
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto mb-14">
             {[
-              { icon: Vote, title: "التصويت على المبادرات", desc: "صوّت وأثّر في قرارات المجتمع غير الربحي بشكل جماعي وشفاف", color: "bg-brand-gold", link: "/voting" },
-              { icon: Shield, title: "حوكمة المشاريع", desc: "أدوات الشفافية المالية والمساءلة لبرامجك ومشاريعك المجتمعية", color: "bg-blue-500", link: "/governance" },
-              { icon: Globe, title: "قياس الأثر AI", desc: "تحليل ذكاء اصطناعي لقياس الأثر الاجتماعي الحقيقي لبرامجك", color: "bg-purple-500", link: "/impact" },
+              {
+                icon: Vote,
+                title: "التصويت على المبادرات",
+                desc: "صوّت وأثّر في قرارات المجتمع غير الربحي بشكل جماعي وشفاف",
+                color: "bg-brand-gold",
+                link: "/voting",
+              },
+              {
+                icon: Shield,
+                title: "حوكمة المشاريع",
+                desc: "أدوات الشفافية المالية والمساءلة لبرامجك ومشاريعك المجتمعية",
+                color: "bg-blue-500",
+                link: "/governance",
+              },
+              {
+                icon: Globe,
+                title: "قياس الأثر AI",
+                desc: "تحليل ذكاء اصطناعي لقياس الأثر الاجتماعي الحقيقي لبرامجك",
+                color: "bg-purple-500",
+                link: "/impact",
+              },
             ].map(({ icon: Icon, title, desc, color, link }) => (
-              <Link key={link} href={link}
-                className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-gold/30 rounded-2xl p-6 transition-all duration-300 cursor-pointer block">
-                <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center mb-4`}>
+              <Link
+                key={link}
+                href={link}
+                className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-brand-gold/30 rounded-2xl p-6 transition-all duration-300 cursor-pointer block"
+              >
+                <div
+                  className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center mb-4`}
+                >
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-white font-black text-lg mb-2">{title}</h3>
@@ -108,7 +141,10 @@ export const Box = (): JSX.Element => {
               </Button>
             </Link>
             <Link href="/ecstt">
-              <Button variant="outline" className="border-white/20 text-white bg-white/10 px-10 py-5 rounded-2xl font-black text-base flex items-center gap-2">
+              <Button
+                variant="outline"
+                className="border-white/20 text-white bg-white/10 px-10 py-5 rounded-2xl font-black text-base flex items-center gap-2"
+              >
                 استكشف المنظومة <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>

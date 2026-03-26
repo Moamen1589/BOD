@@ -12,6 +12,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend
 } from "recharts";
+import { PillarsAnalysis } from "@/components/PillarsAnalysis";
 
 type Quarter = {
   programCost: string;
@@ -90,6 +91,41 @@ export default function GovernancePage() {
   const budgetVariance = totalBudget ? (((totalBudget - totalActual) / totalBudget) * 100).toFixed(1) : "0";
   const efficiency = parseFloat(form.resourceEfficiency) || 0;
   const costPerBene = parseFloat(form.costPerBeneficiary) || (totalBeneficiaries ? (totalActual / totalBeneficiaries) : 0);
+
+  // Pillars scoring — map governance indicators to the 6 pillars
+  const govPillarScores = {
+    purpose: Math.min(100, Math.round(
+      (Math.min(100, totalBeneficiaries / 3) * 0.6) +
+      (costPerBene > 0 ? Math.min(40, 10000 / costPerBene * 4) : 20)
+    )),
+    integrity: Math.min(100, Math.round(
+      (efficiency * 0.6) +
+      (totalBudget ? Math.min(40, Math.max(0, (1 - Math.abs(totalBudget - totalActual) / totalBudget)) * 40) : 20)
+    )),
+    empowerment: Math.min(100, Math.round(
+      totalBudget && totalBeneficiaries ? Math.min(100, (totalBeneficiaries / Math.max(1, totalBudget / 10000)) * 30) : 0
+    )),
+    innovation: form.status === "مكتمل" ? 95 : form.status === "جارٍ التنفيذ" ? 70 : form.status === "في المرحلة التخطيطية" ? 45 : 20,
+    capacity: Math.min(100, Math.round(
+      totalBudget && totalActual
+        ? totalActual <= totalBudget
+          ? 70 + ((totalBudget - totalActual) / totalBudget) * 30
+          : Math.max(10, 70 - ((totalActual - totalBudget) / totalBudget) * 80)
+        : efficiency * 0.8
+    )),
+    sustainability: Math.min(100, Math.round(
+      (quarterKeys.filter(q => form.quarters[q].beneficiaries && form.quarters[q].programBudget).length / 4) * 65 +
+      (form.duration ? Math.min(35, parseFloat(form.duration) / 90 * 35) : 0)
+    )),
+  };
+  const govPillarIndicators: Record<string, string[]> = {
+    purpose: ["عدد المستفيدين", "تكلفة المستفيد", "الأثر المباشر"],
+    integrity: ["كفاءة الموارد", "الالتزام بالميزانية", "الشفافية المالية"],
+    empowerment: ["نمو المستفيدين", "معدل التغطية"],
+    innovation: ["حالة المشروع", "التكيف التشغيلي"],
+    capacity: ["الالتزام بالميزانية", "كفاءة الإنفاق"],
+    sustainability: ["تغطية الأرباع", "مدة التنفيذ"],
+  };
 
   const chartData = quarterKeys.map(q => ({
     name: quarterLabels[q],
@@ -344,6 +380,13 @@ export default function GovernancePage() {
                 </div>
               ))}
             </div>
+
+            {/* Pillars Analysis */}
+            <PillarsAnalysis
+              scores={govPillarScores}
+              indicators={govPillarIndicators}
+              systemName="نظام حوكمة المشاريع والبرامج"
+            />
 
             <Button onClick={() => window.print()} variant="outline" className="w-full border-2 border-brand-dark text-brand-dark py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-brand-dark hover:text-white transition-all">
               <Download className="w-4 h-4" /> تصدير التقرير
