@@ -16,7 +16,17 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "الرئيسية", href: "/" },
-  { label: "المنظومة المجتمعية", href: "/ecstt" },
+    {
+    label: "المنظومة المجتمعية",
+    href: "/ecstt",
+    dropdown: [
+      { label: "نظام التحول المؤسسي ECSTT", href: "/ecstt" },
+      { label: "نظام التصويت والمبادرات", href: "/voting" },
+      { label: "حوكمة المشاريع والبرامج", href: "/governance" },
+      { label: "قياس الأثر المجتمعي AI", href: "/impact" },
+      { label: "سجّل جمعيتك", href: "/register" },
+    ],
+  },
   {
     label: "مكتبة الأعمال",
     href: "/work-library"

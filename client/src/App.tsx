@@ -19,6 +19,8 @@ import SolutionsPage from "@/pages/SolutionsPage";
 import SolutionDetailPage from "@/pages/SolutionDetailPage";
 import { useEffect } from "react";
 import VotingPage from "./pages/VotingPage";
+import GovernancePage from "./pages/GovernancePage";
+import ImpactPage from "./pages/ImpactPage";
 
 function Router() {
   const [location] = useLocation();
@@ -33,6 +35,8 @@ function Router() {
       <Route path="/register" component={RegisterPage} />
       <Route path="/ecstt" component={ECSTTPage} />
       <Route path="/voting" component={VotingPage} />
+      <Route path="/governance" component={GovernancePage} />
+      <Route path="/impact" component={ImpactPage} />
       <Route path="/services" component={ServicesPage} />
       <Route path="/services/:slug" component={ServiceDetailPage} />
       <Route path="/blog" component={BlogPage} />
