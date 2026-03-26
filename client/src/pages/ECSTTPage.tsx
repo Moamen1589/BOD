@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
 import {
   Target,
   ShieldCheck,
@@ -382,7 +383,7 @@ export default function ECSTTPage() {
               size="lg"
               className="border-white/20 text-white bg-transparent px-7 sm:px-8 md:px-12 py-4 sm:py-6 md:py-8 rounded-2xl font-bold text-[clamp(1rem,1.6vw,1.125rem)] md:text-xl hover:bg-brand-gold transition-all w-full sm:w-auto"
             >
-              تحدث مع مستشار المنظومة
+              تحدث مع مستشاري المنظومة
             </Button>
           </div>
         </div>
@@ -390,31 +391,75 @@ export default function ECSTTPage() {
       </section>
 
       {/* Problems Section */}
-      <section ref={problemsRef.ref} className={`py-0 bg-white transition-all duration-1000 ${problemsRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} overflow-hidden`}>
+      <section
+        ref={problemsRef.ref}
+        className={`py-0 bg-white transition-all duration-1000 ${problemsRef.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} overflow-hidden`}
+      >
         <div className="flex flex-col lg:flex-row min-h-[520px] lg:min-h-[700px]">
-
           {/* Left — Problems */}
           <div className="lg:w-1/2 bg-[#F8F8F8] px-6 sm:px-8 lg:px-10 py-12 sm:py-16 lg:py-20 flex flex-col justify-center">
-            <span className="bg-red-100 text-red-600 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 inline-block w-fit">تشخيص الواقع</span>
-            <h2 className="text-3xl md:text-4xl font-black text-brand-dark mb-4 leading-tight">هل هذا يشبه<br/>واقع جمعيتك؟</h2>
-            <p className="text-brand-gray mb-8 sm:mb-10 text-sm sm:text-base">المشكلة ليست في النية... المشكلة في غياب المنظومة.</p>
+            <span className="bg-red-100 text-red-600 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 inline-block w-fit">
+              تشخيص الواقع
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-brand-dark mb-4 leading-tight">
+              هل هذا يشبه
+              <br />
+              واقع جمعيتك؟
+            </h2>
+            <p className="text-brand-gray mb-8 sm:mb-10 text-sm sm:text-base">
+              المشكلة ليست في النية... المشكلة في غياب المنظومة.
+            </p>
 
             <div className="space-y-4">
               {[
-                { problem: "تعمل بجهد كبير دون قياس واضح للأثر", detail: "لا يوجد نظام يترجم العمل اليومي إلى أرقام موثقة", emoji: "📊" },
-                { problem: "تطلق مشاريع قبل اختبار جاهزيتها المؤسسية", detail: "مشاريع تُبنى على الحماس لا على التخطيط الممنهج", emoji: "🚀" },
-                { problem: "تمتلك خططًا لا تتحول إلى تنفيذ فعلي", detail: "الخطط تُكتب وتُحفظ دون متابعة أو محاسبة", emoji: "📋" },
-                { problem: "تعاني من ضغط التقارير والحوكمة المتزايد", detail: "متطلبات الجهات الرقابية تستنزف وقت الفريق", emoji: "⚖️" },
-                { problem: "تعتمد على تمويل موسمي غير مستدام", detail: "دورة تمويل هشة تهدد استمرارية البرامج والفريق", emoji: "💰" },
-                { problem: "غياب الرؤية المؤسسية الموحدة", detail: "كل قسم يسير بوجهته دون بوصلة مشتركة", emoji: "🎯" },
+                {
+                  problem: "تعمل بجهد كبير دون قياس واضح للأثر",
+                  detail: "لا يوجد نظام يترجم العمل اليومي إلى أرقام موثقة",
+                  emoji: "📊",
+                },
+                {
+                  problem: "تطلق مشاريع قبل اختبار جاهزيتها المؤسسية",
+                  detail: "مشاريع تُبنى على الحماس لا على التخطيط الممنهج",
+                  emoji: "🚀",
+                },
+                {
+                  problem: "تمتلك خططًا لا تتحول إلى تنفيذ فعلي",
+                  detail: "الخطط تُكتب وتُحفظ دون متابعة أو محاسبة",
+                  emoji: "📋",
+                },
+                {
+                  problem: "تعاني من ضغط التقارير والحوكمة المتزايد",
+                  detail: "متطلبات الجهات الرقابية تستنزف وقت الفريق",
+                  emoji: "⚖️",
+                },
+                {
+                  problem: "تعتمد على تمويل موسمي غير مستدام",
+                  detail: "دورة تمويل هشة تهدد استمرارية البرامج والفريق",
+                  emoji: "💰",
+                },
+                {
+                  problem: "غياب الرؤية المؤسسية الموحدة",
+                  detail: "كل قسم يسير بوجهته دون بوصلة مشتركة",
+                  emoji: "🎯",
+                },
               ].map(({ problem, detail, emoji }, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-red-100 shadow-sm hover:shadow-md hover:border-red-200 transition-all group">
-                  <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center text-xl shrink-0">{emoji}</div>
+                <div
+                  key={idx}
+                  className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-red-100 shadow-sm hover:shadow-md hover:border-red-200 transition-all group"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center text-xl shrink-0">
+                    {emoji}
+                  </div>
                   <div>
-                    <p className="font-black text-brand-dark text-sm leading-snug">{problem}</p>
+                    <p className="font-black text-brand-dark text-sm leading-snug">
+                      {problem}
+                    </p>
                     <p className="text-brand-gray text-xs mt-0.5">{detail}</p>
                   </div>
-                  <XCircle className="text-red-300 shrink-0 mr-auto" size={18} />
+                  <XCircle
+                    className="text-red-300 shrink-0 mr-auto"
+                    size={18}
+                  />
                 </div>
               ))}
             </div>
@@ -431,7 +476,9 @@ export default function ECSTTPage() {
           <div className="lg:w-1/2 bg-brand-dark px-10 py-20 flex flex-col justify-center relative overflow-hidden">
             <div className="absolute top-0 left-0 w-96 h-96 bg-brand-gold/10 blur-[100px] -ml-32 -mt-32 pointer-events-none"></div>
             <div className="relative z-10">
-              <span className="bg-brand-gold/20 text-brand-gold px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 inline-block">الحل</span>
+              <span className="bg-brand-gold/20 text-brand-gold px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 inline-block">
+                الحل
+              </span>
 
               {/* ECSTT Logo */}
               <div className="mb-8 flex items-center gap-5">
@@ -441,17 +488,21 @@ export default function ECSTTPage() {
                   className="w-20 h-20 rounded-2xl shadow-xl border-2 border-white/10 object-cover shrink-0"
                 />
                 <div>
-                  <h3 className="text-white font-black text-2xl leading-tight">المنظومة المجتمعية</h3>
+                  <h3 className="text-white font-black text-2xl leading-tight">
+                    المنظومة المجتمعية
+                  </h3>
                   <p className="text-brand-gold font-bold text-sm">ECSTT</p>
                 </div>
               </div>
 
               <h2 className="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">
-                منظومة واحدة<br/>
+                منظومة واحدة
+                <br />
                 <span className="text-brand-gold">تحل كل هذه المشاكل</span>
               </h2>
               <p className="text-white/60 mb-10 text-base leading-relaxed">
-                رحلة متكاملة تبدأ بالتشخيص وتنتهي بالجاهزية التمويلية — تجمع التخطيط، التشغيل، القياس، والحوكمة في مكان واحد.
+                رحلة متكاملة تبدأ بالتشخيص وتنتهي بالجاهزية التمويلية — تجمع
+                التخطيط، التشغيل، القياس، والحوكمة في مكان واحد.
               </p>
 
               <div className="space-y-4 mb-10">
@@ -465,85 +516,154 @@ export default function ECSTTPage() {
                 ].map(({ solution, icon }, idx) => (
                   <div key={idx} className="flex items-center gap-3">
                     <span className="text-lg">{icon}</span>
-                    <span className="text-white font-bold text-sm">{solution}</span>
+                    <span className="text-white font-bold text-sm">
+                      {solution}
+                    </span>
                   </div>
                 ))}
               </div>
 
               <Button
-                onClick={() => document.getElementById('assessment')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() =>
+                  document
+                    .getElementById("assessment")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
                 className="bg-brand-gold hover:bg-brand-gold-dark text-white px-8 py-5 rounded-2xl font-black text-base shadow-xl shadow-brand-gold/30 w-fit"
               >
                 قيّم جاهزية جمعيتك الآن ←
               </Button>
             </div>
           </div>
-
         </div>
       </section>
 
-
-
       {/* House Model Section */}
-      <section ref={houseRef.ref} className={`py-24 bg-brand-dark text-white overflow-hidden relative transition-all duration-1000 ${houseRef.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <section
+        ref={houseRef.ref}
+        className={`py-24 bg-brand-dark text-white overflow-hidden relative transition-all duration-1000 ${houseRef.isVisible ? "opacity-100" : "opacity-0"}`}
+      >
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black mb-6">نموذج المنزل الشامل</h2>
-            <p className="text-brand-gold text-2xl font-bold">بناء مؤسسي قوي لنتائج قابلة للقياس</p>
+            <h2 className="text-3xl md:text-5xl font-black mb-6">
+              نموذج المنزل الشامل
+            </h2>
+            <p className="text-brand-gold text-2xl font-bold">
+              بناء مؤسسي قوي لنتائج قابلة للقياس
+            </p>
           </div>
-          
+
           <div className="max-w-4xl mx-auto space-y-4">
             {/* Roof */}
             <div className="bg-brand-gold p-10 rounded-t-[5rem] text-center shadow-2xl relative border-b-4 border-black/10">
-              <h3 className="text-3xl font-black mb-3">السقف - الفهم والرؤية</h3>
-              <p className="text-white font-bold text-lg">تحليل الواقع • فهم المتغيرات • مواءمة الأنظمة والسوق</p>
+              <h3 className="text-3xl font-black mb-3">
+                السقف - الفهم والرؤية
+              </h3>
+              <p className="text-white font-bold text-lg">
+                تحليل الواقع • فهم المتغيرات • مواءمة الأنظمة والسوق
+              </p>
             </div>
             {/* Floors */}
             <div className="bg-white/5 p-10 text-center border-x-8 border-brand-gold/20 backdrop-blur-sm">
-              <h3 className="text-3xl font-black mb-3 text-brand-gold">الطابق العلوي - الريادة</h3>
-              <p className="text-white/80 font-bold text-lg">تشخيص حقيقي • حلول عملية • قيادة التغيير</p>
+              <h3 className="text-3xl font-black mb-3 text-brand-gold">
+                الطابق العلوي - الريادة
+              </h3>
+              <p className="text-white/80 font-bold text-lg">
+                تشخيص حقيقي • حلول عملية • قيادة التغيير
+              </p>
             </div>
             <div className="bg-white/10 p-16 text-center border-x-8 border-brand-gold/30 backdrop-blur-md relative overflow-hidden group">
               <div className="absolute inset-0 bg-brand-gold/5 scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-              <h3 className="text-4xl font-black mb-4 relative z-10">القلب - التشغيل</h3>
-              <p className="text-brand-gold text-2xl font-black relative z-10">تشخيص ← تخطيط ← تنفيذ ← قياس ← تحسين</p>
+              <h3 className="text-4xl font-black mb-4 relative z-10">
+                القلب - التشغيل
+              </h3>
+              <p className="text-brand-gold text-2xl font-black relative z-10">
+                تشخيص ← تخطيط ← تنفيذ ← قياس ← تحسين
+              </p>
             </div>
             <div className="bg-white/5 p-10 text-center border-x-8 border-brand-gold/20 backdrop-blur-sm">
-              <h3 className="text-3xl font-black mb-3 text-brand-gold">الطابق السفلي - الاحتراف</h3>
-              <p className="text-white/80 font-bold text-lg">حوكمة • إدارة • تقارير • مؤشرات أداء</p>
+              <h3 className="text-3xl font-black mb-3 text-brand-gold">
+                الطابق السفلي - الاحتراف
+              </h3>
+              <p className="text-white/80 font-bold text-lg">
+                حوكمة • إدارة • تقارير • مؤشرات أداء
+              </p>
             </div>
             {/* Foundation */}
             <div className="bg-brand-gold/20 border-8 border-brand-gold/40 p-12 rounded-b-3xl text-center shadow-inner">
-              <h3 className="text-3xl font-black mb-3 text-brand-gold">الأساس - الأثر والاستدامة</h3>
-              <p className="text-white font-bold text-lg">أثر موثق • ثقة الممولين • جاهزية تمويلية</p>
+              <h3 className="text-3xl font-black mb-3 text-brand-gold">
+                الأساس - الأثر والاستدامة
+              </h3>
+              <p className="text-white font-bold text-lg">
+                أثر موثق • ثقة الممولين • جاهزية تمويلية
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Association Journey */}
-      <section ref={journeyRef.ref} className={`py-24 bg-white transition-all duration-1000 ${journeyRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <section
+        ref={journeyRef.ref}
+        className={`py-24 bg-white transition-all duration-1000 ${journeyRef.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+      >
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black text-brand-dark mb-6">رحلة الجمعية معنا</h2>
+            <h2 className="text-3xl md:text-5xl font-black text-brand-dark mb-6">
+              رحلة الجمعية معنا
+            </h2>
             <div className="w-32 h-2 bg-brand-gold mx-auto rounded-full"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             {[
-              { title: "التشخيص والتهيئة", desc: "تشخيص مؤسسي وتقييم الحوكمة", output: "تقرير تشخيص معتمد", icon: Search },
-              { title: "التخطيط والتحول", desc: "خطة تحسين وتشغيل وتحديد RACI", output: "خطط قابلة للتنفيذ", icon: Layout },
-              { title: "التشغيل المنضبط", desc: "تحويل الخطط لمهام ونظام عباق", output: "تشغيل مستقر ومنضبط", icon: Zap },
-              { title: "القياس والأثر", desc: "مؤشرات الأداء وتقارير الأثر", output: "أثر موثق بالأرقام", icon: TrendingUp },
-              { title: "الجاهزية التمويلية", desc: "ملف تمويلي وشفافية مالية", output: "جاهزية حقيقية للتمويل", icon: Shield }
+              {
+                title: "التشخيص والتهيئة",
+                desc: "تشخيص مؤسسي وتقييم الحوكمة",
+                output: "تقرير تشخيص معتمد",
+                icon: Search,
+              },
+              {
+                title: "التخطيط والتحول",
+                desc: "خطة تحسين وتشغيل وتحديد RACI",
+                output: "خطط قابلة للتنفيذ",
+                icon: Layout,
+              },
+              {
+                title: "التشغيل المنضبط",
+                desc: "تحويل الخطط لمهام ونظام عباق",
+                output: "تشغيل مستقر ومنضبط",
+                icon: Zap,
+              },
+              {
+                title: "القياس والأثر",
+                desc: "مؤشرات الأداء وتقارير الأثر",
+                output: "أثر موثق بالأرقام",
+                icon: TrendingUp,
+              },
+              {
+                title: "الجاهزية التمويلية",
+                desc: "ملف تمويلي وشفافية مالية",
+                output: "جاهزية حقيقية للتمويل",
+                icon: Shield,
+              },
             ].map((step, idx) => (
-                <div key={idx} className="relative p-5 bg-brand-light-gold rounded-[2.5rem] border border-brand-gold/10 hover:shadow-2xl transition-all group overflow-hidden flex flex-col">
-                <div className="absolute top-0 right-0 bg-brand-gold text-white w-10 h-10 flex items-center justify-center font-black rounded-bl-2xl">{idx + 1}</div>
+              <div
+                key={idx}
+                className="relative p-5 bg-brand-light-gold rounded-[2.5rem] border border-brand-gold/10 hover:shadow-2xl transition-all group overflow-hidden flex flex-col"
+              >
+                <div className="absolute top-0 right-0 bg-brand-gold text-white w-10 h-10 flex items-center justify-center font-black rounded-bl-2xl">
+                  {idx + 1}
+                </div>
                 <div className="bg-white p-4 rounded-2xl w-fit mb-6 text-brand-gold group-hover:bg-brand-gold group-hover:text-white transition-colors shadow-sm">
                   <step.icon size={28} />
                 </div>
-                <h4 className="text-xl font-black mb-4 text-brand-dark">{step.title}</h4>
-                <p className="text-brand-gray text-sm mb-6 leading-relaxed">{step.desc}</p>
+                <h4 className="text-xl font-black mb-4 text-brand-dark">
+                  {step.title}
+                </h4>
+                <p className="text-brand-gray text-sm mb-6 leading-relaxed">
+                  {step.desc}
+                </p>
                 <div className="bg-brand-dark text-white px-4 py-3  rounded-2xl  font-bold mt-auto  w-full  mx-auto">
                   <span className="flex items-center justify-center gap-2 mb-1 ">
                     <span className="text-xs">المخرج: {step.output}</span>
@@ -556,18 +676,28 @@ export default function ECSTTPage() {
       </section>
 
       {/* Interactive Cycle Section */}
-      <section ref={cycleRef.ref} className={`py-32 bg-brand-light transition-all duration-1000 ${cycleRef.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <section
+        ref={cycleRef.ref}
+        className={`py-32 bg-brand-light transition-all duration-1000 ${cycleRef.isVisible ? "opacity-100" : "opacity-0"}`}
+      >
         <div className="container mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-black text-brand-dark mb-6">دائرة المنظومة المجتمعية</h2>
-            <p className="text-brand-gray text-xl max-w-2xl mx-auto">تكامل الأركان الستة لتحقيق التحول المجتمعي المستدام</p>
+            <h2 className="text-3xl md:text-5xl font-black text-brand-dark mb-6">
+              دائرة المنظومة المجتمعية
+            </h2>
+            <p className="text-brand-gray text-xl max-w-2xl mx-auto">
+              تكامل الأركان الستة لتحقيق التحول المجتمعي المستدام
+            </p>
           </div>
-          
+
           <div className="flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20">
             {/* The Cycle Circle - FIXED AND FUNCTIONAL */}
             <div
               className="relative shrink-0"
-              style={{ width: `${cycleRadius * 2}px`, height: `${cycleRadius * 2}px` }}
+              style={{
+                width: `${cycleRadius * 2}px`,
+                height: `${cycleRadius * 2}px`,
+              }}
             >
               {/* Main Outer Path Ring */}
               <div
@@ -576,38 +706,49 @@ export default function ECSTTPage() {
                   borderWidth: `${cycleRadius < 150 ? 10 : cycleRadius < 220 ? 16 : 28}px`,
                 }}
               ></div>
-              
+
               {arkan.map((item, idx) => {
-                const angle = (idx * 60) - 90; // Start from top
+                const angle = idx * 60 - 90; // Start from top
                 const isSelected = selectedRukn === item.id;
-                const nodeSize = cycleRadius < 150 ? 52 : cycleRadius < 220 ? 64 : 96;
-                const iconSize = cycleRadius < 150 ? 22 : cycleRadius < 220 ? 26 : 36;
-                const ringThickness = cycleRadius < 150 ? 10 : cycleRadius < 220 ? 16 : 28;
-                const orbitRadius = cycleRadius - ringThickness / 2 - nodeSize / 2;
-                
+                const nodeSize =
+                  cycleRadius < 150 ? 52 : cycleRadius < 220 ? 64 : 96;
+                const iconSize =
+                  cycleRadius < 150 ? 22 : cycleRadius < 220 ? 26 : 36;
+                const ringThickness =
+                  cycleRadius < 150 ? 10 : cycleRadius < 220 ? 16 : 28;
+                const orbitRadius =
+                  cycleRadius - ringThickness / 2 - nodeSize / 2;
+
                 // Calculate position on the circle
                 const x = Math.cos(angle * (Math.PI / 180)) * orbitRadius;
                 const y = Math.sin(angle * (Math.PI / 180)) * orbitRadius;
 
                 return (
-                  <div key={item.id} className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <button 
+                  <div
+                    key={item.id}
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  >
+                    <button
                       onClick={() => setSelectedRukn(item.id)}
-                      className={`pointer-events-auto absolute rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl border-4 border-white z-30 ${isSelected ? 'scale-125 ring-8 ring-brand-gold/20' : 'hover:scale-115 opacity-90'} ${item.color}`}
-                      style={{ 
+                      className={`pointer-events-auto absolute rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl border-4 border-white z-30 ${isSelected ? "scale-125 ring-8 ring-brand-gold/20" : "hover:scale-115 opacity-90"} ${item.color}`}
+                      style={{
                         width: `${nodeSize}px`,
                         height: `${nodeSize}px`,
                         transform: `translate(${x}px, ${y}px)`,
                       }}
                     >
-                      <item.icon className="text-white" style={{ width: `${iconSize}px`, height: `${iconSize}px` }} />
+                      <item.icon
+                        className="text-white"
+                        style={{
+                          width: `${iconSize}px`,
+                          height: `${iconSize}px`,
+                        }}
+                      />
                     </button>
-                    
-           
                   </div>
                 );
               })}
-              
+
               {/* Central Hub with Logo */}
               <div
                 className="absolute inset-0 m-auto bg-white rounded-full flex items-center justify-center z-10 shadow-2xl border-4 p-4 sm:p-5 overflow-hidden"
@@ -616,7 +757,11 @@ export default function ECSTTPage() {
                   height: `${cycleRadius < 150 ? 110 : cycleRadius < 220 ? 150 : 220}px`,
                 }}
               >
-                <img src="/images/cstt-logo.jpg" alt="Logo" className="w-full h-auto rounded-full" />
+                <img
+                  src="/images/cstt-logo.jpg"
+                  alt="Logo"
+                  className="w-full h-auto rounded-full"
+                />
               </div>
             </div>
 
@@ -626,14 +771,21 @@ export default function ECSTTPage() {
                 <div className="bg-white p-12 rounded-[3.5rem] shadow-2xl border-2 border-brand-gold/10 animate-in fade-in slide-in-from-left-8 duration-700 relative">
                   <div className="absolute -top-6 -right-6 bg-brand-gold text-white p-4 rounded-3xl shadow-lg">
                     {(() => {
-                      const RuknIcon = arkan.find(r => r.id === selectedRukn)?.icon || Info;
+                      const RuknIcon =
+                        arkan.find((r) => r.id === selectedRukn)?.icon || Info;
                       return <RuknIcon size={40} />;
                     })()}
                   </div>
-                  <h3 className="text-[clamp(1.5rem,2.6vw,2.25rem)] font-black mb-6 text-brand-dark">{arkan.find(r => r.id === selectedRukn)?.title}</h3>
-                  <div className={`w-20 h-1.5 ${arkan.find(r => r.id === selectedRukn)?.color} mb-8 rounded-full`}></div>
-                  <p className="text-2xl text-brand-gray mb-10 leading-relaxed font-medium">{arkan.find(r => r.id === selectedRukn)?.description}</p>
-                  
+                  <h3 className="text-[clamp(1.5rem,2.6vw,2.25rem)] font-black mb-6 text-brand-dark">
+                    {arkan.find((r) => r.id === selectedRukn)?.title}
+                  </h3>
+                  <div
+                    className={`w-20 h-1.5 ${arkan.find((r) => r.id === selectedRukn)?.color} mb-8 rounded-full`}
+                  ></div>
+                  <p className="text-2xl text-brand-gray mb-10 leading-relaxed font-medium">
+                    {arkan.find((r) => r.id === selectedRukn)?.description}
+                  </p>
+
                   <div className="space-y-6">
                     <h4 className="text-xl font-black text-brand-dark flex items-center gap-3">
                       <BarChart className="text-brand-gold w-6 h-6" />
@@ -642,11 +794,15 @@ export default function ECSTTPage() {
                     <div className="grid grid-cols-1 gap-4">
                       <div className="flex items-center gap-4 bg-brand-light-gold/50 p-5 rounded-2xl border border-brand-gold/10">
                         <CheckCircle className="text-green-500 w-6 h-6 shrink-0" />
-                        <span className="font-bold text-brand-dark">تحقيق أثر مجتمعي ملموس وقابل للقياس</span>
+                        <span className="font-bold text-brand-dark">
+                          تحقيق أثر مجتمعي ملموس وقابل للقياس
+                        </span>
                       </div>
                       <div className="flex items-center gap-4 bg-brand-light-gold/50 p-5 rounded-2xl border border-brand-gold/10">
                         <CheckCircle className="text-green-500 w-6 h-6 shrink-0" />
-                        <span className="font-bold text-brand-dark">حوكمة مؤسسية تضمن الاستدامة والنمو</span>
+                        <span className="font-bold text-brand-dark">
+                          حوكمة مؤسسية تضمن الاستدامة والنمو
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -654,7 +810,9 @@ export default function ECSTTPage() {
               ) : (
                 <div className="bg-brand-light p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3rem] lg:rounded-[4rem] text-center border-4 border-dashed border-brand-gold/20 flex flex-col items-center">
                   <Brain className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-brand-gold/30 mb-6 sm:mb-8" />
-                  <p className="text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl text-brand-gray font-black">الرجاء الضغط على أحد الأركان لاستعراض خارطة التحول</p>
+                  <p className="text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl text-brand-gray font-black">
+                    الرجاء الضغط على أحد الأركان لاستعراض خارطة التحول
+                  </p>
                 </div>
               )}
             </div>
@@ -665,42 +823,65 @@ export default function ECSTTPage() {
       {/* Results Roadmap */}
       <section className="py-16 sm:py-20 lg:py-24 bg-brand-dark text-white">
         <div className="container mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-[clamp(1.6rem,2.6vw,3rem)] font-black mb-10 sm:mb-16">نتائج متوقعة خلال 90 يوم</h2>
+          <h2 className="text-[clamp(1.6rem,2.6vw,3rem)] font-black mb-10 sm:mb-16">
+            نتائج متوقعة خلال 90 يوم
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
             {[
               { icon: Shield, label: "حوكمة مفعّلة" },
               { icon: Zap, label: "تشغيل منضبط" },
               { icon: Layout, label: "تقارير جاهزة" },
               { icon: BarChart, label: "لوحة أداء واضحة" },
-              { icon: TrendingUp, label: "جاهزية تمويلية" }
+              { icon: TrendingUp, label: "جاهزية تمويلية" },
             ].map((item, idx) => (
-              <div key={idx} className="bg-white/5 p-5 sm:p-7 lg:p-10 rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] flex flex-col items-center gap-4 sm:gap-5 lg:gap-6 border border-white/10 hover:border-brand-gold/50 transition-all group">
+              <div
+                key={idx}
+                className="bg-white/5 p-5 sm:p-7 lg:p-10 rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] flex flex-col items-center gap-4 sm:gap-5 lg:gap-6 border border-white/10 hover:border-brand-gold/50 transition-all group"
+              >
                 <item.icon className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-brand-gold group-hover:scale-110 transition-transform" />
-                <span className="text-[clamp(0.9rem,1.2vw,1.25rem)] font-black">{item.label}</span>
+                <span className="text-[clamp(0.9rem,1.2vw,1.25rem)] font-black">
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
-          <p className="mt-8 sm:mt-12 lg:mt-16 text-[clamp(0.9rem,1.2vw,1.25rem)] text-white/50 font-bold">بدون تعقيد… وبدون تحميل الجمعية ما لا تحتمل</p>
+          <p className="mt-8 sm:mt-12 lg:mt-16 text-[clamp(0.9rem,1.2vw,1.25rem)] text-white/50 font-bold">
+            بدون تعقيد… وبدون تحميل الجمعية ما لا تحتمل
+          </p>
         </div>
       </section>
 
       {/* Detailed Assessment Survey */}
-      <section ref={assessmentRef.ref} className="py-20 sm:py-28 lg:py-32 bg-white" id="assessment">
+      <section
+        ref={assessmentRef.ref}
+        className="py-20 sm:py-28 lg:py-32 bg-white"
+        id="assessment"
+      >
         <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
           {step === "intro" && (
             <div className="text-center bg-brand-light-gold p-8 sm:p-12 lg:p-20 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] border-4 border-brand-gold/20 relative overflow-hidden shadow-2xl">
               <div className="absolute -top-20 -left-20 w-80 h-80 bg-brand-gold/10 rounded-full"></div>
               <Rocket className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-brand-gold mx-auto mb-6 sm:mb-8" />
-              <h2 className="text-[clamp(1.8rem,3vw,3.5rem)] font-black text-brand-dark mb-6 sm:mb-8">ابدأ بناء جمعية جاهزة للأثر</h2>
+              <h2 className="text-[clamp(1.8rem,3vw,3.5rem)] font-black text-brand-dark mb-6 sm:mb-8">
+                ابدأ بناء جمعية جاهزة للأثر
+              </h2>
               <p className="text-[clamp(1rem,1.6vw,1.125rem)] md:text-xl lg:text-2xl text-brand-gray mb-8 sm:mb-12 lg:mb-16 leading-relaxed font-medium">
-                لا تبدأ بمشروع جديد… ابدأ ببناء الأساس الصحيح.
-                قيم جاهزيتك الآن عبر نموذج الامتثال السنوي.
+                لا تبدأ بمشروع جديد… ابدأ ببناء الأساس الصحيح. قيم جاهزيتك الآن
+                عبر نموذج الامتثال السنوي.
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                <Button onClick={() => setStep("assessment")} size="lg" className="bg-brand-dark text-white px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl w-full sm:w-auto">
+                <Button
+                  onClick={() => setStep("assessment")}
+                  size="lg"
+                  className="bg-brand-dark text-white px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl w-full sm:w-auto"
+                >
                   🚀 ابدأ رحلة جمعيتك الآن
                 </Button>
-                <Button variant="outline" size="lg" className="border-brand-dark text-brand-dark px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-brand-dark text-brand-dark px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black w-full sm:w-auto"
+                >
                   📋 احصل على تقييم مجاني
                 </Button>
               </div>
@@ -711,63 +892,113 @@ export default function ECSTTPage() {
             <div className="bg-white shadow-2xl rounded-[2.5rem] sm:rounded-[3rem] lg:rounded-[4rem] border border-brand-light overflow-hidden">
               <div className="bg-brand-dark p-6 sm:p-8 lg:p-12 text-white flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8">
                 <div>
-                  <h2 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-4 underline decoration-brand-gold underline-offset-8">تقييم نضج المنظومة</h2>
+                  <h2 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-4 underline decoration-brand-gold underline-offset-8">
+                    تقييم نضج المنظومة
+                  </h2>
                   <div className="flex items-center gap-4">
-                    <span className="bg-brand-gold text-white px-4 py-1 rounded-lg text-sm font-black">المحور {activeAxisIndex + 1}</span>
-                    <p className="text-base sm:text-xl lg:text-2xl font-bold text-white/90">{assessmentAxes[activeAxisIndex].title}</p>
+                    <span className="bg-brand-gold text-white px-4 py-1 rounded-lg text-sm font-black">
+                      المحور {activeAxisIndex + 1}
+                    </span>
+                    <p className="text-base sm:text-xl lg:text-2xl font-bold text-white/90">
+                      {assessmentAxes[activeAxisIndex].title}
+                    </p>
                   </div>
                 </div>
                 <div className="bg-white/10 p-4 sm:p-5 lg:p-6 rounded-3xl text-center border border-white/10 min-w-[110px] sm:min-w-[130px]">
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-brand-gold">{Math.round(((activeAxisIndex + 1) / assessmentAxes.length) * 100)}%</div>
-                  <p className="text-xs text-white/50 mt-2 font-bold uppercase tracking-widest">Progress</p>
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-brand-gold">
+                    {Math.round(
+                      ((activeAxisIndex + 1) / assessmentAxes.length) * 100,
+                    )}
+                    %
+                  </div>
+                  <p className="text-xs text-white/50 mt-2 font-bold uppercase tracking-widest">
+                    Progress
+                  </p>
                 </div>
               </div>
-              
+
               <div className="p-6 sm:p-10 lg:p-20">
                 <div className="space-y-12">
                   {assessmentAxes[activeAxisIndex].questions.map((q, qIdx) => (
-                    <div key={qIdx} className="p-5 sm:p-7 lg:p-10 bg-brand-light-gold/30 rounded-[1.75rem] sm:rounded-[2.25rem] lg:rounded-[2.5rem] border-2 border-brand-gold/5 hover:border-brand-gold/20 transition-all">
+                    <div
+                      key={qIdx}
+                      className="p-5 sm:p-7 lg:p-10 bg-brand-light-gold/30 rounded-[1.75rem] sm:rounded-[2.25rem] lg:rounded-[2.5rem] border-2 border-brand-gold/5 hover:border-brand-gold/20 transition-all"
+                    >
                       <div className="flex flex-col md:flex-row justify-between items-center mb-6 sm:mb-8 lg:mb-10 gap-4 sm:gap-6">
-                        <label className="text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl font-black text-brand-dark leading-tight">{q}</label>
+                        <label className="text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl font-black text-brand-dark leading-tight">
+                          {q}
+                        </label>
                         <div className="bg-brand-dark text-brand-gold w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center text-[clamp(1.6rem,2.4vw,2.5rem)] font-black shadow-xl">
-                          {responses[`${assessmentAxes[activeAxisIndex].title}-${qIdx}`] || 0}
+                          {responses[
+                            `${assessmentAxes[activeAxisIndex].title}-${qIdx}`
+                          ] || 0}
                         </div>
                       </div>
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 lg:gap-8">
-                        <div className="text-xs font-black text-red-500 uppercase tracking-tighter shrink-0">خطر مؤسسي</div>
-                        <input 
-                          type="range" 
-                          min="0" max="5" step="1" 
-                          value={responses[`${assessmentAxes[activeAxisIndex].title}-${qIdx}`] || 0}
-                          onChange={(e) => handleScoreChange(assessmentAxes[activeAxisIndex].title, qIdx, parseInt(e.target.value))}
-                          className="w-full sm:flex-grow h-4 bg-white border-2 border-brand-gold/10 rounded-full appearance-none cursor-pointer accent-brand-gold"
-                        />
-                        <div className="text-xs font-black text-green-500 uppercase tracking-tighter shrink-0">امتثال مستدام</div>
-                      </div>
-                      <div className="flex justify-between mt-4 px-1">
-                        {[0,1,2,3,4,5].map(v => (
-                          <div key={v} className="text-[10px] font-bold text-brand-gray/40">{v}</div>
-                        ))}
+                        <div className="text-xs font-black text-red-500 uppercase tracking-tighter shrink-0">
+                          خطر مؤسسي
+                        </div>
+                        <div className="w-full sm:flex-grow">
+                          <Slider
+                            dir="rtl"
+                            min={0}
+                            max={5}
+                            step={1}
+                            value={[
+                              responses[
+                                `${assessmentAxes[activeAxisIndex].title}-${qIdx}`
+                              ] || 0,
+                            ]}
+                            onValueChange={(value) =>
+                              handleScoreChange(
+                                assessmentAxes[activeAxisIndex].title,
+                                qIdx,
+                                value[0] ?? 0,
+                              )
+                            }
+                            className="w-full"
+                          />
+                          <div className="relative mt-4 h-4">
+                            <div className="absolute inset-x-0 top-0 flex justify-between">
+                              {[0, 1, 2, 3, 4, 5].map((v) => (
+                                <div key={v} className="relative w-0">
+                                  <span className="absolute top-0 -translate-x-1/2 text-[10px] font-bold text-brand-gray/40 whitespace-nowrap">
+                                    {v}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-xs font-black text-green-500 uppercase tracking-tighter shrink-0">
+                          امتثال مستدام
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-between mt-10 sm:mt-14 lg:mt-20 gap-6">
-                  <Button 
+                  <Button
                     variant="outline"
                     disabled={activeAxisIndex === 0}
-                    onClick={() => setActiveAxisIndex(prev => prev - 1)}
+                    onClick={() => setActiveAxisIndex((prev) => prev - 1)}
                     className="flex-1 py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl border-4 border-brand-dark text-brand-dark text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black hover:bg-brand-dark hover:text-white transition-all"
                   >
                     المحور السابق
                   </Button>
                   {activeAxisIndex === assessmentAxes.length - 1 ? (
-                    <Button onClick={() => setStep("result")} className="flex-[2] bg-brand-gold text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-lg sm:text-2xl lg:text-3xl font-black shadow-2xl shadow-brand-gold/30">
+                    <Button
+                      onClick={() => setStep("result")}
+                      className="flex-[2] bg-brand-gold text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-lg sm:text-2xl lg:text-3xl font-black shadow-2xl shadow-brand-gold/30"
+                    >
                       إصدار التقرير النهائي 📊
                     </Button>
                   ) : (
-                    <Button onClick={() => setActiveAxisIndex(prev => prev + 1)} className="flex-[2] bg-brand-dark text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl">
+                    <Button
+                      onClick={() => setActiveAxisIndex((prev) => prev + 1)}
+                      className="flex-[2] bg-brand-dark text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl"
+                    >
                       حفظ والمتابعة للمحور التالي
                     </Button>
                   )}
@@ -781,21 +1012,37 @@ export default function ECSTTPage() {
               <div className="bg-brand-dark text-white p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] text-center relative overflow-hidden shadow-2xl">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
                 <div className="relative z-10">
-                  <h2 className="text-[clamp(1.8rem,3.2vw,3.75rem)] font-black mb-8 sm:mb-12">نتيجة تشخيص المنظومة المجتمعية</h2>
-                  
+                  <h2 className="text-[clamp(1.8rem,3.2vw,3.75rem)] font-black mb-8 sm:mb-12">
+                    نتيجة تشخيص المنظومة المجتمعية
+                  </h2>
+
                   <div className="flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-12 lg:gap-16 mb-10 sm:mb-16">
                     <div className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-full border-[12px] sm:border-[16px] lg:border-[20px] border-brand-gold flex flex-col items-center justify-center bg-white text-brand-dark shadow-2xl transform hover:rotate-6 transition-transform">
-                      <span className="text-4xl sm:text-5xl lg:text-7xl font-black">{getOverallAverage()}</span>
-                      <span className="text-xs font-black text-brand-gray uppercase tracking-widest mt-1">المتوسط العام</span>
+                      <span className="text-4xl sm:text-5xl lg:text-7xl font-black">
+                        {getOverallAverage()}
+                      </span>
+                      <span className="text-xs font-black text-brand-gray uppercase tracking-widest mt-1">
+                        المتوسط العام
+                      </span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-brand-gold mb-3 sm:mb-4">مستوى النضج المؤسسي:</p>
-                      <h3 className={`text-[clamp(2rem,3.4vw,4.2rem)] font-black ${getMaturityLevel(parseFloat(getOverallAverage())).color} mb-6 sm:mb-8 leading-tight drop-shadow-md`}>
-                        {getMaturityLevel(parseFloat(getOverallAverage())).label}
+                      <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-brand-gold mb-3 sm:mb-4">
+                        مستوى النضج المؤسسي:
+                      </p>
+                      <h3
+                        className={`text-[clamp(2rem,3.4vw,4.2rem)] font-black ${getMaturityLevel(parseFloat(getOverallAverage())).color} mb-6 sm:mb-8 leading-tight drop-shadow-md`}
+                      >
+                        {
+                          getMaturityLevel(parseFloat(getOverallAverage()))
+                            .label
+                        }
                       </h3>
                       <div className="flex flex-wrap gap-3 sm:gap-4">
-                        {["ناشئة", "نامية", "ناضجة", "مستدامة"].map(stage => (
-                          <div key={stage} className={`flex-1 min-w-[120px] px-4 sm:px-6 py-2 sm:py-3 rounded-2xl text-xs sm:text-sm font-black border-2 transition-all ${getMaturityLevel(parseFloat(getOverallAverage())).stage === stage ? 'bg-brand-gold border-brand-gold text-white scale-110 shadow-lg' : 'border-white/10 text-white/30'}`}>
+                        {["ناشئة", "نامية", "ناضجة", "مستدامة"].map((stage) => (
+                          <div
+                            key={stage}
+                            className={`flex-1 min-w-[120px] px-4 sm:px-6 py-2 sm:py-3 rounded-2xl text-xs sm:text-sm font-black border-2 transition-all ${getMaturityLevel(parseFloat(getOverallAverage())).stage === stage ? "bg-brand-gold border-brand-gold text-white scale-110 shadow-lg" : "border-white/10 text-white/30"}`}
+                          >
                             {stage}
                           </div>
                         ))}
@@ -807,23 +1054,46 @@ export default function ECSTTPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {assessmentAxes.map((a, i) => (
-                  <Card key={i} className="border-none shadow-2xl bg-white overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border-b-8 border-brand-gold/10">
+                  <Card
+                    key={i}
+                    className="border-none shadow-2xl bg-white overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border-b-8 border-brand-gold/10"
+                  >
                     <CardContent className="p-6 sm:p-8 lg:p-10">
                       <div className="flex justify-between items-start mb-6">
-                        <h4 className="font-black text-brand-dark text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl max-w-[70%] leading-tight">{a.title}</h4>
-                        <div className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color}`}>
+                        <h4 className="font-black text-brand-dark text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl max-w-[70%] leading-tight">
+                          {a.title}
+                        </h4>
+                        <div
+                          className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color}`}
+                        >
                           {getAxisAverage(a.title)}
                         </div>
                       </div>
                       <div className="h-6 bg-brand-light rounded-full mb-4 overflow-hidden p-1 shadow-inner">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-1000 ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color.replace('text', 'bg')}`}
-                          style={{ width: `${(parseFloat(getAxisAverage(a.title).toString()) / 5) * 100}%` }}
+                        <div
+                          className={`h-full rounded-full transition-all duration-1000 ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color.replace("text", "bg")}`}
+                          style={{
+                            width: `${(parseFloat(getAxisAverage(a.title).toString()) / 5) * 100}%`,
+                          }}
                         ></div>
                       </div>
                       <div className="flex justify-between items-center text-xs font-black">
-                        <span className="text-brand-gray/50 uppercase">Maturity Score</span>
-                        <span className={getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color}>{getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).label}</span>
+                        <span className="text-brand-gray/50 uppercase">
+                          Maturity Score
+                        </span>
+                        <span
+                          className={
+                            getMaturityLevel(
+                              parseFloat(getAxisAverage(a.title).toString()),
+                            ).color
+                          }
+                        >
+                          {
+                            getMaturityLevel(
+                              parseFloat(getAxisAverage(a.title).toString()),
+                            ).label
+                          }
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
@@ -832,16 +1102,44 @@ export default function ECSTTPage() {
 
               <div className="bg-brand-light-gold p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] border-4 border-brand-gold/20 text-center shadow-xl">
                 <HelpCircle className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-brand-gold mx-auto mb-6 sm:mb-8" />
-                <h3 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-6 sm:mb-8 text-brand-dark">خطة المعالجة الفورية</h3>
+                <h3 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-6 sm:mb-8 text-brand-dark">
+                  خطة المعالجة الفورية
+                </h3>
                 <p className="text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl text-brand-gray mb-6 sm:mb-10 lg:mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
-                  وجد نظامنا التحليلي أن المحور الأكثر حرجاً لديك هو <span className="font-black text-brand-dark underline decoration-brand-gold decoration-4 underline-offset-8">{assessmentAxes.reduce((min, cur) => parseFloat(getAxisAverage(cur.title).toString()) < parseFloat(getAxisAverage(min.title).toString()) ? cur : min, assessmentAxes[0]).title}</span>. 
-                  نوصي بالبدء في رحلة التحول فوراً.
+                  وجد نظامنا التحليلي أن المحور الأكثر حرجاً لديك هو{" "}
+                  <span className="font-black text-brand-dark underline decoration-brand-gold decoration-4 underline-offset-8">
+                    {
+                      assessmentAxes.reduce(
+                        (min, cur) =>
+                          parseFloat(getAxisAverage(cur.title).toString()) <
+                          parseFloat(getAxisAverage(min.title).toString())
+                            ? cur
+                            : min,
+                        assessmentAxes[0],
+                      ).title
+                    }
+                  </span>
+                  . نوصي بالبدء في رحلة التحول فوراً.
                 </p>
                 <div className="flex flex-col md:flex-row gap-8 justify-center">
-                  <Button asChild size="lg" className="bg-brand-dark text-white px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl hover:scale-105 transition-transform w-full md:w-auto">
-                    <a href={getRecommendation().link}>تفعيل {getRecommendation().platform}</a>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-brand-dark text-white px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl hover:scale-105 transition-transform w-full md:w-auto"
+                  >
+                    <a href={getRecommendation().link}>
+                      تفعيل {getRecommendation().platform}
+                    </a>
                   </Button>
-                  <Button onClick={() => { setStep("intro"); setActiveAxisIndex(0); setResponses({}); }} variant="outline" className="border-brand-dark text-brand-dark px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black w-full sm:w-auto">
+                  <Button
+                    onClick={() => {
+                      setStep("intro");
+                      setActiveAxisIndex(0);
+                      setResponses({});
+                    }}
+                    variant="outline"
+                    className="border-brand-dark text-brand-dark px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black w-full sm:w-auto"
+                  >
                     إعادة التشخيص الشامل
                   </Button>
                 </div>
@@ -861,13 +1159,17 @@ export default function ECSTTPage() {
           <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
             {/* Left text */}
             <div className="lg:w-1/2">
-              <span className="bg-brand-gold/20 text-brand-gold px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 inline-block">مجتمع مفتوح</span>
+              <span className="bg-brand-gold/20 text-brand-gold px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 inline-block">
+                مجتمع مفتوح
+              </span>
               <h2 className="text-[clamp(1.8rem,3.2vw,3.75rem)] font-black text-white mb-6 leading-tight">
-                منصة تفاعلية<br/>
+                منصة تفاعلية
+                <br />
                 <span className="text-brand-gold">للمشاركة المجتمعية</span>
               </h2>
               <p className="text-white/60 text-[clamp(1rem,1.6vw,1.125rem)] lg:text-xl leading-relaxed mb-8 sm:mb-10">
-                قيّم المبادرات، اترك تعليقك، وشارك برأيك مع مئات الجمعيات السعودية في منصة مجتمعية مفتوحة للجميع.
+                قيّم المبادرات، اترك تعليقك، وشارك برأيك مع مئات الجمعيات
+                السعودية في منصة مجتمعية مفتوحة للجميع.
               </p>
               <div className="flex flex-wrap gap-4 mb-10">
                 {[
@@ -876,9 +1178,14 @@ export default function ECSTTPage() {
                   { icon: "❤️", label: "إعجاب وتفاعل" },
                   { icon: "📣", label: "اقتراح مبادرات جديدة" },
                 ].map(({ icon, label }) => (
-                  <div key={label} className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl">
+                  <div
+                    key={label}
+                    className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl"
+                  >
                     <span>{icon}</span>
-                    <span className="text-white text-sm font-bold">{label}</span>
+                    <span className="text-white text-sm font-bold">
+                      {label}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -893,25 +1200,59 @@ export default function ECSTTPage() {
             {/* Right — preview cards */}
             <div className="lg:w-1/2 space-y-4">
               {[
-                { name: "مبادرة إطعام", cat: "الأمن الغذائي", color: "bg-orange-500", votes: 312, comments: 47, rating: 4.7 },
-                { name: "مبادرة رعاية", cat: "رعاية الأسرة", color: "bg-rose-500", votes: 389, comments: 63, rating: 4.8 },
-                { name: "برنامج بداية", cat: "التوظيف", color: "bg-green-500", votes: 241, comments: 38, rating: 4.6 },
+                {
+                  name: "مبادرة إطعام",
+                  cat: "الأمن الغذائي",
+                  color: "bg-orange-500",
+                  votes: 312,
+                  comments: 47,
+                  rating: 4.7,
+                },
+                {
+                  name: "مبادرة رعاية",
+                  cat: "رعاية الأسرة",
+                  color: "bg-rose-500",
+                  votes: 389,
+                  comments: 63,
+                  rating: 4.8,
+                },
+                {
+                  name: "برنامج بداية",
+                  cat: "التوظيف",
+                  color: "bg-green-500",
+                  votes: 241,
+                  comments: 38,
+                  rating: 4.6,
+                },
               ].map((item) => (
-                <div key={item.name} className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-5 hover:bg-white/10 transition-colors">
-                  <div className={`${item.color} w-12 h-12 rounded-xl shrink-0 flex items-center justify-center`}>
-                    <span className="text-white font-black text-lg">{item.rating}</span>
+                <div
+                  key={item.name}
+                  className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5 flex items-center gap-4 sm:gap-5 hover:bg-white/10 transition-colors"
+                >
+                  <div
+                    className={`${item.color} w-12 h-12 rounded-xl shrink-0 flex items-center justify-center`}
+                  >
+                    <span className="text-white font-black text-lg">
+                      {item.rating}
+                    </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-black text-base">{item.name}</p>
+                    <p className="text-white font-black text-base">
+                      {item.name}
+                    </p>
                     <p className="text-white/40 text-xs">{item.cat}</p>
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="text-center">
-                      <p className="text-brand-gold font-black text-sm">{item.votes}</p>
+                      <p className="text-brand-gold font-black text-sm">
+                        {item.votes}
+                      </p>
                       <p className="text-white/40 text-xs">تصويت</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-white font-black text-sm">{item.comments}</p>
+                      <p className="text-white font-black text-sm">
+                        {item.comments}
+                      </p>
                       <p className="text-white/40 text-xs">تعليق</p>
                     </div>
                   </div>

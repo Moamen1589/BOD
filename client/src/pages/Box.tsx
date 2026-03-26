@@ -62,7 +62,7 @@ export const Box = (): JSX.Element => {
                     rel="noopener noreferrer"
                     aria-label="WhatsApp"
                   >
-                    تحدث مع مستشار المنظومة
+                    تحدث مع مستشاري المنظومة
                   </a>
                 </Button>
               </div>
