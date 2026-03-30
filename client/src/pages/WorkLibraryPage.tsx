@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Navbar } from "@/components/Navbar";
@@ -6,6 +6,9 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import type { WorkItem } from "@shared/schema";
+
+const CASE_STUDIES_API_URL =
+  "https://gold-weasel-489740.hostingersite.com/api/case-studies";
 
 const categories = [
   { key: "all", label: "جميع الأعمال" },
@@ -24,16 +27,133 @@ const categoryLabels: Record<string, string> = {
   "motion-graphics": "موشن جرافيك",
 };
 
+type WorkCategory = WorkItem["category"];
+
+interface CaseStudyApiItem {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content_text: string | null;
+  link: string | null;
+  image_url: string | null;
+  published_at: string | null;
+}
+
+interface CaseStudiesPageResponse {
+  current_page: number;
+  data: CaseStudyApiItem[];
+  last_page: number;
+}
+
+interface WorkLibraryCardItem {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  category: WorkCategory;
+  imageUrl: string | null;
+  externalLink: string | null;
+  createdAt: string;
+}
+
+interface WorkLibraryQueryResult {
+  items: WorkLibraryCardItem[];
+  currentPage: number;
+  lastPage: number;
+}
+
+function toWorkCardItem(item: CaseStudyApiItem): WorkLibraryCardItem {
+  return {
+    id: item.id,
+    slug: item.slug || `case-study-${item.id}`,
+    title: item.title,
+    description: item.excerpt || item.content_text || "",
+    // This endpoint is dedicated to procedural guides only.
+    category: "procedural-guides",
+    imageUrl: item.image_url || null,
+    externalLink: item.link || null,
+    createdAt: item.published_at || "",
+  };
+}
+
 export default function WorkLibraryPage() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: items, isLoading } = useQuery<WorkItem[]>({
-    queryKey: ["/api/work-library", activeCategory],
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory]);
+
+  const { data, isLoading } = useQuery<WorkLibraryQueryResult>({
+    queryKey: ["/api/case-studies", activeCategory, currentPage],
     queryFn: async () => {
-      const url = activeCategory === "all" ? "/api/work-library" : `/api/work-library?category=${activeCategory}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch");
-      return res.json();
+      try {
+        if (
+          activeCategory === "all" ||
+          activeCategory === "procedural-guides"
+        ) {
+          const res = await fetch(
+            `${CASE_STUDIES_API_URL}?page=${currentPage}`,
+          );
+          if (!res.ok) throw new Error("Failed to fetch case studies");
+
+          const page = (await res.json()) as CaseStudiesPageResponse;
+          const mapped = (page.data || [])
+            .map(toWorkCardItem)
+            .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+          return {
+            items: mapped,
+            currentPage: page.current_page || currentPage,
+            lastPage: page.last_page || 1,
+          };
+        }
+
+        const localRes = await fetch(
+          `/api/work-library?category=${activeCategory}`,
+        );
+        if (!localRes.ok) throw new Error("Failed to fetch");
+
+        const localItems = (await localRes.json()) as WorkItem[];
+        return {
+          items: localItems.map((entry) => ({
+            id: entry.id,
+            slug: entry.slug,
+            title: entry.title,
+            description: entry.description,
+            category: entry.category,
+            imageUrl: entry.imageUrl,
+            externalLink: null,
+            createdAt: entry.createdAt ? String(entry.createdAt) : "",
+          })),
+          currentPage: 1,
+          lastPage: 1,
+        };
+      } catch {
+        const url =
+          activeCategory === "all"
+            ? "/api/work-library"
+            : `/api/work-library?category=${activeCategory}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to fetch");
+
+        const localItems = (await res.json()) as WorkItem[];
+        return {
+          items: localItems.map((entry) => ({
+            id: entry.id,
+            slug: entry.slug,
+            title: entry.title,
+            description: entry.description,
+            category: entry.category,
+            imageUrl: entry.imageUrl,
+            externalLink: null,
+            createdAt: entry.createdAt ? String(entry.createdAt) : "",
+          })),
+          currentPage: 1,
+          lastPage: 1,
+        };
+      }
     },
   });
 
@@ -43,10 +163,16 @@ export default function WorkLibraryPage() {
       <main className="flex-1 pt-28 pb-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <span className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/10 px-4 py-1.5 rounded-md" data-testid="badge-work-library-page">
+            <span
+              className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/10 px-4 py-1.5 rounded-md"
+              data-testid="badge-work-library-page"
+            >
               مكتبة الأعمال
             </span>
-            <h1 className="font-almarai font-extrabold text-3xl md:text-4xl text-brand-dark mt-6 mb-4" data-testid="text-work-library-title">
+            <h1
+              className="font-almarai font-extrabold text-3xl md:text-4xl text-brand-dark mt-6 mb-4"
+              data-testid="text-work-library-title"
+            >
               أعمالنا ومشاريعنا المنجزة
             </h1>
             <p className="font-almarai text-brand-gray max-w-2xl mx-auto text-lg">
@@ -79,30 +205,127 @@ export default function WorkLibraryPage() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items?.map((item) => (
-                <Link key={item.id} href={`/work-library/${item.slug}`}>
-                  <div
-                    className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
-                    data-testid={`card-work-${item.slug}`}
+              {data?.items.map((item) =>
+                item.externalLink ? (
+                  <a
+                    key={item.id}
+                    href={item.externalLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    {item.imageUrl && (
-                      <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover" loading="lazy" />
-                    )}
-                    <div className="p-5 flex-1 flex flex-col">
-                      <Badge variant="outline" className="w-fit text-brand-gold-dark border-brand-gold/30 font-almarai text-xs mb-3">
-                        {categoryLabels[item.category] || item.category}
-                      </Badge>
-                      <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">{item.title}</h3>
-                      <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-2 flex-1">{item.description}</p>
+                    <div
+                      className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
+                      data-testid={`card-work-${item.slug}`}
+                    >
+                      {item.imageUrl && (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-full h-48 object-cover"
+                          loading="lazy"
+                        />
+                      )}
+                      <div className="p-5 flex-1 flex flex-col">
+                        <Badge
+                          variant="outline"
+                          className="w-fit text-brand-gold-dark border-brand-gold/30 font-almarai text-xs mb-3"
+                        >
+                          {categoryLabels[item.category] || item.category}
+                        </Badge>
+                        <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
+                          {item.title}
+                        </h3>
+                        <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-2 flex-1">
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </a>
+                ) : (
+                  <Link key={item.id} href={`/work-library/${item.slug}`}>
+                    <div
+                      className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
+                      data-testid={`card-work-${item.slug}`}
+                    >
+                      {item.imageUrl && (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-full h-48 object-cover"
+                          loading="lazy"
+                        />
+                      )}
+                      <div className="p-5 flex-1 flex flex-col">
+                        <Badge
+                          variant="outline"
+                          className="w-fit text-brand-gold-dark border-brand-gold/30 font-almarai text-xs mb-3"
+                        >
+                          {categoryLabels[item.category] || item.category}
+                        </Badge>
+                        <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
+                          {item.title}
+                        </h3>
+                        <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-2 flex-1">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ),
+              )}
             </div>
           )}
 
-          {!isLoading && items?.length === 0 && (
-            <p className="text-center text-muted-foreground py-12 font-almarai text-lg">لا توجد أعمال في هذا التصنيف</p>
+          {!isLoading &&
+            (activeCategory === "all" ||
+              activeCategory === "procedural-guides") &&
+            (data?.lastPage || 1) > 1 && (
+              <div className="mt-10 flex items-center justify-center gap-2 flex-wrap">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={(data?.currentPage || 1) === 1}
+                  className="px-4 py-2 rounded-md font-almarai text-sm font-bold bg-brand-light-gold text-brand-gold-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  السابق
+                </button>
+
+                {Array.from(
+                  { length: data?.lastPage || 1 },
+                  (_, idx) => idx + 1,
+                ).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-4 py-2 rounded-md font-almarai text-sm font-bold transition-colors ${
+                      page === (data?.currentPage || 1)
+                        ? "bg-brand-gold text-white"
+                        : "bg-brand-light-gold text-brand-gold-dark hover:bg-brand-gold/20"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, data?.lastPage || prev + 1),
+                    )
+                  }
+                  disabled={(data?.currentPage || 1) === (data?.lastPage || 1)}
+                  className="px-4 py-2 rounded-md font-almarai text-sm font-bold bg-brand-light-gold text-brand-gold-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  التالي
+                </button>
+              </div>
+            )}
+
+          {!isLoading && (data?.items.length || 0) === 0 && (
+            <p className="text-center text-muted-foreground py-12 font-almarai text-lg">
+              لا توجد أعمال في هذا التصنيف
+            </p>
           )}
         </div>
       </main>

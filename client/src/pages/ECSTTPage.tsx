@@ -290,6 +290,15 @@ export default function ECSTTPage() {
     return { label: "خطر مؤسسي", color: "text-red-500", stage: "ناشئة" };
   };
 
+  const getScoreDescription = (score: number) => {
+    if (score >= 5) return "امتثال كامل ومستدام";
+    if (score >= 4) return "امتثال جيد مع تحسينات بسيطة";
+    if (score >= 3) return "امتثال جزئي";
+    if (score >= 2) return "ضعف امتثال";
+    if (score >= 1) return "عدم امتثال";
+    return "غير مطبق";
+  };
+
   const getRecommendation = () => {
     const averages = assessmentAxes.map((a) => ({
       title: a.title,
@@ -300,33 +309,74 @@ export default function ECSTTPage() {
       averages[0],
     );
 
-    if (weakest.title.includes("قياس الأداء"))
+    if (weakest.title.includes("الحوكمة") || weakest.title.includes("القيادة"))
       return {
-        platform: "منصة أداء",
-        link: "/solutions/adaa-platform",
-        cta: "تفعيل منصة أداء",
+        platform: "مسرعة أثر وريادة",
+        link: "",
+        cta: "التسجيل في مسرعة أثر وريادة",
       };
     if (weakest.title.includes("إدارة المشاريع"))
       return {
         platform: "مختبرات حقق",
-        link: "/solutions/haqqiq-labs",
-        cta: "تفعيل مختبرات حقق",
+        link: "",
+        cta: "التسجيل في مختبرات حقق",
       };
-    if (weakest.title.includes("التخطيط") || weakest.title.includes("التقنية"))
+    if (weakest.title.includes("قياس الأداء"))
       return {
-        platform: "نظام عباق",
-        link: "/solutions",
-        cta: "تفعيل نظام عباق",
+        platform: "منصة أداء",
+        link: "",
+        cta: "التسجيل في منصة أداء",
       };
+    if (
+      weakest.title.includes("الإدارة المالية") ||
+      weakest.title.includes("الإنسانية")
+    )
+      return {
+        platform: "مسرعة أثر وريادة",
+        link: "",
+        cta: "التسجيل في مسرعة أثر وريادة",
+      };
+    if (
+      weakest.title.includes("الموارد البشرية") ||
+      weakest.title.includes("الاتصال المؤسسي")
+    )
+      return {
+        platform: "اكاديمية حقق",
+        link: "",
+        cta: "التسجيل في اكاديمية حقق",
+      };
+    if (weakest.title.includes("التقنية"))
+      return {
+        platform: "عباق وأثر 360",
+        link: "",
+        cta: "التسجيل في عباق وأثر 360",
+      };
+    if (weakest.title.includes("التخطيط والتشغيل"))
+      return {
+        platform: "مسرعة أثر وريادة",
+        link: "",
+        cta: "التسجيل في مسرعة أثر وريادة",
+      };
+
     return {
-      platform: "فريق استشارات ولادة حلم",
-      link: "https://wa.me/966567771966",
-      cta: "تواصل مع فريق استشارات ولادة حلم",
-      external: true,
+      platform: "مسرعة أثر وريادة",
+      link: "",
+      cta: "التسجيل في مسرعة أثر وريادة",
     };
   };
 
   const recommendation = getRecommendation();
+  const currentAxis = assessmentAxes[activeAxisIndex];
+  const answeredCountInCurrentAxis = currentAxis.questions.filter((_, i) =>
+    Object.prototype.hasOwnProperty.call(
+      responses,
+      `${currentAxis.title}-${i}`,
+    ),
+  ).length;
+  const isCurrentAxisComplete =
+    answeredCountInCurrentAxis === currentAxis.questions.length;
+  const missingAnswersCount =
+    currentAxis.questions.length - answeredCountInCurrentAxis;
 
   const handleAssessmentEntry = () => {
     if (hasRegistration) {
@@ -919,63 +969,62 @@ export default function ECSTTPage() {
 
               <div className="p-6 sm:p-10 lg:p-20">
                 <div className="space-y-12">
-                  {assessmentAxes[activeAxisIndex].questions.map((q, qIdx) => (
-                    <div
-                      key={qIdx}
-                      className="p-5 sm:p-7 lg:p-10 bg-brand-light-gold/30 rounded-[1.75rem] sm:rounded-[2.25rem] lg:rounded-[2.5rem] border-2 border-brand-gold/5 hover:border-brand-gold/20 transition-all"
-                    >
-                      <div className="flex flex-col md:flex-row justify-between items-center mb-6 sm:mb-8 lg:mb-10 gap-4 sm:gap-6">
-                        <label className="text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl font-black text-brand-dark leading-tight">
-                          {q}
-                        </label>
-                        <div className="bg-brand-dark text-brand-gold w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center text-[clamp(1.6rem,2.4vw,2.5rem)] font-black shadow-xl">
-                          {responses[
-                            `${assessmentAxes[activeAxisIndex].title}-${qIdx}`
-                          ] || 0}
-                        </div>
-                      </div>
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 lg:gap-8">
-                        <div className="text-xs font-black text-red-500 uppercase tracking-tighter shrink-0">
-                          خطر مؤسسي
-                        </div>
-                        <div className="w-full sm:flex-grow">
-                          <Slider
-                            dir="rtl"
-                            min={0}
-                            max={5}
-                            step={1}
-                            value={[
-                              responses[
-                                `${assessmentAxes[activeAxisIndex].title}-${qIdx}`
-                              ] || 0,
-                            ]}
-                            onValueChange={(value) =>
-                              handleScoreChange(
-                                assessmentAxes[activeAxisIndex].title,
-                                qIdx,
-                                value[0] ?? 0,
-                              )
-                            }
-                            className="w-full"
-                          />
-                          <div className="relative mt-4 h-4">
-                            <div className="absolute inset-x-0 top-0 flex justify-between">
-                              {[0, 1, 2, 3, 4, 5].map((v) => (
-                                <div key={v} className="relative w-0">
-                                  <span className="absolute top-0 -translate-x-1/2 text-[10px] font-bold text-brand-gray/40 whitespace-nowrap">
-                                    {v}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
+                  {assessmentAxes[activeAxisIndex].questions.map((q, qIdx) => {
+                    const scoreKey = `${assessmentAxes[activeAxisIndex].title}-${qIdx}`;
+                    const selectedScore = responses[scoreKey] || 0;
+
+                    return (
+                      <div
+                        key={qIdx}
+                        className="p-5 sm:p-7 lg:p-10 bg-brand-light-gold/30 rounded-[1.75rem] sm:rounded-[2.25rem] lg:rounded-[2.5rem] border-2 border-brand-gold/5 hover:border-brand-gold/20 transition-all"
+                      >
+                        <div className="flex flex-col md:flex-row justify-between items-center mb-6 sm:mb-8 lg:mb-10 gap-4 sm:gap-6">
+                          <label className="text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl font-black text-brand-dark leading-tight">
+                            {q}
+                          </label>
+                          <div className="bg-brand-dark text-brand-gold w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center text-[clamp(1.6rem,2.4vw,2.5rem)] font-black shadow-xl">
+                            {selectedScore}
                           </div>
                         </div>
-                        <div className="text-xs font-black text-green-500 uppercase tracking-tighter shrink-0">
-                          امتثال مستدام
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 lg:gap-8">
+                          <div className="text-xs font-black text-red-500 uppercase tracking-tighter shrink-0">
+                            خطر مؤسسي
+                          </div>
+                          <div className="w-full sm:flex-grow">
+                            <Slider
+                              dir="rtl"
+                              min={0}
+                              max={5}
+                              step={1}
+                              value={[selectedScore]}
+                              onValueChange={(value) =>
+                                handleScoreChange(
+                                  assessmentAxes[activeAxisIndex].title,
+                                  qIdx,
+                                  value[0] ?? 0,
+                                )
+                              }
+                              className="w-full"
+                            />
+                            <div className="relative mt-4 h-4">
+                              <div className="absolute inset-x-0 top-0 flex justify-between">
+                                {[0, 1, 2, 3, 4, 5].map((v) => (
+                                  <div key={v} className="relative w-0">
+                                    <span className="absolute top-0 -translate-x-1/2 text-[10px] font-bold text-brand-gray/40 whitespace-nowrap">
+                                      {v}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-xs font-black text-brand-dark tracking-tight shrink-0 text-right max-w-[190px] sm:max-w-[230px] leading-relaxed">
+                            {getScoreDescription(selectedScore)}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-between mt-10 sm:mt-14 lg:mt-20 gap-6">
@@ -989,20 +1038,35 @@ export default function ECSTTPage() {
                   </Button>
                   {activeAxisIndex === assessmentAxes.length - 1 ? (
                     <Button
-                      onClick={() => setStep("result")}
+                      onClick={() => {
+                        if (!isCurrentAxisComplete) return;
+                        setStep("result");
+                      }}
+                      disabled={!isCurrentAxisComplete}
                       className="flex-[2] bg-brand-gold text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-lg sm:text-2xl lg:text-3xl font-black shadow-2xl shadow-brand-gold/30"
                     >
                       إصدار التقرير النهائي 📊
                     </Button>
                   ) : (
                     <Button
-                      onClick={() => setActiveAxisIndex((prev) => prev + 1)}
+                      onClick={() => {
+                        if (!isCurrentAxisComplete) return;
+                        setActiveAxisIndex((prev) => prev + 1);
+                      }}
+                      disabled={!isCurrentAxisComplete}
                       className="flex-[2] bg-brand-dark text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl"
                     >
                       حفظ والمتابعة للمحور التالي
                     </Button>
                   )}
                 </div>
+
+                {!isCurrentAxisComplete && (
+                  <p className="mt-4 text-center text-sm sm:text-base font-bold text-red-600">
+                    يرجى تعبئة جميع عناصر هذا المحور قبل المتابعة. المتبقي:{" "}
+                    {missingAnswersCount}
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -1019,7 +1083,7 @@ export default function ECSTTPage() {
                   <div className="flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-12 lg:gap-16 mb-10 sm:mb-16">
                     <div className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-full border-[12px] sm:border-[16px] lg:border-[20px] border-brand-gold flex flex-col items-center justify-center bg-white text-brand-dark shadow-2xl transform hover:rotate-6 transition-transform">
                       <span className="text-4xl sm:text-5xl lg:text-7xl font-black">
-                        {getOverallAverage()}
+                        {getOverallAverage()} / 5
                       </span>
                       <span className="text-xs font-black text-brand-gray uppercase tracking-widest mt-1">
                         المتوسط العام
@@ -1052,6 +1116,42 @@ export default function ECSTTPage() {
                 </div>
               </div>
 
+              <div className="bg-white p-8 sm:p-10 lg:p-12 rounded-[2.5rem] sm:rounded-[3rem] lg:rounded-[4rem] border border-brand-gold/20 shadow-xl">
+                <div className="text-center mb-8 sm:mb-10">
+                  <h3 className="text-[clamp(1.4rem,2.2vw,2.2rem)] font-black text-brand-dark mb-3">
+                    الأركان الستة للمنظومة
+                  </h3>
+                  <p className="text-brand-gray font-bold">
+                    تذكير بمحاور التحول المؤسسي التي تقود نتيجة النضج
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                  {arkan.map((rukn) => (
+                    <div
+                      key={rukn.id}
+                      className="bg-brand-light-gold/30 border border-brand-gold/15 rounded-3xl p-5 sm:p-6"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div
+                          className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 ${rukn.color}`}
+                        >
+                          <rukn.icon size={24} />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-brand-dark text-base sm:text-lg leading-tight mb-2">
+                            {rukn.title}
+                          </h4>
+                          <p className="text-sm text-brand-gray leading-relaxed">
+                            {rukn.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {assessmentAxes.map((a, i) => (
                   <Card
@@ -1066,7 +1166,7 @@ export default function ECSTTPage() {
                         <div
                           className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color}`}
                         >
-                          {getAxisAverage(a.title)}
+                          {getAxisAverage(a.title)} / 5
                         </div>
                       </div>
                       <div className="h-6 bg-brand-light rounded-full mb-4 overflow-hidden p-1 shadow-inner">
@@ -1105,9 +1205,10 @@ export default function ECSTTPage() {
                 <h3 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-6 sm:mb-8 text-brand-dark">
                   خطة المعالجة الفورية
                 </h3>
-                <p className="text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl text-brand-gray mb-6 sm:mb-10 lg:mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
-                  وجد نظامنا التحليلي أن المحور الأكثر حرجاً لديك هو{" "}
-                  <span className="font-black text-brand-dark underline decoration-brand-gold decoration-4 underline-offset-8">
+                <p className="text-[clamp(0.95rem,1.3vw,1.05rem)] lg:text-xl text-brand-gray mb-6 sm:mb-10 lg:mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
+                  بناءً على إحصائيات التقييم، المحور الأكثر احتياجاً للتدخل لديك
+                  هو{" "}
+                  <span className="font-black text-brand-dark  decoration-4 underline-offset-8 leading-[70px]">
                     {
                       assessmentAxes.reduce(
                         (min, cur) =>
@@ -1119,16 +1220,23 @@ export default function ECSTTPage() {
                       ).title
                     }
                   </span>
-                  . نوصي بالبدء في رحلة التحول فوراً.
+                  . التوجيه الأنسب الآن هو التسجيل في{" "}
+                  <a
+                    href={recommendation.link || "#"}
+                    className="font-black text-brand-dark underline decoration-brand-gold decoration-4 underline-offset-8"
+                  >
+                    {recommendation.platform}
+                  </a>
+                  .
                 </p>
                 <div className="flex flex-col md:flex-row gap-8 justify-center">
                   <Button
                     asChild
                     size="lg"
-                    className="bg-brand-dark text-white px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl hover:scale-105 transition-transform w-full md:w-auto"
+                    className="bg-brand-dark text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 rounded-xl sm:rounded-xl text-[clamp(0.95rem,1.3vw,1rem)] lg:text-xl font-black shadow-2xl hover:scale-105 transition-transform w-full md:w-auto"
                   >
-                    <a href={getRecommendation().link}>
-                      تفعيل {getRecommendation().platform}
+                    <a href={recommendation.link || "#"}>
+                      تفعيل فريق استشارات ولادة حلم
                     </a>
                   </Button>
                   <Button
@@ -1138,7 +1246,7 @@ export default function ECSTTPage() {
                       setResponses({});
                     }}
                     variant="outline"
-                    className="border-brand-dark text-brand-dark px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black w-full sm:w-auto"
+                    className="border-brand-dark text-brand-dark px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 rounded-xl sm:rounded-xl text-[clamp(0.95rem,1.3vw,1rem)] lg:text-xl font-black w-full sm:w-auto"
                   >
                     إعادة التشخيص الشامل
                   </Button>
