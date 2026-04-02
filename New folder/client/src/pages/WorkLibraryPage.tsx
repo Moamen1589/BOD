@@ -5,15 +5,10 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { FileText } from "lucide-react";
 import type { WorkItem } from "@shared/schema";
 
 const CASE_STUDIES_API_URL =
   "https://gold-weasel-489740.hostingersite.com/api/case-studies";
-const STRATEGIC_PLANS_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/strategic-plans";
-const ANNUAL_PLANS_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/annual-plans";
 
 const categories = [
   { key: "all", label: "جميع الأعمال" },
@@ -45,56 +40,10 @@ interface CaseStudyApiItem {
   published_at: string | null;
 }
 
-interface AnnualPlanApiItem {
-  id: number;
-  post_id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  content_text: string | null;
-  link: string | null;
-  featured_image: {
-    url: string;
-  };
-  content_image_1: {
-    url: string;
-  };
-  published_at: string | null;
-}
-
-interface StrategicPlanApiItem {
-  id: number;
-  post_id: number;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  content_text: string | null;
-  image_url: string | null;
-  content_image_1: string | null;
-  content_image_2: string | null;
-  published_at: string | null;
-}
-
 interface CaseStudiesPageResponse {
   current_page: number;
   data: CaseStudyApiItem[];
   last_page: number;
-}
-
-interface AnnualPlansPageResponse {
-  data: AnnualPlanApiItem[];
-  meta: {
-    current_page: number;
-    last_page: number;
-  };
-}
-
-interface StrategicPlansPageResponse {
-  data: StrategicPlanApiItem[];
-  meta: {
-    current_page: number;
-    last_page: number;
-  };
 }
 
 interface WorkLibraryCardItem {
@@ -128,49 +77,16 @@ function toWorkCardItem(item: CaseStudyApiItem): WorkLibraryCardItem {
   };
 }
 
-function toAnnualPlanCardItem(item: AnnualPlanApiItem): WorkLibraryCardItem {
-  return {
-    id: item.id,
-    slug: item.slug || `annual-plan-${item.id}`,
-    title: item.title,
-    description: item.excerpt || item.content_text || "",
-    category: "annual-plans",
-    imageUrl: item.featured_image?.url || item.content_image_1?.url || null,
-    externalLink: item.link || null,
-    createdAt: item.published_at || "",
-  };
-}
-
-function toStrategicPlanCardItem(
-  item: StrategicPlanApiItem,
-): WorkLibraryCardItem {
-  return {
-    id: item.id,
-    slug: item.slug || `strategic-plan-${item.id}`,
-    title: item.title,
-    description: item.excerpt || item.content_text || "",
-    category: "strategic-planning",
-    imageUrl:
-      item.image_url || item.content_image_1 || item.content_image_2 || null,
-    externalLink: null,
-    createdAt: item.published_at || "",
-  };
-}
-
 export default function WorkLibraryPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const isDetailCategory = (category: WorkCategory) =>
-    category === "procedural-guides" ||
-    category === "annual-plans" ||
-    category === "strategic-planning";
 
   useEffect(() => {
     setCurrentPage(1);
   }, [activeCategory]);
 
   const { data, isLoading } = useQuery<WorkLibraryQueryResult>({
-    queryKey: ["work-library", activeCategory, currentPage],
+    queryKey: ["/api/case-studies", activeCategory, currentPage],
     queryFn: async () => {
       try {
         if (
@@ -191,42 +107,6 @@ export default function WorkLibraryPage() {
             items: mapped,
             currentPage: page.current_page || currentPage,
             lastPage: page.last_page || 1,
-          };
-        }
-
-        if (activeCategory === "annual-plans") {
-          const res = await fetch(
-            `${ANNUAL_PLANS_API_URL}?page=${currentPage}`,
-          );
-          if (!res.ok) throw new Error("Failed to fetch annual plans");
-
-          const page = (await res.json()) as AnnualPlansPageResponse;
-          const mapped = (page.data || [])
-            .map(toAnnualPlanCardItem)
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-
-          return {
-            items: mapped,
-            currentPage: page.meta?.current_page || currentPage,
-            lastPage: page.meta?.last_page || 1,
-          };
-        }
-
-        if (activeCategory === "strategic-planning") {
-          const res = await fetch(
-            `${STRATEGIC_PLANS_API_URL}?page=${currentPage}`,
-          );
-          if (!res.ok) throw new Error("Failed to fetch strategic plans");
-
-          const page = (await res.json()) as StrategicPlansPageResponse;
-          const mapped = (page.data || [])
-            .map(toStrategicPlanCardItem)
-            .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-
-          return {
-            items: mapped,
-            currentPage: page.meta?.current_page || currentPage,
-            lastPage: page.meta?.last_page || 1,
           };
         }
 
@@ -252,45 +132,11 @@ export default function WorkLibraryPage() {
         };
       } catch {
         const url =
-          activeCategory === "all" || activeCategory === "procedural-guides"
-            ? `${CASE_STUDIES_API_URL}?page=${currentPage}`
-            : activeCategory === "strategic-planning"
-              ? `${STRATEGIC_PLANS_API_URL}?page=${currentPage}`
-              : activeCategory === "annual-plans"
-                ? `${ANNUAL_PLANS_API_URL}?page=${currentPage}`
-                : `/api/work-library?category=${activeCategory}`;
+          activeCategory === "all"
+            ? "/api/work-library"
+            : `/api/work-library?category=${activeCategory}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch");
-
-        if (
-          activeCategory === "all" ||
-          activeCategory === "procedural-guides"
-        ) {
-          const page = (await res.json()) as CaseStudiesPageResponse;
-          return {
-            items: (page.data || []).map(toWorkCardItem),
-            currentPage: page.current_page || currentPage,
-            lastPage: page.last_page || 1,
-          };
-        }
-
-        if (activeCategory === "annual-plans") {
-          const page = (await res.json()) as AnnualPlansPageResponse;
-          return {
-            items: (page.data || []).map(toAnnualPlanCardItem),
-            currentPage: page.meta?.current_page || currentPage,
-            lastPage: page.meta?.last_page || 1,
-          };
-        }
-
-        if (activeCategory === "strategic-planning") {
-          const page = (await res.json()) as StrategicPlansPageResponse;
-          return {
-            items: (page.data || []).map(toStrategicPlanCardItem),
-            currentPage: page.meta?.current_page || currentPage,
-            lastPage: page.meta?.last_page || 1,
-          };
-        }
 
         const localItems = (await res.json()) as WorkItem[];
         return {
@@ -350,6 +196,7 @@ export default function WorkLibraryPage() {
               </button>
             ))}
           </div>
+
           {isLoading ? (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -359,7 +206,7 @@ export default function WorkLibraryPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {data?.items.map((item) =>
-                item.externalLink && !isDetailCategory(item.category) ? (
+                item.externalLink ? (
                   <a
                     key={item.id}
                     href={item.externalLink}
@@ -370,22 +217,13 @@ export default function WorkLibraryPage() {
                       className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
                       data-testid={`card-work-${item.slug}`}
                     >
-                      {item.imageUrl ? (
+                      {item.imageUrl && (
                         <img
                           src={item.imageUrl}
                           alt={item.title}
                           className="w-full h-48 object-cover"
                           loading="lazy"
                         />
-                      ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-brand-gold/15 via-brand-light-gold to-white flex flex-col items-center justify-center text-center px-4">
-                          <div className="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 text-brand-gold-dark">
-                            <FileText size={28} />
-                          </div>
-                          <p className="font-almarai text-sm font-bold text-brand-gold-dark">
-                            لا توجد صورة متاحة
-                          </p>
-                        </div>
                       )}
                       <div className="p-5 flex-1 flex flex-col">
                         <Badge
@@ -404,30 +242,18 @@ export default function WorkLibraryPage() {
                     </div>
                   </a>
                 ) : (
-                  <Link
-                    key={item.id}
-                    href={`/work-library/${item.slug}?category=${item.category}`}
-                  >
+                  <Link key={item.id} href={`/work-library/${item.slug}`}>
                     <div
                       className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
                       data-testid={`card-work-${item.slug}`}
                     >
-                      {item.imageUrl ? (
+                      {item.imageUrl && (
                         <img
                           src={item.imageUrl}
                           alt={item.title}
                           className="w-full h-48 object-cover"
                           loading="lazy"
                         />
-                      ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-brand-gold/15 via-brand-light-gold to-white flex flex-col items-center justify-center text-center px-4">
-                          <div className="w-14 h-14 rounded-full bg-white shadow-sm flex items-center justify-center mb-3 text-brand-gold-dark">
-                            <FileText size={28} />
-                          </div>
-                          <p className="font-almarai text-sm font-bold text-brand-gold-dark">
-                            لا توجد صورة متاحة
-                          </p>
-                        </div>
                       )}
                       <div className="p-5 flex-1 flex flex-col">
                         <Badge
@@ -452,8 +278,7 @@ export default function WorkLibraryPage() {
 
           {!isLoading &&
             (activeCategory === "all" ||
-              activeCategory === "procedural-guides" ||
-              activeCategory === "annual-plans") &&
+              activeCategory === "procedural-guides") &&
             (data?.lastPage || 1) > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2 flex-wrap">
                 <button

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -35,7 +35,6 @@ import {
   Clock,
   Rocket,
   XCircle,
-  Download,
 } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Progress } from "@/components/ui/progress";
@@ -108,8 +107,6 @@ const assessmentAxes = [
       "إدارة المخاطر",
       "الامتثال للأنظمة",
     ],
-    platform: "مسرعة أثر وريادة",
-    recommendation: "التوصية بالتسجيل في مسرعة أثر وريادة",
   },
   {
     title: "القيادة والاستراتيجية",
@@ -120,8 +117,6 @@ const assessmentAxes = [
       "متابعة تنفيذ الاستراتيجية",
       "قرارات مبنية على بيانات",
     ],
-    platform: "مسرعة أثر وريادة",
-    recommendation: "التوصية بالتسجيل في مسرعة أثر وريادة",
   },
   {
     title: "التخطيط والتشغيل",
@@ -132,8 +127,6 @@ const assessmentAxes = [
       "وضوح الأدوار والمسؤوليات",
       "كفاءة العمليات",
     ],
-    platform: "مسرعة أثر وريادة",
-    recommendation: "التوصية بالتسجيل في مسرعة أثر وريادة",
   },
   {
     title: "إدارة المشاريع (مختبرات حقق)",
@@ -144,8 +137,6 @@ const assessmentAxes = [
       "إدارة المخاطر",
       "قابلية التوسع",
     ],
-    platform: "مختبرات حقق",
-    recommendation: "التوصية بالتسجيل في مختبرات حقق",
   },
   {
     title: "قياس الأداء والأثر (منصة أداء)",
@@ -156,8 +147,6 @@ const assessmentAxes = [
       "شهادات أداء",
       "استخدام النتائج في القرار",
     ],
-    platform: "منصة أداء",
-    recommendation: "التوصية بالتسجيل في منصة أداء",
   },
   {
     title: "الإدارة المالية والاستدامة",
@@ -168,8 +157,6 @@ const assessmentAxes = [
       "تقارير مالية منتظمة",
       "جاهزية تمويلية",
     ],
-    platform: "مسرعة أثر وريادة",
-    recommendation: "التوصية بالتسجيل في مسرعة أثر وريادة",
   },
   {
     title: "الموارد البشرية وبناء القدرات",
@@ -180,8 +167,6 @@ const assessmentAxes = [
       "خطط تطوير وتدريب",
       "استقرار الفريق",
     ],
-    platform: "اكاديمية حقق",
-    recommendation: "التوصية بالتسجيل في اكاديمية حقق",
   },
   {
     title: "التقنية والتحول الرقمي",
@@ -192,8 +177,6 @@ const assessmentAxes = [
       "أتمتة العمليات",
       "استخدام الذكاء في القرار",
     ],
-    platform: "عباق وأثر 360",
-    recommendation: "التوصية بالتسجيل في عباق وأثر 360",
   },
   {
     title: "الاتصال المؤسسي والسرد",
@@ -204,8 +187,6 @@ const assessmentAxes = [
       "قنوات فعالة",
       "تفاعل أصحاب المصلحة",
     ],
-    platform: "اكاديمية حقق",
-    recommendation: "التوصية بالتسجيل في اكاديمية حقق",
   },
   {
     title: "الإنسانية وأصحاب المصلحة",
@@ -216,8 +197,6 @@ const assessmentAxes = [
       "عدالة الإجراءات",
       "أثر اجتماعي حقيقي",
     ],
-    platform: "مسرعة أثر وريادة",
-    recommendation: "التوصية بالتسجيل في مسرعة أثر وريادة",
   },
 ];
 
@@ -229,9 +208,6 @@ export default function ECSTTPage() {
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [selectedRukn, setSelectedRukn] = useState<string | null>("purpose");
   const [cycleRadius, setCycleRadius] = useState(220);
-    const [progressValues, setProgressValues] = useState<Record<number, number>>({});
-  const [isExporting, setIsExporting] = useState(false);
-  const resultRef = useRef<HTMLDivElement>(null);
 
   const heroRef = useScrollAnimation();
   const problemsRef = useScrollAnimation();
@@ -264,67 +240,6 @@ export default function ECSTTPage() {
 
     setHasRegistration(Boolean(storedOrgId));
   }, []);
-
-  useEffect(() => {
-    setProgressValues({});
-    if (step !== "result") return;
-    const timeout = setTimeout(() => {
-      const vals: Record<number, number> = {};
-      assessmentAxes.forEach((a, i) => {
-        vals[i] = parseFloat(getAxisAverage(a.title).toString());
-      });
-      setProgressValues(vals);
-    }, 150);
-    return () => clearTimeout(timeout);
-  }, [step]);
-
-  const exportToPDF = async () => {
-    if (!resultRef.current || isExporting) return;
-    setIsExporting(true);
-    try {
-      const { default: html2canvas } = await import("html2canvas");
-      const { jsPDF } = await import("jspdf");
-      const element = resultRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#f9f5f0",
-        logging: false,
-        windowWidth: 1200,
-      });
-      const imgData = canvas.toDataURL("image/jpeg", 0.92);
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const usableW = pageW - margin * 2;
-      const imgH = (canvas.height * usableW) / canvas.width;
-      let yPos = margin;
-      let remaining = imgH;
-      let srcY = 0;
-      const pxPerMm = canvas.width / usableW;
-      while (remaining > 0) {
-        const sliceH = Math.min(remaining, pageH - margin * 2);
-        const slicePx = sliceH * pxPerMm;
-        const sliceCanvas = document.createElement("canvas");
-        sliceCanvas.width = canvas.width;
-        sliceCanvas.height = slicePx;
-        const ctx = sliceCanvas.getContext("2d")!;
-        ctx.drawImage(canvas, 0, srcY, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
-        const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.92);
-        pdf.addImage(sliceData, "JPEG", margin, yPos, usableW, sliceH);
-        remaining -= sliceH;
-        srcY += slicePx;
-        if (remaining > 0) { pdf.addPage(); yPos = margin; }
-      }
-      pdf.save(`تقرير-التقييم-المؤسسي-${new Date().toLocaleDateString("ar-SA").replace(/\//g, "-")}.pdf`);
-    } catch (err) {
-      console.error("PDF export failed", err);
-    } finally {
-      setIsExporting(false);
-    }
-  };
 
   const handleScoreChange = (
     axisTitle: string,
@@ -1165,26 +1080,6 @@ export default function ECSTTPage() {
 
           {step === "result" && (
             <div className="space-y-10 sm:space-y-12 animate-in fade-in zoom-in duration-1000">
-              <div className="flex justify-end">
-                <Button
-                  onClick={exportToPDF}
-                  disabled={isExporting}
-                  className="flex items-center gap-2 bg-brand-gold hover:bg-brand-gold/90 text-white font-black rounded-2xl px-6 py-3 text-sm shadow-lg transition-all disabled:opacity-60"
-                >
-                  {isExporting ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      جارٍ التصدير...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="w-4 h-4" />
-                      تصدير التقرير PDF
-                    </>
-                  )}
-                </Button>
-              </div>
-              <div ref={resultRef}>
               <div className="bg-brand-dark text-white p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] text-center relative overflow-hidden shadow-2xl">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
                 <div className="relative z-10">
@@ -1213,27 +1108,15 @@ export default function ECSTTPage() {
                             .label
                         }
                       </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 mt-2 w-full">
-                        {[
-                          { range: "4.5 – 5", label: "امتثال مؤسسي ناضج", min: 4.5, activeClass: "bg-green-500 border-green-500 text-white", inactiveClass: "border-green-500/30 text-green-400/40" },
-                          { range: "3.5 – 4.4", label: "امتثال جيد", min: 3.5, activeClass: "bg-blue-500 border-blue-500 text-white", inactiveClass: "border-blue-400/30 text-blue-300/40" },
-                          { range: "2.5 – 3.4", label: "امتثال متوسط", min: 2.5, activeClass: "bg-yellow-500 border-yellow-400 text-white", inactiveClass: "border-yellow-400/30 text-yellow-300/40" },
-                          { range: "1.5 – 2.4", label: "امتثال ضعيف", min: 1.5, activeClass: "bg-orange-500 border-orange-500 text-white", inactiveClass: "border-orange-400/30 text-orange-300/40" },
-                          { range: "أقل من 1.5", label: "خطر مؤسسي", min: 0, activeClass: "bg-red-500 border-red-500 text-white", inactiveClass: "border-red-400/30 text-red-300/40" },
-                        ].map((level, idx, arr) => {
-                          const avg = parseFloat(getOverallAverage());
-                          const maxVal = idx === 0 ? 5 : arr[idx - 1].min;
-                          const isActive = avg >= level.min && avg < maxVal;
-                          return (
-                            <div
-                              key={level.label}
-                              className={`px-3 py-2 rounded-2xl text-center border-2 transition-all ${isActive ? level.activeClass + " scale-105 shadow-lg" : level.inactiveClass}`}
-                            >
-                              <div className="text-[10px] font-bold opacity-80 mb-0.5 whitespace-nowrap">{level.range}</div>
-                              <div className="text-xs font-black leading-tight">{level.label}</div>
-                            </div>
-                          );
-                        })}
+                      <div className="flex flex-wrap gap-3 sm:gap-4">
+                        {["ناشئة", "نامية", "ناضجة", "مستدامة"].map((stage) => (
+                          <div
+                            key={stage}
+                            className={`flex-1 min-w-[120px] px-4 sm:px-6 py-2 sm:py-3 rounded-2xl text-xs sm:text-sm font-black border-2 transition-all ${getMaturityLevel(parseFloat(getOverallAverage())).stage === stage ? "bg-brand-gold border-brand-gold text-white scale-110 shadow-lg" : "border-white/10 text-white/30"}`}
+                          >
+                            {stage}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -1277,51 +1160,51 @@ export default function ECSTTPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {assessmentAxes.map((a, i) => {
-                  const avg = parseFloat(getAxisAverage(a.title).toString());
-                  const maturity = getMaturityLevel(avg);
-                  const animWidth = `${((progressValues[i] ?? 0) / 5) * 100}%`;
-                  const getPlatformMsg = (score: number, platform: string) => {
-                    if (score >= 4.5) return null;
-                    if (score >= 3.5) return { text: `يمكن الاستفادة من ${platform} لتعزيز هذا المحور`, style: "bg-blue-50 border-blue-200 text-blue-800" };
-                    if (score >= 2.5) return { text: `يُوصى بالالتحاق ببرنامج ${platform} لتطوير هذا المحور`, style: "bg-yellow-50 border-yellow-300 text-yellow-900" };
-                    return { text: `يُوصى بشدة بالالتحاق بـ ${platform} — هذا المحور يحتاج تدخلاً عاجلاً`, style: "bg-red-50 border-red-300 text-red-800" };
-                  };
-                  const msg = getPlatformMsg(avg, a.platform);
-                  return (
-                    <Card
-                      key={i}
-                      className="border-none shadow-2xl bg-white overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border-b-8 border-brand-gold/10"
-                    >
-                      <CardContent className="p-6 sm:p-8 lg:p-10">
-                        <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-black text-brand-dark text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl max-w-[70%] leading-tight">
-                            {a.title}
-                          </h4>
-                          <div className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${maturity.color}`}>
-                            {getAxisAverage(a.title)} / 5
-                          </div>
+                {assessmentAxes.map((a, i) => (
+                  <Card
+                    key={i}
+                    className="border-none shadow-2xl bg-white overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border-b-8 border-brand-gold/10"
+                  >
+                    <CardContent className="p-6 sm:p-8 lg:p-10">
+                      <div className="flex justify-between items-start mb-6">
+                        <h4 className="font-black text-brand-dark text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl max-w-[70%] leading-tight">
+                          {a.title}
+                        </h4>
+                        <div
+                          className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color}`}
+                        >
+                          {getAxisAverage(a.title)} / 5
                         </div>
-                        {msg && (
-                          <div className={`flex items-start gap-2 rounded-xl border px-3 py-2 mb-5 ${msg.style}`}>
-                            <span className="text-sm shrink-0 mt-0.5">💡</span>
-                            <p className="text-xs font-bold leading-relaxed">{msg.text}</p>
-                          </div>
-                        )}
-                        <div className="h-5 bg-brand-light rounded-full mb-4 overflow-hidden p-0.5 shadow-inner">
-                          <div
-                            className={`h-full rounded-full ${maturity.color.replace("text", "bg")}`}
-                            style={{ width: animWidth, transition: "width 1.2s cubic-bezier(0.4,0,0.2,1)" }}
-                          />
-                        </div>
-                        <div className="flex justify-between items-center text-xs font-black">
-                          <span className="text-brand-gray/50 uppercase">Maturity Score</span>
-                          <span className={maturity.color}>{maturity.label}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                      </div>
+                      <div className="h-6 bg-brand-light rounded-full mb-4 overflow-hidden p-1 shadow-inner">
+                        <div
+                          className={`h-full rounded-full transition-all duration-1000 ${getMaturityLevel(parseFloat(getAxisAverage(a.title).toString())).color.replace("text", "bg")}`}
+                          style={{
+                            width: `${(parseFloat(getAxisAverage(a.title).toString()) / 5) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between items-center text-xs font-black">
+                        <span className="text-brand-gray/50 uppercase">
+                          Maturity Score
+                        </span>
+                        <span
+                          className={
+                            getMaturityLevel(
+                              parseFloat(getAxisAverage(a.title).toString()),
+                            ).color
+                          }
+                        >
+                          {
+                            getMaturityLevel(
+                              parseFloat(getAxisAverage(a.title).toString()),
+                            ).label
+                          }
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
 
               <div className="bg-brand-light-gold p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] border-4 border-brand-gold/20 text-center shadow-xl">
@@ -1376,7 +1259,6 @@ export default function ECSTTPage() {
                   </Button>
                 </div>
               </div>
-              </div>{/* end resultRef */}
             </div>
           )}
         </div>
