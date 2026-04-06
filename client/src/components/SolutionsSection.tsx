@@ -1,82 +1,60 @@
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useEffect, useState } from "react";
 
-type Solution = {
-  title: string;
-  desc: string;
-  link?: string;
-  available: boolean;
-  logoUrl?: string;
-  logoText?: string;
+const DIGITAL_SOLUTION_LINKS_API_URL =
+  "https://gold-weasel-489740.hostingersite.com/api/digital-solution-links";
+
+type ApiDigitalSolutionLink = {
+  id: number;
+  label: string;
+  label_en: string | null;
+  url: string;
+  open_in_new_tab: boolean;
+  sort_order: number;
+  is_active: boolean;
 };
 
-const solutions: Solution[] = [
-  {
-    title: "منصة أداء لقياس الأداء المؤسسي",
-    desc: "منصة لقياس أداء المنظمات وتحليل نتائج المشاريع بشكل دقيق.",
-    link: "https://adaa.pro",
-    logoUrl: "/images/adaa-logo.png",
-    available: true,
-  },
-  {
-    title: "مختبرات حقّق الاجتماعية",
-    desc: "منصة تقدم استشارات تخصصية ودراسات ميدانية للمشاريع الاجتماعية.",
-    link: "https://haqqeq-lab.com",
-    logoUrl: "https://www.google.com/s2/favicons?domain=haqqeq-lab.com&sz=128",
-    available: true,
-  },
-  {
-    title: "مسرعة أثر وريادة",
-    desc: "منصة لتصميم الخطط الاستراتيجية والتشغيلية ومتابعة الأداء.",
-    link: "https://athar-riyada.com",
-    logoUrl:
-      "https://www.google.com/s2/favicons?domain=athar-riyada.com&sz=128",
-    available: true,
-  },
-  {
-    title: "أكاديمية حقّق 360",
-    desc: "منصة تدريبية تجمع بين الاستشارات والتدريب المؤسسي.",
-    link: "https://www.hqq360.com",
-    logoUrl: "https://www.google.com/s2/favicons?domain=hqq360.com&sz=128",
-    available: true,
-  },
-  {
-    title: "أثر 360",
-    desc: "منصة لقياس الأثر التسويقي وتحليل نتائج الحملات التسويقية.",
-    logoUrl: "/images/athar-360-logo.png",
-    available: false,
-  },
-  {
-    title: "منصة عباق",
-    desc: "منصة تفاعلية تدعم التحول المؤسسي وتربط بين التشغيل وقياس الأثر.",
-    logoUrl: "/images/abaq-logo.png",
-    available: false,
-  },
-];
-
-function PlatformLogo({ solution }: { solution: Solution }) {
-  if (solution.logoUrl) {
-    return (
-      <img
-        src={solution.logoUrl}
-        alt={solution.title}
-        className="w-8 h-8 object-contain"
-        loading="lazy"
-      />
-    );
-  }
-
-  return (
-    <span className="font-almarai font-extrabold text-sm text-brand-gold-dark">
-      {solution.logoText}
-    </span>
-  );
-}
+type ApiDigitalSolutionLinksResponse = {
+  success: boolean;
+  data: ApiDigitalSolutionLink[];
+};
 
 export function SolutionsSection() {
   const header = useScrollAnimation();
   const grid = useScrollAnimation();
+  const [items, setItems] = useState<ApiDigitalSolutionLink[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadLinks = async () => {
+      try {
+        const res = await fetch(DIGITAL_SOLUTION_LINKS_API_URL);
+        if (!res.ok) return;
+
+        const payload = (await res.json()) as ApiDigitalSolutionLinksResponse;
+        const sorted = (payload.data || [])
+          .filter((item) => item.is_active)
+          .sort((a, b) => a.sort_order - b.sort_order);
+
+        if (isMounted) {
+          setItems(sorted);
+        }
+      } catch {
+        if (isMounted) {
+          setItems([]);
+        }
+      }
+    };
+
+    loadLinks();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section id="solutions" className="py-16 md:py-24 bg-white">
@@ -106,30 +84,24 @@ export function SolutionsSection() {
           ref={grid.ref}
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {solutions.map((s, i) => (
+          {items.map((item, i) => (
             <div
-              key={s.title}
+              key={item.id}
               className={`relative rounded-md p-6 bg-brand-gold/10 border border-gray-100 hover:shadow-md transition-shadow scroll-hidden stagger-${i + 1} ${grid.isVisible ? "scroll-visible" : ""}`}
-              data-testid={`solution-card-${s.title}`}
+              data-testid={`solution-card-${item.id}`}
             >
-              {!s.available && (
-                <span
-                  className="absolute top-4 left-4 font-almarai text-xs font-bold bg-brand-gold text-white px-3 py-1 rounded-md"
-                  data-testid="badge-coming-soon"
-                >
-                  قريبًا
-                </span>
-              )}
               <div className="w-12 h-12 rounded-md flex items-center justify-center mb-4 bg-brand-gold/20">
-                <PlatformLogo solution={s} />
+                <span className="font-almarai font-extrabold text-xs text-brand-gold-dark">
+                  رابط
+                </span>
               </div>
               <h4 className="font-almarai font-bold text-lg text-brand-dark mb-2">
-                {s.title}
+                {item.label}
               </h4>
               <p className="font-almarai text-brand-gray text-sm leading-relaxed mb-4">
-                {s.desc}
+                {item.label_en || item.url}
               </p>
-              {s.available && s.link && (
+              {item.url && (
                 <Button
                   asChild
                   variant="ghost"
@@ -137,10 +109,12 @@ export function SolutionsSection() {
                   className="font-almarai text-brand-gold-dark p-0 h-auto gap-1"
                 >
                   <a
-                    href={s.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-testid={`link-solution-${s.title}`}
+                    href={item.url}
+                    target={item.open_in_new_tab ? "_blank" : "_self"}
+                    rel={
+                      item.open_in_new_tab ? "noopener noreferrer" : undefined
+                    }
+                    data-testid={`link-solution-${item.id}`}
                   >
                     زيارة المنصة
                     <ExternalLink size={14} />
@@ -150,6 +124,12 @@ export function SolutionsSection() {
             </div>
           ))}
         </div>
+
+        {items.length === 0 && (
+          <p className="text-center mt-8 font-almarai text-brand-gray">
+            لا توجد روابط حلول رقمية متاحة حاليا
+          </p>
+        )}
       </div>
     </section>
   );

@@ -8,8 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { FileText } from "lucide-react";
 import type { WorkItem } from "@shared/schema";
 
-const CASE_STUDIES_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/case-studies";
+const PROCEDURAL_EVIDENCES_API_URL =
+  "https://gold-weasel-489740.hostingersite.com/api/procedural-evidences";
 const STRATEGIC_PLANS_API_URL =
   "https://gold-weasel-489740.hostingersite.com/api/strategic-plans";
 const ANNUAL_PLANS_API_URL =
@@ -34,7 +34,7 @@ const categoryLabels: Record<string, string> = {
 
 type WorkCategory = WorkItem["category"];
 
-interface CaseStudyApiItem {
+interface ProceduralEvidenceApiItem {
   id: number;
   slug: string;
   title: string;
@@ -42,6 +42,8 @@ interface CaseStudyApiItem {
   content_text: string | null;
   link: string | null;
   image_url: string | null;
+  date: string | null;
+  modified: string | null;
   published_at: string | null;
 }
 
@@ -75,9 +77,9 @@ interface StrategicPlanApiItem {
   published_at: string | null;
 }
 
-interface CaseStudiesPageResponse {
+interface ProceduralEvidencesPageResponse {
   current_page: number;
-  data: CaseStudyApiItem[];
+  data: ProceduralEvidenceApiItem[];
   last_page: number;
 }
 
@@ -114,7 +116,7 @@ interface WorkLibraryQueryResult {
   lastPage: number;
 }
 
-function toWorkCardItem(item: CaseStudyApiItem): WorkLibraryCardItem {
+function toWorkCardItem(item: ProceduralEvidenceApiItem): WorkLibraryCardItem {
   return {
     id: item.id,
     slug: item.slug || `case-study-${item.id}`,
@@ -124,7 +126,7 @@ function toWorkCardItem(item: CaseStudyApiItem): WorkLibraryCardItem {
     category: "procedural-guides",
     imageUrl: item.image_url || null,
     externalLink: item.link || null,
-    createdAt: item.published_at || "",
+    createdAt: item.published_at || item.date || item.modified || "",
   };
 }
 
@@ -178,11 +180,11 @@ export default function WorkLibraryPage() {
           activeCategory === "procedural-guides"
         ) {
           const res = await fetch(
-            `${CASE_STUDIES_API_URL}?page=${currentPage}`,
+            `${PROCEDURAL_EVIDENCES_API_URL}?page=${currentPage}`,
           );
-          if (!res.ok) throw new Error("Failed to fetch case studies");
+          if (!res.ok) throw new Error("Failed to fetch procedural evidences");
 
-          const page = (await res.json()) as CaseStudiesPageResponse;
+          const page = (await res.json()) as ProceduralEvidencesPageResponse;
           const mapped = (page.data || [])
             .map(toWorkCardItem)
             .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -253,7 +255,7 @@ export default function WorkLibraryPage() {
       } catch {
         const url =
           activeCategory === "all" || activeCategory === "procedural-guides"
-            ? `${CASE_STUDIES_API_URL}?page=${currentPage}`
+            ? `${PROCEDURAL_EVIDENCES_API_URL}?page=${currentPage}`
             : activeCategory === "strategic-planning"
               ? `${STRATEGIC_PLANS_API_URL}?page=${currentPage}`
               : activeCategory === "annual-plans"
@@ -266,7 +268,7 @@ export default function WorkLibraryPage() {
           activeCategory === "all" ||
           activeCategory === "procedural-guides"
         ) {
-          const page = (await res.json()) as CaseStudiesPageResponse;
+          const page = (await res.json()) as ProceduralEvidencesPageResponse;
           return {
             items: (page.data || []).map(toWorkCardItem),
             currentPage: page.current_page || currentPage,

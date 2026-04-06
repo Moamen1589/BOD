@@ -112,7 +112,7 @@ export default function BlogPage() {
       excerpt: item.short_description || item.content || "",
       content: item.content || "",
       category: "article" as Article["category"],
-      imageUrl: toImageUrl(item?.image_path),
+      imageUrl: item?.image_url,
       publishDate: item.published_at,
       published: item.is_published,
       createdAt: new Date(item.created_at),

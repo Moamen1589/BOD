@@ -20,7 +20,7 @@ const REMOTE_SOURCE_URLS: Record<string, string> = {
   "strategic-planning":
     "https://gold-weasel-489740.hostingersite.com/api/strategic-plans",
   "procedural-guides":
-    "https://gold-weasel-489740.hostingersite.com/api/case-studies",
+    "https://gold-weasel-489740.hostingersite.com/api/procedural-evidences",
   "annual-plans":
     "https://gold-weasel-489740.hostingersite.com/api/annual-plans",
 };
@@ -32,6 +32,8 @@ interface RemoteWorkItem {
   excerpt: string | null;
   content_text: string | null;
   link: string | null;
+  date?: string | null;
+  modified?: string | null;
   published_at: string | null;
   image_url?: string | null;
   featured_image?: { url: string } | null;
@@ -84,7 +86,7 @@ function mapRemoteItem(
       item.image_url ||
       null,
     sourceLink: item.link || null,
-    publishDate: item.published_at || null,
+    publishDate: item.published_at || item.date || item.modified || null,
   };
 }
 

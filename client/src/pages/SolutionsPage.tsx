@@ -9,6 +9,8 @@ import { ExternalLink } from "lucide-react";
 import type { DigitalSolution } from "@shared/schema";
 
 const releasesApiBase = "https://gold-weasel-489740.hostingersite.com";
+const CASE_STUDIES_API_URL =
+  "https://gold-weasel-489740.hostingersite.com/api/case-studies";
 
 const types = [
   { key: "all", label: "الكل" },
@@ -46,6 +48,21 @@ type ReleasesApiResponse = {
   };
 };
 
+type ApiCaseStudy = {
+  id: number;
+  title: string;
+  excerpt?: string | null;
+  content_text?: string | null;
+  link?: string | null;
+  image_url?: string | null;
+};
+
+type CaseStudiesApiResponse = {
+  current_page?: number;
+  data: ApiCaseStudy[];
+  last_page?: number;
+};
+
 type DisplayCard =
   | {
       kind: "solution";
@@ -66,6 +83,14 @@ type DisplayCard =
       downloadUrl: string | null;
       buttonText: string;
       editionNumber: number | null;
+    }
+  | {
+      kind: "case-study";
+      id: number;
+      title: string;
+      description: string;
+      imageUrl: string | null;
+      externalLink: string | null;
     };
 
 type SolutionsPageData = {
@@ -76,10 +101,19 @@ type SolutionsPageData = {
 const cleanReleaseText = (value?: string | null): string => {
   if (!value) return "";
   return value
+    .replace(/<br\s*\/?>(\s*)/gi, "\n")
+    .replace(/<\/(p|div|li|h[1-6])>/gi, "\n")
+    .replace(/<(p|div|li|h[1-6])[^>]*>/gi, "")
     .replace(/elementor-widget-container\">?/gi, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/gi, " ")
-    .replace(/\s+/g, " ")
+    .replace(/\r/g, "")
+    .replace(/\s*(\d+\s*-\s*)/g, "\n$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .join("\n")
+    .replace(/[ \t]{2,}/g, " ")
     .trim();
 };
 
@@ -103,7 +137,8 @@ const readInitialState = () => {
 
   return {
     type: safeType,
-    page: safeType === "publication" ? safePage : 1,
+    page:
+      safeType === "publication" || safeType === "case-study" ? safePage : 1,
   };
 };
 
@@ -119,7 +154,10 @@ export default function SolutionsPage() {
     const nextState = readInitialState();
     setActiveType((prev) => (prev === nextState.type ? prev : nextState.type));
     setCurrentPage((prev) => {
-      const nextPage = nextState.type === "publication" ? nextState.page : 1;
+      const nextPage =
+        nextState.type === "publication" || nextState.type === "case-study"
+          ? nextState.page
+          : 1;
       return prev === nextPage ? prev : nextPage;
     });
   }, [location]);
@@ -135,7 +173,7 @@ export default function SolutionsPage() {
       params.set("type", activeType);
     }
 
-    if (activeType === "publication") {
+    if (activeType === "publication" || activeType === "case-study") {
       params.set("page", String(currentPage));
     } else {
       params.delete("page");
@@ -155,11 +193,13 @@ export default function SolutionsPage() {
         );
         if (!releasesRes.ok) throw new Error("Failed to fetch releases");
 
-        const releasesPayload = (await releasesRes.json()) as ReleasesApiResponse;
+        const releasesPayload =
+          (await releasesRes.json()) as ReleasesApiResponse;
 
         const cards: DisplayCard[] = (releasesPayload?.data ?? []).map(
           (release) => {
             const cleanTitle = cleanReleaseText(release.title_guess);
+            const cleanDescription = cleanReleaseText(release.card_text);
             const fallbackTitle = release.edition_number
               ? `الإصدار ${release.edition_number}`
               : `الإصدار ${release.id}`;
@@ -168,12 +208,11 @@ export default function SolutionsPage() {
               kind: "release",
               id: release.id,
               title: cleanTitle || fallbackTitle,
-              description:
-                cleanReleaseText(release.card_text) || cleanTitle || fallbackTitle,
+              description: cleanDescription || cleanTitle || fallbackTitle,
               imageUrl: release.image_url?.trim() || null,
               downloadUrl:
-                release.direct_download_url?.trim() ||
                 release.file_url?.trim() ||
+                release.direct_download_url?.trim() ||
                 null,
               buttonText: release.button_text?.trim() || "للإطلاع والتحميل",
               editionNumber: release.edition_number ?? null,
@@ -184,6 +223,32 @@ export default function SolutionsPage() {
         return {
           cards,
           totalPages: Math.max(1, releasesPayload.meta?.last_page ?? 1),
+        };
+      }
+
+      if (activeType === "case-study") {
+        const caseStudiesRes = await fetch(
+          `${CASE_STUDIES_API_URL}?page=${currentPage}`,
+        );
+        if (!caseStudiesRes.ok) throw new Error("Failed to fetch case studies");
+
+        const caseStudiesPayload =
+          (await caseStudiesRes.json()) as CaseStudiesApiResponse;
+
+        const cards: DisplayCard[] = (caseStudiesPayload?.data ?? []).map(
+          (study) => ({
+            kind: "case-study",
+            id: study.id,
+            title: study.title,
+            description: study.excerpt || study.content_text || "",
+            imageUrl: study.image_url?.trim() || null,
+            externalLink: study.link?.trim() || null,
+          }),
+        );
+
+        return {
+          cards,
+          totalPages: Math.max(1, caseStudiesPayload.last_page ?? 1),
         };
       }
 
@@ -222,10 +287,16 @@ export default function SolutionsPage() {
       <main className="flex-1 pt-28 pb-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <span className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/10 px-4 py-1.5 rounded-md" data-testid="badge-solutions-page">
+            <span
+              className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/10 px-4 py-1.5 rounded-md"
+              data-testid="badge-solutions-page"
+            >
               حلولنا الرقمية
             </span>
-            <h1 className="font-almarai font-extrabold text-3xl md:text-4xl text-brand-dark mt-6 mb-4" data-testid="text-solutions-title">
+            <h1
+              className="font-almarai font-extrabold text-3xl md:text-4xl text-brand-dark mt-6 mb-4"
+              data-testid="text-solutions-title"
+            >
               المنصات والحلول الرقمية
             </h1>
             <p className="font-almarai text-brand-gray max-w-2xl mx-auto text-lg">
@@ -280,24 +351,96 @@ export default function SolutionsPage() {
                         {!card.imageUrl && (
                           <div className="w-full h-48 bg-gradient-to-br from-brand-gold/10 to-brand-gold/5 flex items-center justify-center">
                             <span className="font-almarai text-4xl text-brand-gold/30 font-bold">
-                              {typeLabels[card.solutionType] || card.solutionType}
+                              {typeLabels[card.solutionType] ||
+                                card.solutionType}
                             </span>
                           </div>
                         )}
                         <div className="p-5 flex-1 flex flex-col">
                           <div className="flex items-center gap-2 mb-3 flex-wrap">
-                            <Badge variant="outline" className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs">
-                              {typeLabels[card.solutionType] || card.solutionType}
+                            <Badge
+                              variant="outline"
+                              className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs"
+                            >
+                              {typeLabels[card.solutionType] ||
+                                card.solutionType}
                             </Badge>
                             {card.link && (
-                              <ExternalLink size={14} className="text-brand-gray/50" />
+                              <ExternalLink
+                                size={14}
+                                className="text-brand-gray/50"
+                              />
                             )}
                           </div>
-                          <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">{card.title}</h3>
-                          <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-2 flex-1">{card.description}</p>
+                          <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
+                            {card.title}
+                          </h3>
+                          <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-2 flex-1">
+                            {card.description}
+                          </p>
                         </div>
                       </div>
                     </Link>
+                  );
+                }
+
+                if (card.kind === "case-study") {
+                  return (
+                    <div
+                      key={`case-study-${card.id}`}
+                      className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col"
+                      data-testid={`card-case-study-${card.id}`}
+                    >
+                      {card.imageUrl ? (
+                        <img
+                          src={card.imageUrl}
+                          alt={card.title}
+                          className="w-full h-48 object-cover"
+                          loading="lazy"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="w-full h-48 bg-gradient-to-br from-brand-gold/10 to-brand-gold/5 flex items-center justify-center">
+                          <span className="font-almarai text-4xl text-brand-gold/30 font-bold">
+                            دراسة
+                          </span>
+                        </div>
+                      )}
+                      <div className="p-5 flex-1 flex flex-col">
+                        <div className="flex items-center gap-2 mb-3 flex-wrap">
+                          <Badge
+                            variant="outline"
+                            className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs"
+                          >
+                            دراسة حالة
+                          </Badge>
+                          {card.externalLink && (
+                            <ExternalLink
+                              size={14}
+                              className="text-brand-gray/50"
+                            />
+                          )}
+                        </div>
+                        <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
+                          {card.title}
+                        </h3>
+                        <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-3 flex-1">
+                          {card.description}
+                        </p>
+                        {card.externalLink && (
+                          <a
+                            href={card.externalLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-white font-almarai text-sm font-bold hover:bg-brand-gold-dark transition-colors"
+                            data-testid={`button-case-study-open-${card.id}`}
+                          >
+                            عرض الدراسة
+                            <ExternalLink size={14} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
                   );
                 }
 
@@ -311,7 +454,7 @@ export default function SolutionsPage() {
                       <img
                         src={card.imageUrl}
                         alt={card.title}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-[320px] object-contain bg-white"
                         loading="lazy"
                         referrerPolicy="no-referrer"
                       />
@@ -324,13 +467,25 @@ export default function SolutionsPage() {
                     )}
                     <div className="p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-2 mb-3 flex-wrap">
-                        <Badge variant="outline" className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs">
-                          {card.editionNumber ? `إصدار ${card.editionNumber}` : "إصدار"}
+                        <Badge
+                          variant="outline"
+                          className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs"
+                        >
+                          {card.editionNumber
+                            ? `إصدار ${card.editionNumber}`
+                            : "إصدار"}
                         </Badge>
-                        <ExternalLink size={14} className="text-brand-gray/50" />
+                        <ExternalLink
+                          size={14}
+                          className="text-brand-gray/50"
+                        />
                       </div>
-                      <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">{card.title}</h3>
-                      <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-3 flex-1">{card.description}</p>
+                      <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
+                        {card.title}
+                      </h3>
+                      <p className="font-almarai text-brand-gray text-sm leading-relaxed whitespace-pre-line text-right flex-1">
+                        {card.description}
+                      </p>
                       {card.downloadUrl && (
                         <a
                           href={card.downloadUrl}
@@ -354,12 +509,14 @@ export default function SolutionsPage() {
             <p className="text-center text-muted-foreground py-12 font-almarai text-lg">
               {activeType === "publication"
                 ? "لا توجد إصدارات في هذه الصفحة"
-                : "لا توجد حلول في هذا التصنيف"}
+                : activeType === "case-study"
+                  ? "لا توجد دراسات حالة في هذه الصفحة"
+                  : "لا توجد حلول في هذا التصنيف"}
             </p>
           )}
 
           {!isLoading &&
-            activeType === "publication" &&
+            (activeType === "publication" || activeType === "case-study") &&
             cards.length > 0 &&
             totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-10 flex-wrap">
@@ -380,9 +537,9 @@ export default function SolutionsPage() {
                   const page = index + 1;
                   const start = Math.max(
                     1,
-                    Math.min(currentPage - 1, totalPages - 3),
+                    Math.min(currentPage - 1, totalPages - 2),
                   );
-                  const end = Math.min(totalPages, start + 3);
+                  const end = Math.min(totalPages, start + 2);
                   if (page < start || page > end) return null;
 
                   return (
