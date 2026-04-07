@@ -17,6 +17,7 @@ import WorkLibraryPage from "@/pages/WorkLibraryPage";
 import WorkItemDetailPage from "@/pages/WorkItemDetailPage";
 import SolutionsPage from "@/pages/SolutionsPage";
 import SolutionDetailPage from "@/pages/SolutionDetailPage";
+import CaseStudyDetailPage from "@/pages/CaseStudyDetailPage";
 import { useEffect } from "react";
 import VotingPage from "./pages/VotingPage";
 import GovernancePage from "./pages/GovernancePage";
@@ -44,6 +45,10 @@ function Router() {
       <Route path="/work-library" component={WorkLibraryPage} />
       <Route path="/work-library/:slug" component={WorkItemDetailPage} />
       <Route path="/solutions" component={SolutionsPage} />
+      <Route
+        path="/solutions/case-study/:slug"
+        component={CaseStudyDetailPage}
+      />
       <Route path="/solutions/:slug" component={SolutionDetailPage} />
       <Route component={NotFound} />
     </Switch>

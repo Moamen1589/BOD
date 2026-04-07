@@ -5,15 +5,17 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import type { DigitalSolution } from "@shared/schema";
 
 const releasesApiBase = "https://gold-weasel-489740.hostingersite.com";
 const CASE_STUDIES_API_URL =
   "https://gold-weasel-489740.hostingersite.com/api/case-studies";
+const DIGITAL_SOLUTION_LINKS_API_URL =
+  "https://gold-weasel-489740.hostingersite.com/api/digital-solution-links";
 
 const types = [
-  { key: "all", label: "الكل" },
   { key: "platform", label: "المنصات" },
   { key: "case-study", label: "دراسات الحالة" },
   { key: "publication", label: "الإصدارات" },
@@ -50,17 +52,37 @@ type ReleasesApiResponse = {
 
 type ApiCaseStudy = {
   id: number;
+  slug: string;
   title: string;
   excerpt?: string | null;
   content_text?: string | null;
   link?: string | null;
   image_url?: string | null;
+  image_drive_link?: string | null;
+  image_drive_file_id?: string | null;
+  author_name?: string | null;
+  published_at?: string | null;
 };
 
 type CaseStudiesApiResponse = {
   current_page?: number;
   data: ApiCaseStudy[];
   last_page?: number;
+};
+
+type ApiDigitalSolutionLink = {
+  id: number;
+  label: string;
+  label_en: string | null;
+  url: string;
+  open_in_new_tab: boolean;
+  sort_order: number;
+  is_active: boolean;
+};
+
+type ApiDigitalSolutionLinksResponse = {
+  success: boolean;
+  data: ApiDigitalSolutionLink[];
 };
 
 type DisplayCard =
@@ -87,10 +109,22 @@ type DisplayCard =
   | {
       kind: "case-study";
       id: number;
+      slug: string;
       title: string;
       description: string;
+      content: string;
       imageUrl: string | null;
       externalLink: string | null;
+      publishDate: string | null;
+      authorName: string | null;
+    }
+  | {
+      kind: "platform-link";
+      id: number;
+      title: string;
+      subtitle: string;
+      url: string;
+      openInNewTab: boolean;
     };
 
 type SolutionsPageData = {
@@ -117,18 +151,45 @@ const cleanReleaseText = (value?: string | null): string => {
     .trim();
 };
 
+const toImageUrl = (imagePath?: string | null): string | null => {
+  if (!imagePath) return null;
+  const trimmed = imagePath.trim();
+  if (!trimmed) return null;
+  const match =
+    trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+    trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (!match) return trimmed;
+  return `https://lh3.googleusercontent.com/d/${match[1]}=w1000`;
+};
+
+const toDriveImageById = (driveFileId?: string | null): string | null => {
+  if (!driveFileId) return null;
+  const trimmed = driveFileId.trim();
+  if (!trimmed) return null;
+  return `https://lh3.googleusercontent.com/d/${trimmed}=w1000`;
+};
+
+const resolveCaseStudyImage = (study: ApiCaseStudy): string | null => {
+  return (
+    toDriveImageById(study.image_drive_file_id) ||
+    toImageUrl(study.image_drive_link) ||
+    study.image_url?.trim() ||
+    null
+  );
+};
+
 const isValidType = (type: string | null): type is SolutionFilterType => {
   return !!type && types.some((t) => t.key === type);
 };
 
 const readInitialState = () => {
   if (typeof window === "undefined") {
-    return { type: "all" as SolutionFilterType, page: 1 };
+    return { type: "platform" as SolutionFilterType, page: 1 };
   }
 
   const params = new URLSearchParams(window.location.search);
   const typeParam = params.get("type");
-  const safeType = isValidType(typeParam) ? typeParam : "all";
+  const safeType = isValidType(typeParam) ? typeParam : "platform";
   const requestedPage = Number(params.get("page") ?? "1");
   const safePage =
     Number.isFinite(requestedPage) && requestedPage > 0
@@ -166,12 +227,7 @@ export default function SolutionsPage() {
     if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
-
-    if (activeType === "all") {
-      params.delete("type");
-    } else {
-      params.set("type", activeType);
-    }
+    params.set("type", activeType);
 
     if (activeType === "publication" || activeType === "case-study") {
       params.set("page", String(currentPage));
@@ -209,7 +265,7 @@ export default function SolutionsPage() {
               id: release.id,
               title: cleanTitle || fallbackTitle,
               description: cleanDescription || cleanTitle || fallbackTitle,
-              imageUrl: release.image_url?.trim() || null,
+              imageUrl: toImageUrl(release.image_url),
               downloadUrl:
                 release.file_url?.trim() ||
                 release.direct_download_url?.trim() ||
@@ -239,10 +295,14 @@ export default function SolutionsPage() {
           (study) => ({
             kind: "case-study",
             id: study.id,
+            slug: study.slug,
             title: study.title,
             description: study.excerpt || study.content_text || "",
-            imageUrl: study.image_url?.trim() || null,
+            content: study.content_text || study.excerpt || "",
+            imageUrl: resolveCaseStudyImage(study),
             externalLink: study.link?.trim() || null,
+            publishDate: study.published_at?.trim() || null,
+            authorName: study.author_name?.trim() || null,
           }),
         );
 
@@ -252,10 +312,32 @@ export default function SolutionsPage() {
         };
       }
 
-      const url =
-        activeType === "all"
-          ? "/api/solutions"
-          : `/api/solutions?type=${activeType}`;
+      if (activeType === "platform") {
+        const linksRes = await fetch(DIGITAL_SOLUTION_LINKS_API_URL);
+        if (!linksRes.ok) throw new Error("Failed to fetch platform links");
+
+        const linksPayload =
+          (await linksRes.json()) as ApiDigitalSolutionLinksResponse;
+
+        const cards: DisplayCard[] = (linksPayload.data || [])
+          .filter((item) => item.is_active)
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map((item) => ({
+            kind: "platform-link",
+            id: item.id,
+            title: item.label,
+            subtitle: item.label_en || item.url,
+            url: item.url,
+            openInNewTab: item.open_in_new_tab,
+          }));
+
+        return {
+          cards,
+          totalPages: 1,
+        };
+      }
+
+      const url = `/api/solutions?type=${activeType}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch solutions");
       const solutions = (await res.json()) as DigitalSolution[];
@@ -333,6 +415,48 @@ export default function SolutionsPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {cards.map((card) => {
+                if (card.kind === "platform-link") {
+                  return (
+                    <div
+                      key={`platform-link-${card.id}`}
+                      className="relative rounded-md p-6 bg-brand-gold/10 border border-gray-100 hover:shadow-md transition-shadow h-full"
+                      data-testid={`solution-card-${card.id}`}
+                    >
+                      <div className="w-12 h-12 rounded-md flex items-center justify-center mb-4 bg-brand-gold/20">
+                        <span className="font-almarai font-extrabold text-xs text-brand-gold-dark">
+                          رابط
+                        </span>
+                      </div>
+                      <h4 className="font-almarai font-bold text-lg text-brand-dark mb-2">
+                        {card.title}
+                      </h4>
+                      <p className="font-almarai text-brand-gray text-sm leading-relaxed mb-4">
+                        {card.subtitle}
+                      </p>
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="sm"
+                        className="font-almarai text-brand-gold-dark p-0 h-auto gap-1"
+                      >
+                        <a
+                          href={card.url}
+                          target={card.openInNewTab ? "_blank" : "_self"}
+                          rel={
+                            card.openInNewTab
+                              ? "noopener noreferrer"
+                              : undefined
+                          }
+                          data-testid={`link-solution-${card.id}`}
+                        >
+                          زيارة المنصة
+                          <ExternalLink size={14} />
+                        </a>
+                      </Button>
+                    </div>
+                  );
+                }
+
                 if (card.kind === "solution") {
                   return (
                     <Link key={card.id} href={`/solutions/${card.slug}`}>
@@ -386,61 +510,66 @@ export default function SolutionsPage() {
 
                 if (card.kind === "case-study") {
                   return (
-                    <div
+                    <Link
                       key={`case-study-${card.id}`}
-                      className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow h-full flex flex-col"
-                      data-testid={`card-case-study-${card.id}`}
+                      href={`/solutions/case-study/${card.slug}`}
+                      onClick={() => {
+                        try {
+                          sessionStorage.setItem(
+                            `case_study_${card.slug}`,
+                            JSON.stringify(card),
+                          );
+                        } catch {}
+                      }}
                     >
-                      {card.imageUrl ? (
-                        <img
-                          src={card.imageUrl}
-                          alt={card.title}
-                          className="w-full h-48 object-cover"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <div className="w-full h-48 bg-gradient-to-br from-brand-gold/10 to-brand-gold/5 flex items-center justify-center">
-                          <span className="font-almarai text-4xl text-brand-gold/30 font-bold">
-                            دراسة
-                          </span>
-                        </div>
-                      )}
-                      <div className="p-5 flex-1 flex flex-col">
-                        <div className="flex items-center gap-2 mb-3 flex-wrap">
-                          <Badge
-                            variant="outline"
-                            className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs"
-                          >
-                            دراسة حالة
-                          </Badge>
-                          {card.externalLink && (
-                            <ExternalLink
-                              size={14}
-                              className="text-brand-gray/50"
-                            />
-                          )}
-                        </div>
-                        <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
-                          {card.title}
-                        </h3>
-                        <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-3 flex-1">
-                          {card.description}
-                        </p>
-                        {card.externalLink && (
-                          <a
-                            href={card.externalLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-brand-gold text-white font-almarai text-sm font-bold hover:bg-brand-gold-dark transition-colors"
-                            data-testid={`button-case-study-open-${card.id}`}
-                          >
-                            عرض الدراسة
-                            <ExternalLink size={14} />
-                          </a>
+                      <div
+                        className="bg-white rounded-md border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col"
+                        data-testid={`card-case-study-${card.id}`}
+                      >
+                        {card.imageUrl ? (
+                          <img
+                            src={card.imageUrl}
+                            alt={card.title}
+                            className="w-full h-48 object-cover"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <div className="w-full h-48 bg-gradient-to-br from-brand-gold/10 to-brand-gold/5 flex items-center justify-center">
+                            <span className="font-almarai text-4xl text-brand-gold/30 font-bold">
+                              دراسة
+                            </span>
+                          </div>
                         )}
+                        <div className="p-5 flex-1 flex flex-col">
+                          <div className="flex items-center gap-2 mb-3 flex-wrap">
+                            <Badge
+                              variant="outline"
+                              className="text-brand-gold-dark border-brand-gold/30 font-almarai text-xs"
+                            >
+                              دراسة حالة
+                            </Badge>
+                            {card.externalLink && (
+                              <ExternalLink
+                                size={14}
+                                className="text-brand-gray/50"
+                              />
+                            )}
+                            {card.publishDate && (
+                              <span className="font-almarai text-xs text-brand-gray/60">
+                                {card.publishDate}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="font-almarai font-bold text-brand-dark mb-2 line-clamp-2">
+                            {card.title}
+                          </h3>
+                          <p className="font-almarai text-brand-gray text-sm leading-relaxed line-clamp-3 flex-1">
+                            {card.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   );
                 }
 

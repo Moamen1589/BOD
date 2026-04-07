@@ -19,7 +19,12 @@ type ApiBlog = {
   is_published: boolean;
   created_at: string;
   updated_at: string;
-  category?: { id: number; name: string; slug: string; description: string } | null;
+  category?: {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+  } | null;
 };
 
 type ApiResponse = {
@@ -37,11 +42,18 @@ type ApiNewsItem = {
   title: string;
   slug: string;
   excerpt: string | null;
+  content?: string | null;
   image: string | null;
   reading_time: string | null;
   published_at: string | null;
   author: string | null;
-  categories?: { id: number; name?: { ar?: string | null; en?: string | null } | null; slug: string }[] | null;
+  categories?:
+    | {
+        id: number;
+        name?: { ar?: string | null; en?: string | null } | null;
+        slug: string;
+      }[]
+    | null;
 };
 
 type NewsApiResponse = {
@@ -146,7 +158,7 @@ export default function BlogPage() {
       title: item.title,
       slug: item.slug,
       excerpt: item.excerpt || "",
-      content: item.excerpt || "",
+      content: item.content || item.excerpt || "",
       category: "news" as Article["category"],
       imageUrl: toImageUrl(item.image),
       publishDate: item.published_at,
@@ -313,8 +325,7 @@ export default function BlogPage() {
                         `blog_post_${post.slug}`,
                         JSON.stringify(post),
                       );
-                    } catch {
-                    }
+                    } catch {}
                   }}
                 >
                   <div
