@@ -23,6 +23,8 @@ const REMOTE_SOURCE_URLS: Record<string, string> = {
     "https://gold-weasel-489740.hostingersite.com/api/procedural-evidences",
   "annual-plans":
     "https://gold-weasel-489740.hostingersite.com/api/annual-plans",
+  "community-initiatives":
+    "https://gold-weasel-489740.hostingersite.com/api/social-initiatives",
 };
 
 interface RemoteWorkItem {
@@ -37,7 +39,7 @@ interface RemoteWorkItem {
   published_at: string | null;
   image_url?: string | null;
   featured_image?: { url: string } | null;
-  content_image_1?: { url: string } | null;
+  content_image_1?: { url: string } | string | null;
 }
 
 interface RemotePageResponse {
@@ -73,6 +75,11 @@ function mapRemoteItem(
   item: RemoteWorkItem,
   category: WorkItem["category"],
 ): DetailWorkItem {
+  const contentImageUrl =
+    typeof item.content_image_1 === "string"
+      ? item.content_image_1
+      : item.content_image_1?.url;
+
   return {
     id: item.id,
     slug: item.slug,
@@ -81,10 +88,7 @@ function mapRemoteItem(
     content: item.content_text || item.excerpt || "",
     category,
     imageUrl:
-      item.featured_image?.url ||
-      item.content_image_1?.url ||
-      item.image_url ||
-      null,
+      item.featured_image?.url || contentImageUrl || item.image_url || null,
     sourceLink: item.link || null,
     publishDate: item.published_at || item.date || item.modified || null,
   };
@@ -174,7 +178,8 @@ export default function WorkItemDetailPage() {
   const isApiBackedCategory =
     category === "annual-plans" ||
     category === "procedural-guides" ||
-    category === "strategic-planning";
+    category === "strategic-planning" ||
+    category === "community-initiatives";
 
   const { data: item, isLoading } = useQuery<DetailWorkItem>({
     queryKey: ["work-library-detail", slug, category],
@@ -184,9 +189,15 @@ export default function WorkItemDetailPage() {
       const searchOrder: WorkItem["category"][] =
         category === "annual-plans" ||
         category === "procedural-guides" ||
-        category === "strategic-planning"
+        category === "strategic-planning" ||
+        category === "community-initiatives"
           ? [category]
-          : ["strategic-planning", "annual-plans", "procedural-guides"];
+          : [
+              "strategic-planning",
+              "annual-plans",
+              "procedural-guides",
+              "community-initiatives",
+            ];
 
       for (const searchCategory of searchOrder) {
         const remoteUrl = REMOTE_SOURCE_URLS[searchCategory];

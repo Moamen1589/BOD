@@ -14,6 +14,8 @@ const STRATEGIC_PLANS_API_URL =
   "https://gold-weasel-489740.hostingersite.com/api/strategic-plans";
 const ANNUAL_PLANS_API_URL =
   "https://gold-weasel-489740.hostingersite.com/api/annual-plans";
+const SOCIAL_INITIATIVES_API_URL =
+  "https://gold-weasel-489740.hostingersite.com/api/social-initiatives";
 
 const categories = [
   { key: "all", label: "جميع الأعمال" },
@@ -77,6 +79,21 @@ interface StrategicPlanApiItem {
   published_at: string | null;
 }
 
+interface SocialInitiativeApiItem {
+  id: number;
+  post_id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content_text: string | null;
+  image_url: string | null;
+  content_image_1: string | null;
+  link: string | null;
+  post_date: string | null;
+  post_modified: string | null;
+  created_at: string | null;
+}
+
 interface ProceduralEvidencesPageResponse {
   current_page: number;
   data: ProceduralEvidenceApiItem[];
@@ -97,6 +114,16 @@ interface StrategicPlansPageResponse {
     current_page: number;
     last_page: number;
   };
+}
+
+interface SocialInitiativesPageResponse {
+  data: SocialInitiativeApiItem[];
+  meta?: {
+    current_page: number;
+    last_page: number;
+  };
+  current_page?: number;
+  last_page?: number;
 }
 
 interface WorkLibraryCardItem {
@@ -159,13 +186,29 @@ function toStrategicPlanCardItem(
   };
 }
 
+function toSocialInitiativeCardItem(
+  item: SocialInitiativeApiItem,
+): WorkLibraryCardItem {
+  return {
+    id: item.id,
+    slug: item.slug || `community-initiative-${item.id}`,
+    title: item.title,
+    description: item.excerpt || item.content_text || "",
+    category: "community-initiatives",
+    imageUrl: item.image_url || item.content_image_1 || null,
+    externalLink: item.link || null,
+    createdAt: item.created_at || item.post_date || item.post_modified || "",
+  };
+}
+
 export default function WorkLibraryPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const isDetailCategory = (category: WorkCategory) =>
     category === "procedural-guides" ||
     category === "annual-plans" ||
-    category === "strategic-planning";
+    category === "strategic-planning" ||
+    category === "community-initiatives";
 
   useEffect(() => {
     setCurrentPage(1);
@@ -232,6 +275,25 @@ export default function WorkLibraryPage() {
           };
         }
 
+        if (activeCategory === "community-initiatives") {
+          const res = await fetch(
+            `${SOCIAL_INITIATIVES_API_URL}?page=${currentPage}`,
+          );
+          if (!res.ok) throw new Error("Failed to fetch social initiatives");
+
+          const page = (await res.json()) as SocialInitiativesPageResponse;
+          const mapped = (page.data || [])
+            .map(toSocialInitiativeCardItem)
+            .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+          return {
+            items: mapped,
+            currentPage:
+              page.meta?.current_page || page.current_page || currentPage,
+            lastPage: page.meta?.last_page || page.last_page || 1,
+          };
+        }
+
         const localRes = await fetch(
           `/api/work-library?category=${activeCategory}`,
         );
@@ -258,9 +320,11 @@ export default function WorkLibraryPage() {
             ? `${PROCEDURAL_EVIDENCES_API_URL}?page=${currentPage}`
             : activeCategory === "strategic-planning"
               ? `${STRATEGIC_PLANS_API_URL}?page=${currentPage}`
-              : activeCategory === "annual-plans"
-                ? `${ANNUAL_PLANS_API_URL}?page=${currentPage}`
-                : `/api/work-library?category=${activeCategory}`;
+              : activeCategory === "community-initiatives"
+                ? `${SOCIAL_INITIATIVES_API_URL}?page=${currentPage}`
+                : activeCategory === "annual-plans"
+                  ? `${ANNUAL_PLANS_API_URL}?page=${currentPage}`
+                  : `/api/work-library?category=${activeCategory}`;
         const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch");
 
@@ -291,6 +355,16 @@ export default function WorkLibraryPage() {
             items: (page.data || []).map(toStrategicPlanCardItem),
             currentPage: page.meta?.current_page || currentPage,
             lastPage: page.meta?.last_page || 1,
+          };
+        }
+
+        if (activeCategory === "community-initiatives") {
+          const page = (await res.json()) as SocialInitiativesPageResponse;
+          return {
+            items: (page.data || []).map(toSocialInitiativeCardItem),
+            currentPage:
+              page.meta?.current_page || page.current_page || currentPage,
+            lastPage: page.meta?.last_page || page.last_page || 1,
           };
         }
 
@@ -455,7 +529,8 @@ export default function WorkLibraryPage() {
           {!isLoading &&
             (activeCategory === "all" ||
               activeCategory === "procedural-guides" ||
-              activeCategory === "annual-plans") &&
+              activeCategory === "annual-plans" ||
+              activeCategory === "community-initiatives") &&
             (data?.lastPage || 1) > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2 flex-wrap">
                 <button
