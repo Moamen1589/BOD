@@ -18,7 +18,6 @@ const SOCIAL_INITIATIVES_API_URL =
   "https://gold-weasel-489740.hostingersite.com/api/social-initiatives";
 
 const categories = [
-  { key: "all", label: "جميع الأعمال" },
   { key: "strategic-planning", label: "الخطط الاستراتيجية" },
   { key: "procedural-guides", label: "الأدلة الإجرائية" },
   { key: "annual-plans", label: "الخطط السنوية" },
@@ -202,7 +201,7 @@ function toSocialInitiativeCardItem(
 }
 
 export default function WorkLibraryPage() {
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState("strategic-planning");
   const [currentPage, setCurrentPage] = useState(1);
   const isDetailCategory = (category: WorkCategory) =>
     category === "procedural-guides" ||
@@ -527,16 +526,17 @@ export default function WorkLibraryPage() {
           )}
 
           {!isLoading &&
-            (activeCategory === "all" ||
-              activeCategory === "procedural-guides" ||
+            (activeCategory === "procedural-guides" ||
+              activeCategory === "strategic-planning" ||
               activeCategory === "annual-plans" ||
               activeCategory === "community-initiatives") &&
             (data?.lastPage || 1) > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2 flex-wrap">
                 <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => {
+                    setCurrentPage((prev) => Math.max(prev - 1, 1));
+                    scroll(0, 0);
+                  }}
                   disabled={(data?.currentPage || 1) === 1}
                   className="px-4 py-2 rounded-md font-almarai text-sm font-bold bg-brand-light-gold text-brand-gold-dark disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -549,7 +549,10 @@ export default function WorkLibraryPage() {
                 ).map((page) => (
                   <button
                     key={page}
-                    onClick={() => setCurrentPage(page)}
+                    onClick={() => {
+                      setCurrentPage(page);
+                      scroll(0, 0);
+                    }}
                     className={`px-4 py-2 rounded-md font-almarai text-sm font-bold transition-colors ${
                       page === (data?.currentPage || 1)
                         ? "bg-brand-gold text-white"
@@ -561,11 +564,12 @@ export default function WorkLibraryPage() {
                 ))}
 
                 <button
-                  onClick={() =>
+                  onClick={() => {
                     setCurrentPage((prev) =>
                       Math.min(prev + 1, data?.lastPage || prev + 1),
-                    )
-                  }
+                    );
+                    scroll(0, 0);
+                  }}
                   disabled={(data?.currentPage || 1) === (data?.lastPage || 1)}
                   className="px-4 py-2 rounded-md font-almarai text-sm font-bold bg-brand-light-gold text-brand-gold-dark disabled:opacity-50 disabled:cursor-not-allowed"
                 >
