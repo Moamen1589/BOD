@@ -45,7 +45,12 @@ const arkan = [
     id: "purpose",
     title: "الغاية والأثر المجتمعي",
     description:
-      "وضوح الغرض المجتمعي للمنظمة وتحديد الأهداف التي تترجم إلى أثر ملموس في المجتمع.",
+      "وضوح الغرض المجتمعي للمنظمة وتحديد الأهداف التي تترجم إلى أثر ملموس في المجتمع، مع وجود آلية لقياس الأثر بشكل دوري.",
+    indicators: [
+      "وضوح الرسالة المجتمعية لجميع الأفراد المعنيين",
+      "قياس الأثر المجتمعي بانتظام",
+      "توافق الأهداف مع أهداف التنمية المستدامة ورؤية المملكة 2030",
+    ],
     color: "bg-purple-500",
     textColor: "text-purple-500",
     icon: Target,
@@ -54,7 +59,12 @@ const arkan = [
     id: "integrity",
     title: "النزاهة المجتمعية والحوكمة",
     description:
-      "تعد الشفافية والمساءلة في الحوكمة من الأسس التي تُسهم في نجاح التحول المجتمعي.",
+      "الشفافية والمساءلة في الحوكمة من الأسس التي تُسهم في نجاح التحول المجتمعي، مع مواءمة القرارات مع القيم المجتمعية التي تتبناها المنظمة.",
+    indicators: [
+      "وجود ميثاق القيم المجتمعية الملتزم به من الجميع",
+      "تطبيق الشفافية في جميع القرارات الإدارية",
+      "وجود آليات للإفصاح والمساءلة",
+    ],
     color: "bg-blue-500",
     textColor: "text-blue-500",
     icon: ShieldCheck,
@@ -63,7 +73,12 @@ const arkan = [
     id: "empowerment",
     title: "التمكين والمشاركة الاجتماعية",
     description:
-      "تمكين الأفراد والمجتمعات في اتخاذ القرارات المتعلقة بهم يُعتبر جوهرًا للتحول المجتمعي المستدام.",
+      "تمكين الأفراد والمجتمعات في اتخاذ القرارات المتعلقة بهم يُعد جوهر التحول المجتمعي المستدام، مع تشجيع المشاركة الفعّالة في جميع جوانب العمل.",
+    indicators: [
+      "تعزيز ثقافة المشاركة المجتمعية الفعّالة",
+      "تمكين جميع الفئات المجتمعية في اتخاذ القرارات",
+      "توفير منصات للحديث عن القضايا المحلية",
+    ],
     color: "bg-green-500",
     textColor: "text-green-500",
     icon: Users,
@@ -72,7 +87,12 @@ const arkan = [
     id: "innovation",
     title: "التجديد والتكيّف المجتمعي",
     description:
-      "من خلال الابتكار الاجتماعي، يتم التكيف مع التغيرات في البيئة الاجتماعية، مع تقديم حلول مجتمعية جديدة.",
+      "من خلال الابتكار الاجتماعي، يتم التكيّف مع التغيرات في البيئة الاجتماعية وتقديم حلول مجتمعية جديدة لمواجهة التحديات المتزايدة.",
+    indicators: [
+      "تبني الابتكار كجزء من الثقافة المؤسسية",
+      "استخدام التكنولوجيا لتحسين الأداء المجتمعي",
+      "التكيّف مع التغيرات الاجتماعية والاقتصادية",
+    ],
     color: "bg-orange-500",
     textColor: "text-orange-500",
     icon: RefreshCw,
@@ -81,7 +101,12 @@ const arkan = [
     id: "capacity",
     title: "الكفاءة التشغيلية",
     description:
-      "القدرة على إدارة الموارد والعمليات بشكل فعّال لضمان تنفيذ الأهداف المجتمعية بكفاءة.",
+      "القدرة على إدارة الموارد والعمليات بشكل فعّال لضمان تنفيذ الأهداف المجتمعية بكفاءة تشغيلية عالية.",
+    indicators: [
+      "تخصيص الموارد بشكل يتماشى مع الأهداف المجتمعية",
+      "تطوير وتحسين العمليات الداخلية في المنظمة",
+      "تحقيق الفعالية التشغيلية في إدارة الأنشطة المجتمعية",
+    ],
     color: "bg-red-500",
     textColor: "text-red-500",
     icon: Zap,
@@ -90,7 +115,12 @@ const arkan = [
     id: "sustainability",
     title: "الشراكات والنظم البيئية",
     description:
-      "الاستدامة المجتمعية لا تتحقق في عزلة. لذا، بناء شراكات استراتيجية يضمن تحقيق الأثر المستدام.",
+      "الاستدامة المجتمعية لا تتحقق في عزلة؛ لذا فإن بناء شراكات استراتيجية مع القطاع الخاص والحكومة والمجتمع المحلي يضمن تحقيق الأثر المستدام.",
+    indicators: [
+      "بناء شراكات مستدامة مع قطاعات متعددة",
+      "إنشاء بيئة تدعم الابتكار المجتمعي المستدام",
+      "الحصول على تمويل مستدام للمشروعات المجتمعية",
+    ],
     color: "bg-amber-500",
     textColor: "text-amber-500",
     icon: Network,
@@ -229,7 +259,9 @@ export default function ECSTTPage() {
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [selectedRukn, setSelectedRukn] = useState<string | null>("purpose");
   const [cycleRadius, setCycleRadius] = useState(220);
-    const [progressValues, setProgressValues] = useState<Record<number, number>>({});
+  const [progressValues, setProgressValues] = useState<Record<number, number>>(
+    {},
+  );
   const [isExporting, setIsExporting] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -294,7 +326,11 @@ export default function ECSTTPage() {
         windowWidth: 1200,
       });
       const imgData = canvas.toDataURL("image/jpeg", 0.92);
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
       const pageW = pdf.internal.pageSize.getWidth();
       const pageH = pdf.internal.pageSize.getHeight();
       const margin = 10;
@@ -311,14 +347,29 @@ export default function ECSTTPage() {
         sliceCanvas.width = canvas.width;
         sliceCanvas.height = slicePx;
         const ctx = sliceCanvas.getContext("2d")!;
-        ctx.drawImage(canvas, 0, srcY, canvas.width, slicePx, 0, 0, canvas.width, slicePx);
+        ctx.drawImage(
+          canvas,
+          0,
+          srcY,
+          canvas.width,
+          slicePx,
+          0,
+          0,
+          canvas.width,
+          slicePx,
+        );
         const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.92);
         pdf.addImage(sliceData, "JPEG", margin, yPos, usableW, sliceH);
         remaining -= sliceH;
         srcY += slicePx;
-        if (remaining > 0) { pdf.addPage(); yPos = margin; }
+        if (remaining > 0) {
+          pdf.addPage();
+          yPos = margin;
+        }
       }
-      pdf.save(`تقرير-التقييم-المؤسسي-${new Date().toLocaleDateString("ar-SA").replace(/\//g, "-")}.pdf`);
+      pdf.save(
+        `تقرير-التقييم-المؤسسي-${new Date().toLocaleDateString("ar-SA").replace(/\//g, "-")}.pdf`,
+      );
     } catch (err) {
       console.error("PDF export failed", err);
     } finally {
@@ -921,7 +972,7 @@ export default function ECSTTPage() {
                   <div
                     className={`w-20 h-1.5 ${arkan.find((r) => r.id === selectedRukn)?.color} mb-8 rounded-full`}
                   ></div>
-                  <p className="text-2xl text-brand-gray mb-10 leading-relaxed font-medium">
+                  <p className="text-xl text-brand-gray mb-10 leading-relaxed font-medium">
                     {arkan.find((r) => r.id === selectedRukn)?.description}
                   </p>
 
@@ -931,18 +982,20 @@ export default function ECSTTPage() {
                       مؤشرات التحول:
                     </h4>
                     <div className="grid grid-cols-1 gap-4">
-                      <div className="flex items-center gap-4 bg-brand-light-gold/50 p-5 rounded-2xl border border-brand-gold/10">
-                        <CheckCircle className="text-green-500 w-6 h-6 shrink-0" />
-                        <span className="font-bold text-brand-dark">
-                          تحقيق أثر مجتمعي ملموس وقابل للقياس
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-4 bg-brand-light-gold/50 p-5 rounded-2xl border border-brand-gold/10">
-                        <CheckCircle className="text-green-500 w-6 h-6 shrink-0" />
-                        <span className="font-bold text-brand-dark">
-                          حوكمة مؤسسية تضمن الاستدامة والنمو
-                        </span>
-                      </div>
+                      {(
+                        arkan.find((r) => r.id === selectedRukn)?.indicators ||
+                        []
+                      ).map((indicator, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-4 bg-brand-light-gold/50 p-5 rounded-2xl border border-brand-gold/10"
+                        >
+                          <CheckCircle className="text-green-500 w-6 h-6 shrink-0" />
+                          <span className="font-bold text-brand-dark">
+                            {indicator}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -1185,198 +1238,274 @@ export default function ECSTTPage() {
                 </Button>
               </div>
               <div ref={resultRef}>
-              <div className="bg-brand-dark text-white p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] text-center relative overflow-hidden shadow-2xl">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-                <div className="relative z-10">
-                  <h2 className="text-[clamp(1.8rem,3.2vw,3.75rem)] font-black mb-8 sm:mb-12">
-                    نتيجة تشخيص المنظومة المجتمعية
-                  </h2>
+                <div className="bg-brand-dark text-white p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] text-center relative overflow-hidden shadow-2xl">
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                  <div className="relative z-10">
+                    <h2 className="text-[clamp(1.8rem,3.2vw,3.75rem)] font-black mb-8 sm:mb-12">
+                      نتيجة تشخيص المنظومة المجتمعية
+                    </h2>
 
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-12 lg:gap-16 mb-10 sm:mb-16">
-                    <div className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-full border-[12px] sm:border-[16px] lg:border-[20px] border-brand-gold flex flex-col items-center justify-center bg-white text-brand-dark shadow-2xl transform hover:rotate-6 transition-transform">
-                      <span className="text-4xl sm:text-5xl lg:text-7xl font-black">
-                        {getOverallAverage()} / 5
-                      </span>
-                      <span className="text-xs font-black text-brand-gray uppercase tracking-widest mt-1">
-                        المتوسط العام
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-brand-gold mb-3 sm:mb-4">
-                        مستوى النضج المؤسسي:
-                      </p>
-                      <h3
-                        className={`text-[clamp(2rem,3.4vw,4.2rem)] font-black ${getMaturityLevel(parseFloat(getOverallAverage())).color} mb-6 sm:mb-8 leading-tight drop-shadow-md`}
-                      >
-                        {
-                          getMaturityLevel(parseFloat(getOverallAverage()))
-                            .label
-                        }
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 mt-2 w-full">
-                        {[
-                          { range: "4.5 – 5", label: "امتثال مؤسسي ناضج", min: 4.5, activeClass: "bg-green-500 border-green-500 text-white", inactiveClass: "border-green-500/30 text-green-400/40" },
-                          { range: "3.5 – 4.4", label: "امتثال جيد", min: 3.5, activeClass: "bg-blue-500 border-blue-500 text-white", inactiveClass: "border-blue-400/30 text-blue-300/40" },
-                          { range: "2.5 – 3.4", label: "امتثال متوسط", min: 2.5, activeClass: "bg-yellow-500 border-yellow-400 text-white", inactiveClass: "border-yellow-400/30 text-yellow-300/40" },
-                          { range: "1.5 – 2.4", label: "امتثال ضعيف", min: 1.5, activeClass: "bg-orange-500 border-orange-500 text-white", inactiveClass: "border-orange-400/30 text-orange-300/40" },
-                          { range: "أقل من 1.5", label: "خطر مؤسسي", min: 0, activeClass: "bg-red-500 border-red-500 text-white", inactiveClass: "border-red-400/30 text-red-300/40" },
-                        ].map((level, idx, arr) => {
-                          const avg = parseFloat(getOverallAverage());
-                          const maxVal = idx === 0 ? 5 : arr[idx - 1].min;
-                          const isActive = avg >= level.min && avg < maxVal;
-                          return (
-                            <div
-                              key={level.label}
-                              className={`px-3 py-2 rounded-2xl text-center border-2 transition-all ${isActive ? level.activeClass + " scale-105 shadow-lg" : level.inactiveClass}`}
-                            >
-                              <div className="text-[10px] font-bold opacity-80 mb-0.5 whitespace-nowrap">{level.range}</div>
-                              <div className="text-xs font-black leading-tight">{level.label}</div>
-                            </div>
-                          );
-                        })}
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-12 lg:gap-16 mb-10 sm:mb-16">
+                      <div className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-full border-[12px] sm:border-[16px] lg:border-[20px] border-brand-gold flex flex-col items-center justify-center bg-white text-brand-dark shadow-2xl transform hover:rotate-6 transition-transform">
+                        <span className="text-4xl sm:text-5xl lg:text-7xl font-black">
+                          {getOverallAverage()} / 5
+                        </span>
+                        <span className="text-xs font-black text-brand-gray uppercase tracking-widest mt-1">
+                          المتوسط العام
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-brand-gold mb-3 sm:mb-4">
+                          مستوى النضج المؤسسي:
+                        </p>
+                        <h3
+                          className={`text-[clamp(2rem,3.4vw,4.2rem)] font-black ${getMaturityLevel(parseFloat(getOverallAverage())).color} mb-6 sm:mb-8 leading-tight drop-shadow-md`}
+                        >
+                          {
+                            getMaturityLevel(parseFloat(getOverallAverage()))
+                              .label
+                          }
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 mt-2 w-full">
+                          {[
+                            {
+                              range: "4.5 – 5",
+                              label: "امتثال مؤسسي ناضج",
+                              min: 4.5,
+                              activeClass:
+                                "bg-green-500 border-green-500 text-white",
+                              inactiveClass:
+                                "border-green-500/30 text-green-400/40",
+                            },
+                            {
+                              range: "3.5 – 4.4",
+                              label: "امتثال جيد",
+                              min: 3.5,
+                              activeClass:
+                                "bg-blue-500 border-blue-500 text-white",
+                              inactiveClass:
+                                "border-blue-400/30 text-blue-300/40",
+                            },
+                            {
+                              range: "2.5 – 3.4",
+                              label: "امتثال متوسط",
+                              min: 2.5,
+                              activeClass:
+                                "bg-yellow-500 border-yellow-400 text-white",
+                              inactiveClass:
+                                "border-yellow-400/30 text-yellow-300/40",
+                            },
+                            {
+                              range: "1.5 – 2.4",
+                              label: "امتثال ضعيف",
+                              min: 1.5,
+                              activeClass:
+                                "bg-orange-500 border-orange-500 text-white",
+                              inactiveClass:
+                                "border-orange-400/30 text-orange-300/40",
+                            },
+                            {
+                              range: "أقل من 1.5",
+                              label: "خطر مؤسسي",
+                              min: 0,
+                              activeClass:
+                                "bg-red-500 border-red-500 text-white",
+                              inactiveClass:
+                                "border-red-400/30 text-red-300/40",
+                            },
+                          ].map((level, idx, arr) => {
+                            const avg = parseFloat(getOverallAverage());
+                            const maxVal = idx === 0 ? 5 : arr[idx - 1].min;
+                            const isActive = avg >= level.min && avg < maxVal;
+                            return (
+                              <div
+                                key={level.label}
+                                className={`px-3 py-2 rounded-2xl text-center border-2 transition-all ${isActive ? level.activeClass + " scale-105 shadow-lg" : level.inactiveClass}`}
+                              >
+                                <div className="text-[10px] font-bold opacity-80 mb-0.5 whitespace-nowrap">
+                                  {level.range}
+                                </div>
+                                <div className="text-xs font-black leading-tight">
+                                  {level.label}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-white p-8 sm:p-10 lg:p-12 rounded-[2.5rem] sm:rounded-[3rem] lg:rounded-[4rem] border border-brand-gold/20 shadow-xl">
-                <div className="text-center mb-8 sm:mb-10">
-                  <h3 className="text-[clamp(1.4rem,2.2vw,2.2rem)] font-black text-brand-dark mb-3">
-                    الأركان الستة للمنظومة
-                  </h3>
-                  <p className="text-brand-gray font-bold">
-                    تذكير بمحاور التحول المؤسسي التي تقود نتيجة النضج
-                  </p>
-                </div>
+                <div className="bg-white p-8 sm:p-10 lg:p-12 rounded-[2.5rem] sm:rounded-[3rem] lg:rounded-[4rem] border border-brand-gold/20 shadow-xl">
+                  <div className="text-center mb-8 sm:mb-10">
+                    <h3 className="text-[clamp(1.4rem,2.2vw,2.2rem)] font-black text-brand-dark mb-3">
+                      الأركان الستة للمنظومة
+                    </h3>
+                    <p className="text-brand-gray font-bold">
+                      تذكير بمحاور التحول المؤسسي التي تقود نتيجة النضج
+                    </p>
+                  </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                  {arkan.map((rukn) => (
-                    <div
-                      key={rukn.id}
-                      className="bg-brand-light-gold/30 border border-brand-gold/15 rounded-3xl p-5 sm:p-6"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div
-                          className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 ${rukn.color}`}
-                        >
-                          <rukn.icon size={24} />
-                        </div>
-                        <div>
-                          <h4 className="font-black text-brand-dark text-base sm:text-lg leading-tight mb-2">
-                            {rukn.title}
-                          </h4>
-                          <p className="text-sm text-brand-gray leading-relaxed">
-                            {rukn.description}
-                          </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                    {arkan.map((rukn) => (
+                      <div
+                        key={rukn.id}
+                        className="bg-brand-light-gold/30 border border-brand-gold/15 rounded-3xl p-5 sm:p-6"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 ${rukn.color}`}
+                          >
+                            <rukn.icon size={24} />
+                          </div>
+                          <div>
+                            <h4 className="font-black text-brand-dark text-base sm:text-lg leading-tight mb-2">
+                              {rukn.title}
+                            </h4>
+                            <p className="text-sm text-brand-gray leading-relaxed">
+                              {rukn.description}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {assessmentAxes.map((a, i) => {
-                  const avg = parseFloat(getAxisAverage(a.title).toString());
-                  const maturity = getMaturityLevel(avg);
-                  const animWidth = `${((progressValues[i] ?? 0) / 5) * 100}%`;
-                  const getPlatformMsg = (score: number, platform: string) => {
-                    if (score >= 4.5) return null;
-                    if (score >= 3.5) return { text: `يمكن الاستفادة من ${platform} لتعزيز هذا المحور`, style: "bg-blue-50 border-blue-200 text-blue-800" };
-                    if (score >= 2.5) return { text: `يُوصى بالالتحاق ببرنامج ${platform} لتطوير هذا المحور`, style: "bg-yellow-50 border-yellow-300 text-yellow-900" };
-                    return { text: `يُوصى بشدة بالالتحاق بـ ${platform} — هذا المحور يحتاج تدخلاً عاجلاً`, style: "bg-red-50 border-red-300 text-red-800" };
-                  };
-                  const msg = getPlatformMsg(avg, a.platform);
-                  return (
-                    <Card
-                      key={i}
-                      className="border-none shadow-2xl bg-white overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border-b-8 border-brand-gold/10"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {assessmentAxes.map((a, i) => {
+                    const avg = parseFloat(getAxisAverage(a.title).toString());
+                    const maturity = getMaturityLevel(avg);
+                    const animWidth = `${((progressValues[i] ?? 0) / 5) * 100}%`;
+                    const getPlatformMsg = (
+                      score: number,
+                      platform: string,
+                    ) => {
+                      if (score >= 4.5) return null;
+                      if (score >= 3.5)
+                        return {
+                          text: `يمكن الاستفادة من ${platform} لتعزيز هذا المحور`,
+                          style: "bg-blue-50 border-blue-200 text-blue-800",
+                        };
+                      if (score >= 2.5)
+                        return {
+                          text: `يُوصى بالالتحاق ببرنامج ${platform} لتطوير هذا المحور`,
+                          style:
+                            "bg-yellow-50 border-yellow-300 text-yellow-900",
+                        };
+                      return {
+                        text: `يُوصى بشدة بالالتحاق بـ ${platform} — هذا المحور يحتاج تدخلاً عاجلاً`,
+                        style: "bg-red-50 border-red-300 text-red-800",
+                      };
+                    };
+                    const msg = getPlatformMsg(avg, a.platform);
+                    return (
+                      <Card
+                        key={i}
+                        className="border-none shadow-2xl bg-white overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border-b-8 border-brand-gold/10"
+                      >
+                        <CardContent className="p-6 sm:p-8 lg:p-10">
+                          <div className="flex justify-between items-start mb-3">
+                            <h4 className="font-black text-brand-dark text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl max-w-[70%] leading-tight">
+                              {a.title}
+                            </h4>
+                            <div
+                              className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${maturity.color}`}
+                            >
+                              {getAxisAverage(a.title)} / 5
+                            </div>
+                          </div>
+                          {msg && (
+                            <div
+                              className={`flex items-start gap-2 rounded-xl border px-3 py-2 mb-5 ${msg.style}`}
+                            >
+                              <span className="text-sm shrink-0 mt-0.5">
+                                💡
+                              </span>
+                              <p className="text-xs font-bold leading-relaxed">
+                                {msg.text}
+                              </p>
+                            </div>
+                          )}
+                          <div className="h-5 bg-brand-light rounded-full mb-4 overflow-hidden p-0.5 shadow-inner">
+                            <div
+                              className={`h-full rounded-full ${maturity.color.replace("text", "bg")}`}
+                              style={{
+                                width: animWidth,
+                                transition:
+                                  "width 1.2s cubic-bezier(0.4,0,0.2,1)",
+                              }}
+                            />
+                          </div>
+                          <div className="flex justify-between items-center text-xs font-black">
+                            <span className="text-brand-gray/50 uppercase">
+                              Maturity Score
+                            </span>
+                            <span className={maturity.color}>
+                              {maturity.label}
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+
+                <div className="bg-brand-light-gold p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] border-4 border-brand-gold/20 text-center shadow-xl">
+                  <HelpCircle className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-brand-gold mx-auto mb-6 sm:mb-8" />
+                  <h3 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-6 sm:mb-8 text-brand-dark">
+                    خطة المعالجة الفورية
+                  </h3>
+                  <p className="text-[clamp(0.95rem,1.3vw,1.05rem)] lg:text-xl text-brand-gray mb-6 sm:mb-10 lg:mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
+                    بناءً على إحصائيات التقييم، المحور الأكثر احتياجاً للتدخل
+                    لديك هو{" "}
+                    <span className="font-black text-brand-dark  decoration-4 underline-offset-8 leading-[70px]">
+                      {
+                        assessmentAxes.reduce(
+                          (min, cur) =>
+                            parseFloat(getAxisAverage(cur.title).toString()) <
+                            parseFloat(getAxisAverage(min.title).toString())
+                              ? cur
+                              : min,
+                          assessmentAxes[0],
+                        ).title
+                      }
+                    </span>
+                    . التوجيه الأنسب الآن هو التسجيل في{" "}
+                    <a
+                      href={recommendation.link || "#"}
+                      className="font-black text-brand-dark underline decoration-brand-gold decoration-4 underline-offset-8"
                     >
-                      <CardContent className="p-6 sm:p-8 lg:p-10">
-                        <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-black text-brand-dark text-[clamp(1rem,1.5vw,1.25rem)] lg:text-2xl max-w-[70%] leading-tight">
-                            {a.title}
-                          </h4>
-                          <div className={`text-[clamp(1.6rem,2.4vw,2.5rem)] font-black ${maturity.color}`}>
-                            {getAxisAverage(a.title)} / 5
-                          </div>
-                        </div>
-                        {msg && (
-                          <div className={`flex items-start gap-2 rounded-xl border px-3 py-2 mb-5 ${msg.style}`}>
-                            <span className="text-sm shrink-0 mt-0.5">💡</span>
-                            <p className="text-xs font-bold leading-relaxed">{msg.text}</p>
-                          </div>
-                        )}
-                        <div className="h-5 bg-brand-light rounded-full mb-4 overflow-hidden p-0.5 shadow-inner">
-                          <div
-                            className={`h-full rounded-full ${maturity.color.replace("text", "bg")}`}
-                            style={{ width: animWidth, transition: "width 1.2s cubic-bezier(0.4,0,0.2,1)" }}
-                          />
-                        </div>
-                        <div className="flex justify-between items-center text-xs font-black">
-                          <span className="text-brand-gray/50 uppercase">Maturity Score</span>
-                          <span className={maturity.color}>{maturity.label}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-
-              <div className="bg-brand-light-gold p-8 sm:p-12 lg:p-16 rounded-[2.5rem] sm:rounded-[3.5rem] lg:rounded-[5rem] border-4 border-brand-gold/20 text-center shadow-xl">
-                <HelpCircle className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-brand-gold mx-auto mb-6 sm:mb-8" />
-                <h3 className="text-[clamp(1.6rem,2.4vw,2.5rem)] font-black mb-6 sm:mb-8 text-brand-dark">
-                  خطة المعالجة الفورية
-                </h3>
-                <p className="text-[clamp(0.95rem,1.3vw,1.05rem)] lg:text-xl text-brand-gray mb-6 sm:mb-10 lg:mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
-                  بناءً على إحصائيات التقييم، المحور الأكثر احتياجاً للتدخل لديك
-                  هو{" "}
-                  <span className="font-black text-brand-dark  decoration-4 underline-offset-8 leading-[70px]">
-                    {
-                      assessmentAxes.reduce(
-                        (min, cur) =>
-                          parseFloat(getAxisAverage(cur.title).toString()) <
-                          parseFloat(getAxisAverage(min.title).toString())
-                            ? cur
-                            : min,
-                        assessmentAxes[0],
-                      ).title
-                    }
-                  </span>
-                  . التوجيه الأنسب الآن هو التسجيل في{" "}
-                  <a
-                    href={recommendation.link || "#"}
-                    className="font-black text-brand-dark underline decoration-brand-gold decoration-4 underline-offset-8"
-                  >
-                    {recommendation.platform}
-                  </a>
-                  .
-                </p>
-                <div className="flex flex-col md:flex-row gap-8 justify-center">
-                  <Button
-                    asChild
-                    size="lg"
-                    className="bg-brand-dark text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 rounded-xl sm:rounded-xl text-[clamp(0.95rem,1.3vw,1rem)] lg:text-xl font-black shadow-2xl hover:scale-105 transition-transform w-full md:w-auto"
-                  >
-                    <a href={recommendation.link || "#"}>
-                      تفعيل فريق استشارات ولادة حلم
+                      {recommendation.platform}
                     </a>
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setStep("intro");
-                      setActiveAxisIndex(0);
-                      setResponses({});
-                    }}
-                    variant="outline"
-                    className="border-brand-dark text-brand-dark px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 rounded-xl sm:rounded-xl text-[clamp(0.95rem,1.3vw,1rem)] lg:text-xl font-black w-full sm:w-auto"
-                  >
-                    إعادة التشخيص الشامل
-                  </Button>
+                    .
+                  </p>
+                  <div className="flex flex-col md:flex-row gap-8 justify-center">
+                    <Button
+                      asChild
+                      size="lg"
+                      className="bg-brand-dark text-white px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 rounded-xl sm:rounded-xl text-[clamp(0.95rem,1.3vw,1rem)] lg:text-xl font-black shadow-2xl hover:scale-105 transition-transform w-full md:w-auto"
+                    >
+                      <a href={recommendation.link || "#"}>
+                        تفعيل فريق استشارات ولادة حلم
+                      </a>
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setStep("intro");
+                        setActiveAxisIndex(0);
+                        setResponses({});
+                      }}
+                      variant="outline"
+                      className="border-brand-dark text-brand-dark px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 rounded-xl sm:rounded-xl text-[clamp(0.95rem,1.3vw,1rem)] lg:text-xl font-black w-full sm:w-auto"
+                    >
+                      إعادة التشخيص الشامل
+                    </Button>
+                  </div>
                 </div>
               </div>
-              </div>{/* end resultRef */}
+              {/* end resultRef */}
             </div>
           )}
         </div>
