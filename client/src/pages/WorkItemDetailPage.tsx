@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Download, ExternalLink, FileText } from "lucide-react";
+import { ArrowRight, ExternalLink, FileText } from "lucide-react";
 import type { WorkItem } from "@shared/schema";
 
 const categoryLabels: Record<string, string> = {
@@ -38,8 +38,17 @@ interface RemoteWorkItem {
   modified?: string | null;
   published_at: string | null;
   image_url?: string | null;
+  images?: {
+    featured?: string | null;
+    content_1?: string | null;
+    content_2?: string | null;
+  } | null;
   featured_image?: { url: string } | null;
   content_image_1?: { url: string } | string | null;
+  links?: {
+    execution_report?: string | null;
+    association_website?: string | null;
+  } | null;
 }
 
 interface RemotePageResponse {
@@ -61,6 +70,10 @@ interface DetailWorkItem {
   category: WorkItem["category"];
   imageUrl: string | null;
   sourceLink: string | null;
+  links: {
+    executionReport: string | null;
+    associationWebsite: string | null;
+  };
   publishDate: string | null;
 }
 
@@ -75,10 +88,12 @@ function mapRemoteItem(
   item: RemoteWorkItem,
   category: WorkItem["category"],
 ): DetailWorkItem {
+  const featuredImageUrl =
+    item.images?.featured || item.featured_image?.url || item.image_url || null;
   const contentImageUrl =
     typeof item.content_image_1 === "string"
       ? item.content_image_1
-      : item.content_image_1?.url;
+      : item.content_image_1?.url || item.images?.content_1 || null;
 
   return {
     id: item.id,
@@ -87,9 +102,12 @@ function mapRemoteItem(
     description: item.excerpt || item.content_text || "",
     content: item.content_text || item.excerpt || "",
     category,
-    imageUrl:
-      item.featured_image?.url || contentImageUrl || item.image_url || null,
+    imageUrl: featuredImageUrl || contentImageUrl,
     sourceLink: item.link || null,
+    links: {
+      executionReport: item.links?.execution_report || null,
+      associationWebsite: item.links?.association_website || null,
+    },
     publishDate: item.published_at || item.date || item.modified || null,
   };
 }
@@ -104,6 +122,10 @@ function mapLocalItem(item: WorkItem): DetailWorkItem {
     category: item.category,
     imageUrl: item.imageUrl,
     sourceLink: item.fileUrl,
+    links: {
+      executionReport: null,
+      associationWebsite: null,
+    },
     publishDate: item.createdAt ? String(item.createdAt) : null,
   };
 }
@@ -315,42 +337,60 @@ export default function WorkItemDetailPage() {
                   </div>
                 </div>
 
-                <div className="p-6 bg-brand-light-gold/50 rounded-2xl border border-brand-gold/10">
-                  <h2
-                    className="font-almarai font-extrabold text-xl text-brand-dark mb-4"
-                    data-testid="text-work-files-title"
-                  >
-                    الملفات والروابط
-                  </h2>
-                  {item.sourceLink ? (
-                    <a
-                      href={item.sourceLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                {item.category === "strategic-planning" && (
+                  <div className="p-6 bg-brand-light-gold/50 rounded-2xl border border-brand-gold/10">
+                    <h2
+                      className="font-almarai font-extrabold text-xl text-brand-dark mb-4"
+                      data-testid="text-work-files-title"
                     >
-                      <Button
-                        className="bg-brand-gold text-white font-almarai gap-2"
-                        data-testid="button-download-file"
-                      >
-                        {item.category === "annual-plans" ? (
-                          <ExternalLink size={16} />
-                        ) : (
-                          <Download size={16} />
+                      الملفات والروابط
+                    </h2>
+
+                    {item.links.associationWebsite ||
+                    item.links.executionReport ? (
+                      <div className="flex flex-wrap gap-3">
+                        {item.links.associationWebsite && (
+                          <a
+                            href={item.links.associationWebsite}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Button
+                              className="bg-brand-dark text-white font-almarai gap-2"
+                              data-testid="button-association-website"
+                            >
+                              <ExternalLink size={16} />
+                              الاطلاع على موقع الجمعية
+                            </Button>
+                          </a>
                         )}
-                        {item.category === "annual-plans"
-                          ? "فتح المصدر الأصلي"
-                          : "تحميل الملف"}
-                      </Button>
-                    </a>
-                  ) : (
-                    <p
-                      className="font-almarai text-brand-gray"
-                      data-testid="text-work-no-files"
-                    >
-                      لا توجد ملفات أو روابط مرتبطة بهذا العمل حالياً.
-                    </p>
-                  )}
-                </div>
+
+                        {item.links.executionReport && (
+                          <a
+                            href={item.links.executionReport}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Button
+                              className="bg-brand-gold text-white font-almarai gap-2"
+                              data-testid="button-execution-report"
+                            >
+                              <ExternalLink size={16} />
+                              الاطلاع على تقرير التنفيذ
+                            </Button>
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <p
+                        className="font-almarai text-brand-gray"
+                        data-testid="text-work-no-files"
+                      >
+                        لا توجد ملفات أو روابط مرتبطة بهذا العمل حالياً.
+                      </p>
+                    )}
+                  </div>
+                )}
               </section>
 
               <aside className="order-1 lg:order-2 w-full">

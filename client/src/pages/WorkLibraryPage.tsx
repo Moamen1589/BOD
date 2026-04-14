@@ -73,6 +73,11 @@ interface StrategicPlanApiItem {
   excerpt: string | null;
   content_text: string | null;
   image_url: string | null;
+  images?: {
+    featured?: string | null;
+    content_1?: string | null;
+    content_2?: string | null;
+  } | null;
   content_image_1: string | null;
   content_image_2: string | null;
   published_at: string | null;
@@ -179,7 +184,13 @@ function toStrategicPlanCardItem(
     description: item.excerpt || item.content_text || "",
     category: "strategic-planning",
     imageUrl:
-      item.image_url || item.content_image_1 || item.content_image_2 || null,
+      item.images?.featured ||
+      item.image_url ||
+      item.content_image_1 ||
+      item.images?.content_1 ||
+      item.content_image_2 ||
+      item.images?.content_2 ||
+      null,
     externalLink: null,
     createdAt: item.published_at || "",
   };
