@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, CheckCircle } from "lucide-react";
+import { hasCompletedRegistration, saveRegistration } from "@/lib/registration";
 
 type RegisterFormData = {
   organizationName: string;
+  organizationEmail: string;
   organizationType: string;
-  assessmentDate: string;
   assessmentPeriodYears: string;
+  licenseNumber: string;
   executingEntity: string;
   assessmentTeam: string;
   organizationRepresentative: string;
@@ -20,35 +22,80 @@ export default function RegisterPage() {
   const [, setLocation] = useLocation();
   const [formData, setFormData] = useState<RegisterFormData>({
     organizationName: "",
+    organizationEmail: "",
     organizationType: "",
-    assessmentDate: "",
     assessmentPeriodYears: "",
+    licenseNumber: "",
     executingEntity: "",
     assessmentTeam: "",
     organizationRepresentative: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const registerMutation = useMutation<{ id: string }, Error, RegisterFormData>(
-    {
-      mutationFn: async (data) => {
-        const response = await fetch("/api/register", {
+  useEffect(() => {
+    if (hasCompletedRegistration()) {
+      setLocation("/ecstt");
+    }
+  }, [setLocation]);
+
+  const registerMutation = useMutation<
+    { id?: string },
+    Error,
+    RegisterFormData
+  >({
+    mutationFn: async (data) => {
+      const registeredAt = new Date();
+      const evaluationDate = registeredAt.toISOString().split("T")[0];
+      const response = await fetch(
+        "https://gold-weasel-489740.hostingersite.com/api/organizations",
+        {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        if (!response.ok) throw new Error("Registration failed");
-        return response.json();
-      },
-      onSuccess: (data) => {
-        setSubmitted(true);
-        localStorage.setItem("orgId", data.id);
-        setTimeout(() => {
-          setLocation(`/ecstt?orgId=${data.id}`);
-        }, 2000);
-      },
+          body: JSON.stringify({
+            name: data.organizationName,
+            email: data.organizationEmail,
+            type: data.organizationType,
+            liscense_number: data.licenseNumber,
+            evaluation_duration: Number(data.assessmentPeriodYears) || 0,
+            evaluator_name: data.executingEntity,
+            evaluation_team: data.assessmentTeam,
+            representative_name: data.organizationRepresentative,
+            evaluation_date: evaluationDate,
+          }),
+        },
+      );
+      if (!response.ok) throw new Error("Registration failed");
+
+      const responseData = await response.json();
+      const generatedId =
+        responseData?.id ??
+        responseData?.data?.id ??
+        responseData?.organization?.id ??
+        crypto.randomUUID();
+
+      saveRegistration({
+        id: String(generatedId),
+        name: data.organizationName,
+        email: data.organizationEmail,
+        type: data.organizationType,
+        liscense_number: data.licenseNumber,
+        evaluation_duration: Number(data.assessmentPeriodYears) || 0,
+        evaluator_name: data.executingEntity,
+        evaluation_team: data.assessmentTeam,
+        representative_name: data.organizationRepresentative,
+        evaluation_date: evaluationDate,
+        registered_at: registeredAt.toISOString(),
+      });
+
+      return { id: String(generatedId) };
     },
-  );
+    onSuccess: (data) => {
+      setSubmitted(true);
+      setTimeout(() => {
+        setLocation(`/ecstt?orgId=${data.id}`);
+      }, 2000);
+    },
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -115,13 +162,28 @@ export default function RegisterPage() {
 
               <div>
                 <label className="block text-lg font-bold text-brand-dark mb-3">
+                  البريد الإلكتروني
+                </label>
+                <input
+                  type="email"
+                  name="organizationEmail"
+                  value={formData.organizationEmail}
+                  onChange={handleChange}
+                  required
+                  placeholder="example@organization.com"
+                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-lg font-bold text-brand-dark mb-3">
                   نوع الجهة
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { label: "جمعية", value: "جمعية" },
-                    { label: "مؤسسة", value: "مؤسسة" },
-                    { label: "مبادرة", value: "مبادرة" },
+                    { label: "جمعية", value: "association" },
+                    { label: "مؤسسة", value: "foundation" },
+                    { label: "مبادرة", value: "initiative" },
                   ].map((option) => (
                     <label
                       key={option.value}
@@ -151,14 +213,15 @@ export default function RegisterPage() {
 
               <div>
                 <label className="block text-lg font-bold text-brand-dark mb-3">
-                  تاريخ التقييم
+                  رقم الترخيص
                 </label>
                 <input
-                  type="date"
-                  name="assessmentDate"
-                  value={formData.assessmentDate}
+                  type="text"
+                  name="licenseNumber"
+                  value={formData.licenseNumber}
                   onChange={handleChange}
                   required
+                  placeholder="LIC-123456"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
               </div>

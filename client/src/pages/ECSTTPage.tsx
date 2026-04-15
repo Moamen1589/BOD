@@ -39,6 +39,31 @@ import {
 } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Progress } from "@/components/ui/progress";
+import { hasCompletedRegistration } from "@/lib/registration";
+
+const COMMUNITY_HERO_API_BASE = "https://gold-weasel-489740.hostingersite.com";
+const COMMUNITY_HERO_SLIDES_ENDPOINT = `${COMMUNITY_HERO_API_BASE}/api/hero/slides`;
+
+type CommunityHeroSlide = {
+  title_ar?: string | null;
+  subtitle_ar?: string | null;
+  logo_url?: string | null;
+};
+
+const resolveCommunityHeroAssetUrl = (assetPath?: string | null) => {
+  if (!assetPath) return null;
+  if (/^https?:\/\//i.test(assetPath)) return assetPath;
+  if (assetPath.startsWith("/storage/")) {
+    return `${COMMUNITY_HERO_API_BASE}${assetPath}`;
+  }
+
+  const normalizedPath = assetPath.replace(/^\/+/, "");
+  if (normalizedPath.startsWith("storage/")) {
+    return `${COMMUNITY_HERO_API_BASE}/${normalizedPath}`;
+  }
+
+  return `${COMMUNITY_HERO_API_BASE}/storage/${normalizedPath}`;
+};
 
 const arkan = [
   {
@@ -263,6 +288,7 @@ export default function ECSTTPage() {
     {},
   );
   const [isExporting, setIsExporting] = useState(false);
+  const [heroSlide, setHeroSlide] = useState<CommunityHeroSlide | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   const heroRef = useScrollAnimation();
@@ -285,6 +311,48 @@ export default function ECSTTPage() {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const loadHeroSlide = async () => {
+      try {
+        const response = await fetch(COMMUNITY_HERO_SLIDES_ENDPOINT);
+        if (!response.ok) return;
+
+        const payload = await response.json();
+        const firstSlide = Array.isArray(payload?.data)
+          ? payload.data[0]
+          : undefined;
+
+        if (!firstSlide || !isMounted) return;
+
+        setHeroSlide({
+          title_ar: firstSlide.title_ar,
+          subtitle_ar: firstSlide.subtitle_ar,
+          logo_url: firstSlide.logo_url,
+        });
+      } catch {
+        // Keep static fallback values when API is unavailable.
+      }
+    };
+
+    loadHeroSlide();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const heroLogoUrl =
+    resolveCommunityHeroAssetUrl(heroSlide?.logo_url) ||
+    "/images/cstt-logo.jpg";
+  const heroTitle =
+    heroSlide?.title_ar?.trim() ||
+    "حوّل جمعيتك إلى مؤسسة تُدار بالأثر، لا بالاجتهاد";
+  const heroSubtitle =
+    heroSlide?.subtitle_ar?.trim() ||
+    "رحلة متكاملة تبدأ بالتشخيص وتنتهي بالجاهزية التمويلية، عبر منظومة واحدة تجمع التخطيط، التشغيل، القياس، والحوكمة.";
+
+  useEffect(() => {
     const storedOrgId = localStorage.getItem("orgId");
     const urlOrgId = new URLSearchParams(window.location.search).get("orgId");
 
@@ -294,7 +362,7 @@ export default function ECSTTPage() {
       return;
     }
 
-    setHasRegistration(Boolean(storedOrgId));
+    setHasRegistration(hasCompletedRegistration() || Boolean(storedOrgId));
   }, []);
 
   useEffect(() => {
@@ -545,16 +613,15 @@ export default function ECSTTPage() {
       >
         <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col items-center text-center">
           <img
-            src="/images/cstt-logo.jpg"
+            src={heroLogoUrl}
             alt="شعار CSTT"
-            className="h-28 md:h-40 w-auto mb-8 md:mb-10 rounded-full shadow-2xl border-4 border-white transition-transform hover:scale-105"
+            className="w-28 h-28 md:w-40 md:h-40 object-cover rounded-full mb-8 md:mb-10 shadow-2xl border-4 border-white transition-transform hover:scale-105"
           />
           <h1 className="max-w-5xl mx-auto text-[clamp(1.7rem,3.6vw,3.65rem)] font-black mb-5 sm:mb-6 md:mb-8 leading-[1.25] sm:leading-[1.18] md:leading-[1.15] [text-wrap:balance]">
-            حوّل جمعيتك إلى مؤسسة تُدار بالأثر، لا بالاجتهاد
+            {heroTitle}
           </h1>
           <p className="text-[clamp(1rem,1.6vw,1.5rem)] text-white/70 mb-6 sm:mb-8 md:mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
-            رحلة متكاملة تبدأ بالتشخيص وتنتهي بالجاهزية التمويلية، عبر منظومة
-            واحدة تجمع التخطيط، التشغيل، القياس، والحوكمة.
+            {heroSubtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
             <Button
@@ -1063,7 +1130,7 @@ export default function ECSTTPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <Button
-                  onClick={() => setStep("assessment")}
+                  onClick={handleAssessmentEntry}
                   size="lg"
                   className="bg-brand-dark text-white px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl w-full sm:w-auto"
                 >

@@ -22,6 +22,28 @@ import { useEffect } from "react";
 import VotingPage from "./pages/VotingPage";
 import GovernancePage from "./pages/GovernancePage";
 import ImpactPage from "./pages/ImpactPage";
+import { hasCompletedRegistration } from "@/lib/registration";
+
+function RegistrationGuard({
+  component: Component,
+}: {
+  component: React.ComponentType;
+}) {
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!hasCompletedRegistration()) {
+      setLocation("/register");
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  }, [setLocation]);
+
+  if (!hasCompletedRegistration()) {
+    return null;
+  }
+
+  return <Component />;
+}
 
 function Router() {
   const [location] = useLocation();
@@ -35,9 +57,18 @@ function Router() {
       <Route path="/" component={Box} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/ecstt" component={ECSTTPage} />
-      <Route path="/voting" component={VotingPage} />
-      <Route path="/governance" component={GovernancePage} />
-      <Route path="/impact" component={ImpactPage} />
+      <Route
+        path="/voting"
+        component={() => <RegistrationGuard component={VotingPage} />}
+      />
+      <Route
+        path="/governance"
+        component={() => <RegistrationGuard component={GovernancePage} />}
+      />
+      <Route
+        path="/impact"
+        component={() => <RegistrationGuard component={ImpactPage} />}
+      />
       <Route path="/services" component={ServicesPage} />
       <Route path="/services/:slug" component={ServiceDetailPage} />
       <Route path="/blog" component={BlogPage} />
