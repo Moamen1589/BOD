@@ -103,7 +103,7 @@
 
 @keyframes hero-cycle {
   0% {
-    opacity: 0;
+    opacity: 1;
     transform: scale(1.02);
   }
   8% {

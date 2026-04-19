@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, Award, Briefcase, Star } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
 const getVideoMimeType = (assetPath: string) => {
   const cleanPath = assetPath.split(/[?#]/)[0].toLowerCase();
 
@@ -26,7 +27,7 @@ const getYouTubeEmbedUrl = (videoUrl: string) => {
 
     if (!videoId) return null;
 
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&playsinline=1&rel=0&modestbranding=1`;
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&enablejsapi=1`;
   } catch {
     return null;
   }
@@ -95,8 +96,30 @@ const resolveHeroAssetUrl = (assetPath?: string | null) => {
 export function HeroSection() {
   const [heroData, setHeroData] = useState<HeroApiData | null>(null);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [videoCompleted, setVideoCompleted] = useState(false);
+  const [imageCycleRound, setImageCycleRound] = useState(0);
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const youtubeIframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  const subscribeToYouTubeStateChanges = () => {
+    const playerWindow = youtubeIframeRef.current?.contentWindow;
+    if (!playerWindow) return;
+
+    playerWindow.postMessage(
+      JSON.stringify({ event: "listening" }),
+      "*",
+    );
+
+    playerWindow.postMessage(
+      JSON.stringify({
+        event: "command",
+        func: "addEventListener",
+        args: ["onStateChange"],
+      }),
+      "*",
+    );
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -149,7 +172,8 @@ export function HeroSection() {
   const backgroundVideoEmbedUrl = backgroundVideoValue
     ? getYouTubeEmbedUrl(backgroundVideoValue)
     : null;
-  const shouldShowVideo = Boolean(backgroundVideoValue) && !videoFailed;
+  const shouldShowVideo =
+    Boolean(backgroundVideoValue) && !videoFailed && !videoCompleted;
   const shouldShowBackgroundImages = heroLoaded && !shouldShowVideo;
   const shouldAnimateBackgrounds =
     shouldShowBackgroundImages && heroBackgrounds.length > 1;
@@ -161,7 +185,79 @@ export function HeroSection() {
 
   useEffect(() => {
     setVideoReady(false);
+    setVideoCompleted(false);
   }, [backgroundVideoValue, backgroundVideoEmbedUrl]);
+
+  useEffect(() => {
+    if (!videoCompleted || !backgroundVideoValue || videoFailed) return;
+
+    setImageCycleRound((prev) => prev + 1);
+
+    const imageCycleDurationMs =
+      (heroBackgrounds.length > 1 ? heroBackgrounds.length : 1) * 6000;
+
+    const resumeVideoTimeout = window.setTimeout(() => {
+      setVideoReady(false);
+      setVideoCompleted(false);
+    }, imageCycleDurationMs);
+
+    return () => {
+      window.clearTimeout(resumeVideoTimeout);
+    };
+  }, [
+    videoCompleted,
+    backgroundVideoValue,
+    videoFailed,
+    heroBackgrounds.length,
+  ]);
+
+  useEffect(() => {
+    if (!backgroundVideoEmbedUrl) return;
+
+    const handleYouTubeMessage = (event: MessageEvent) => {
+      if (
+        !event.origin.includes("youtube.com") &&
+        !event.origin.includes("youtube-nocookie.com")
+      ) {
+        return;
+      }
+
+      let payload: unknown = event.data;
+      if (typeof payload === "string") {
+        try {
+          payload = JSON.parse(payload);
+        } catch {
+          return;
+        }
+      }
+
+      if (!payload || typeof payload !== "object") return;
+
+      const data = payload as { event?: string; info?: number | string };
+      const infoValue =
+        typeof data.info === "string" ? Number(data.info) : data.info;
+
+      if (data.event === "onStateChange" && infoValue === 0) {
+        setVideoCompleted(true);
+      }
+    };
+
+    window.addEventListener("message", handleYouTubeMessage);
+
+    const subscribeTimeout = window.setTimeout(() => {
+      subscribeToYouTubeStateChanges();
+    }, 500);
+
+    const subscribeRetryTimeout = window.setTimeout(() => {
+      subscribeToYouTubeStateChanges();
+    }, 1500);
+
+    return () => {
+      window.removeEventListener("message", handleYouTubeMessage);
+      window.clearTimeout(subscribeTimeout);
+      window.clearTimeout(subscribeRetryTimeout);
+    };
+  }, [backgroundVideoEmbedUrl]);
 
   return (
     <section
@@ -174,6 +270,7 @@ export function HeroSection() {
             <div className="absolute inset-0 overflow-hidden bg-brand-dark">
               <iframe
                 key={backgroundVideoEmbedUrl}
+                ref={youtubeIframeRef}
                 className={`absolute border-0 transition-opacity duration-500 pointer-events-none ${
                   videoReady ? "opacity-100" : "opacity-0"
                 }`}
@@ -190,7 +287,10 @@ export function HeroSection() {
                   minHeight: "100vh",
                   transform: "translate(-50%, -50%)",
                 }}
-                onLoad={() => setVideoReady(true)}
+                onLoad={() => {
+                  setVideoReady(true);
+                  subscribeToYouTubeStateChanges();
+                }}
               />
             </div>
           ) : (
@@ -201,10 +301,10 @@ export function HeroSection() {
               }`}
               autoPlay
               muted
-              loop
               playsInline
               preload="auto"
               onCanPlay={() => setVideoReady(true)}
+              onEnded={() => setVideoCompleted(true)}
               onError={() => setVideoFailed(true)}
             >
               <source
@@ -222,8 +322,10 @@ export function HeroSection() {
         ) : shouldAnimateBackgrounds ? (
           heroBackgrounds.map((image, index) => (
             <div
-              key={`${image}-${index}`}
-              className="absolute inset-0 bg-cover bg-center opacity-0 animate-hero-cycle"
+              key={`${image}-${index}-${imageCycleRound}`}
+              className={`absolute inset-0 bg-cover bg-center animate-hero-cycle ${
+                index === 0 ? "opacity-100" : "opacity-0"
+              }`}
               style={{
                 backgroundImage: `url(${image})`,
                 animationDelay: `${index * 6}s`,
