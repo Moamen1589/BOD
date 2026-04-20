@@ -183,7 +183,7 @@ export default function RegisterPage() {
                   {[
                     { label: "جمعية", value: "government" },
                     { label: "مؤسسة", value: "foundation" },
-                    { label: "مبادرة", value: "initiative" },
+                    { label: "مبادرة", value: "non_profit" },
                   ].map((option) => (
                     <label
                       key={option.value}
