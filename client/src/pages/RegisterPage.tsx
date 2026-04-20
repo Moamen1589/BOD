@@ -181,7 +181,7 @@ export default function RegisterPage() {
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { label: "جمعية", value: "association" },
+                    { label: "جمعية", value: "government" },
                     { label: "مؤسسة", value: "foundation" },
                     { label: "مبادرة", value: "initiative" },
                   ].map((option) => (
