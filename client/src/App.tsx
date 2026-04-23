@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 
 import { Box } from "@/pages/Box";
 import ECSTTPage from "@/pages/ECSTTPage";
+import FinalReportPage from "@/pages/FinalReportPage";
 import RegisterPage from "@/pages/RegisterPage";
 import ServicesPage from "@/pages/ServicesPage";
 import ServiceDetailPage from "@/pages/ServiceDetailPage";
@@ -57,6 +58,7 @@ function Router() {
       <Route path="/" component={Box} />
       <Route path="/register" component={RegisterPage} />
       <Route path="/ecstt" component={ECSTTPage} />
+      <Route path="/final-report/:submissionId" component={FinalReportPage} />
       <Route
         path="/voting"
         component={() => <RegistrationGuard component={VotingPage} />}

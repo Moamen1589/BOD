@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, CheckCircle } from "lucide-react";
 import { hasCompletedRegistration, saveRegistration } from "@/lib/registration";
+import { extractTokenFromPayload, saveEncryptedAuthToken } from "@/lib/authToken";
 
 type RegisterFormData = {
   organizationName: string;
@@ -67,6 +68,11 @@ export default function RegisterPage() {
       if (!response.ok) throw new Error("Registration failed");
 
       const responseData = await response.json();
+      const authToken = extractTokenFromPayload(responseData);
+      if (authToken) {
+        saveEncryptedAuthToken(authToken);
+      }
+
       const generatedId =
         responseData?.id ??
         responseData?.data?.id ??
@@ -190,17 +196,17 @@ export default function RegisterPage() {
                       className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-brand-gold/20 rounded-2xl cursor-pointer hover:border-brand-gold transition-all"
                     >
                       <input
-                        type="checkbox"
+                        type="radio"
+                        name="organizationType"
+                        value={option.value}
                         checked={formData.organizationType === option.value}
                         onChange={() =>
                           setFormData((prev) => ({
                             ...prev,
-                            organizationType:
-                              prev.organizationType === option.value
-                                ? ""
-                                : option.value,
+                            organizationType: option.value,
                           }))
                         }
+                        required
                         className="w-4 h-4 accent-brand-gold"
                       />
                       <span className="font-bold text-brand-dark">
@@ -236,6 +242,7 @@ export default function RegisterPage() {
                   value={formData.assessmentPeriodYears}
                   onChange={handleChange}
                   min="1"
+                  required
                   placeholder="0"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
@@ -250,6 +257,7 @@ export default function RegisterPage() {
                   name="executingEntity"
                   value={formData.executingEntity}
                   onChange={handleChange}
+                  required
                   placeholder="أدخل اسم الجهة المنفذة"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
@@ -264,6 +272,7 @@ export default function RegisterPage() {
                   value={formData.assessmentTeam}
                   onChange={handleChange}
                   rows={3}
+                  required
                   placeholder="أدخل أسماء أعضاء فريق التقييم"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all resize-none"
                 />
@@ -278,6 +287,7 @@ export default function RegisterPage() {
                   name="organizationRepresentative"
                   value={formData.organizationRepresentative}
                   onChange={handleChange}
+                  required
                   placeholder="أدخل اسم ممثل الجهة"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
