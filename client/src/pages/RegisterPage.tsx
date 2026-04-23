@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, CheckCircle } from "lucide-react";
 import { hasCompletedRegistration, saveRegistration } from "@/lib/registration";
-import { extractTokenFromPayload, saveEncryptedAuthToken } from "@/lib/authToken";
+import {
+  extractTokenFromPayload,
+  saveEncryptedAuthToken,
+} from "@/lib/authToken";
 
 type RegisterFormData = {
   organizationName: string;

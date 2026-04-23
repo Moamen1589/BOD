@@ -109,7 +109,9 @@ const extractTokenFromObject = (value: unknown): string | null => {
   return null;
 };
 
-const extractTokenFromStorageValue = (rawValue: string | null): string | null => {
+const extractTokenFromStorageValue = (
+  rawValue: string | null,
+): string | null => {
   const plainToken = normalizeTokenValue(rawValue);
   if (!plainToken) {
     return null;
