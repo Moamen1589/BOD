@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -139,6 +139,16 @@ export default function GovernancePage() {
     {},
   );
   const [activeTab, setActiveTab] = useState<"form" | "results">("form");
+  const [loadingRemote, setLoadingRemote] = useState(false);
+  const [remoteGovernanceScore, setRemoteGovernanceScore] = useState<null | {
+    pillar_impact: number;
+    pillar_integrity: number;
+    pillar_empowerment: number;
+    pillar_innovation: number;
+    pillar_capacity: number;
+    pillar_sustainability: number;
+    overall_score?: number;
+  }>(null);
 
   const setField = (field: keyof Omit<FormData, "quarters">, val: string) => {
     setForm((prev) => ({ ...prev, [field]: val }));
@@ -394,6 +404,95 @@ export default function GovernancePage() {
     (s, q) => s + (parseFloat(form.quarters[q].programBudget) || 0),
     0,
   );
+
+  // Fetch program details from remote API and populate form when results tab opens
+  useEffect(() => {
+    const loadRemote = async (programId: string) => {
+      try {
+        setLoadingRemote(true);
+        const res = await fetch(
+          `${GOVERNANCE_PROGRAMS_ENDPOINT}/${programId}`,
+          {
+            headers: getRequestHeaders(false),
+          },
+        );
+        if (!res.ok) return;
+        const json = await res.json().catch(() => null);
+        const data = json?.data ?? json;
+        if (!data) return;
+
+        // map program fields
+        setForm((prev) => ({
+          ...prev,
+          programName: data.name ?? prev.programName,
+          actualCost: String(data.total_actual_cost ?? prev.actualCost),
+          resourceEfficiency: String(
+            data.resource_efficiency ?? prev.resourceEfficiency,
+          ),
+          costPerBeneficiary: String(
+            data.cost_per_beneficiary ?? prev.costPerBeneficiary,
+          ),
+          startDate: data.start_date ?? prev.startDate,
+          endDate: data.end_date ?? prev.endDate,
+          status: data.status ?? prev.status,
+          duration: String(data.execution_duration ?? prev.duration),
+          quarters: {
+            Q1: { ...prev.quarters.Q1 },
+            Q2: { ...prev.quarters.Q2 },
+            Q3: { ...prev.quarters.Q3 },
+            Q4: { ...prev.quarters.Q4 },
+          },
+        }));
+
+        // map quarters
+        if (Array.isArray(data.quarters)) {
+          setForm((prev) => {
+            const nextQuarters = { ...prev.quarters } as any;
+            data.quarters.forEach((q: any) => {
+              if (!q.quarter) return;
+              nextQuarters[q.quarter] = {
+                programCost: String(q.actual_cost ?? q.actualCost ?? ""),
+                programBudget: String(q.budget ?? q.program_budget ?? ""),
+                beneficiaries: String(q.beneficiaries ?? ""),
+              };
+            });
+            return { ...prev, quarters: nextQuarters };
+          });
+        }
+
+        // governance score
+        if (data.governance_score) {
+          setRemoteGovernanceScore({
+            pillar_impact: Number(data.governance_score.pillar_impact ?? 0),
+            pillar_integrity: Number(
+              data.governance_score.pillar_integrity ?? 0,
+            ),
+            pillar_empowerment: Number(
+              data.governance_score.pillar_empowerment ?? 0,
+            ),
+            pillar_innovation: Number(
+              data.governance_score.pillar_innovation ?? 0,
+            ),
+            pillar_capacity: Number(data.governance_score.pillar_capacity ?? 0),
+            pillar_sustainability: Number(
+              data.governance_score.pillar_sustainability ?? 0,
+            ),
+            overall_score: Number(data.governance_score.overall_score ?? 0),
+          });
+        }
+      } catch (e) {
+        // ignore
+      } finally {
+        setLoadingRemote(false);
+      }
+    };
+
+    if (activeTab === "results") {
+      const programId =
+        createdProgramId ?? localStorage.getItem("governance_program_id");
+      if (programId) loadRemote(programId);
+    }
+  }, [activeTab, createdProgramId]);
   const totalBeneficiaries = quarterKeys.reduce(
     (s, q) => s + (parseFloat(form.quarters[q].beneficiaries) || 0),
     0,
@@ -406,77 +505,87 @@ export default function GovernancePage() {
     parseFloat(form.costPerBeneficiary) ||
     (totalBeneficiaries ? totalActual / totalBeneficiaries : 0);
 
-  // Pillars scoring — map governance indicators to the 6 pillars
-  const govPillarScores = {
-    purpose: Math.min(
-      100,
-      Math.round(
-        Math.min(100, totalBeneficiaries / 3) * 0.6 +
-          (costPerBene > 0 ? Math.min(40, (10000 / costPerBene) * 4) : 20),
-      ),
-    ),
-    integrity: Math.min(
-      100,
-      Math.round(
-        efficiency * 0.6 +
-          (totalBudget
-            ? Math.min(
-                40,
-                Math.max(
-                  0,
-                  1 - Math.abs(totalBudget - totalActual) / totalBudget,
-                ) * 40,
-              )
-            : 20),
-      ),
-    ),
-    empowerment: Math.min(
-      100,
-      Math.round(
-        totalBudget && totalBeneficiaries
-          ? Math.min(
-              100,
-              (totalBeneficiaries / Math.max(1, totalBudget / 10000)) * 30,
-            )
-          : 0,
-      ),
-    ),
-    innovation:
-      form.status === "مكتمل"
-        ? 95
-        : form.status === "جارٍ التنفيذ"
-          ? 70
-          : form.status === "في المرحلة التخطيطية"
-            ? 45
-            : 20,
-    capacity: Math.min(
-      100,
-      Math.round(
-        totalBudget && totalActual
-          ? totalActual <= totalBudget
-            ? 70 + ((totalBudget - totalActual) / totalBudget) * 30
-            : Math.max(
-                10,
-                70 - ((totalActual - totalBudget) / totalBudget) * 80,
-              )
-          : efficiency * 0.8,
-      ),
-    ),
-    sustainability: Math.min(
-      100,
-      Math.round(
-        (quarterKeys.filter(
-          (q) =>
-            form.quarters[q].beneficiaries && form.quarters[q].programBudget,
-        ).length /
-          4) *
-          65 +
-          (form.duration
-            ? Math.min(35, (parseFloat(form.duration) / 90) * 35)
-            : 0),
-      ),
-    ),
-  };
+  // Pillars scoring — either use remote governance score if available, otherwise compute
+  const govPillarScores = remoteGovernanceScore
+    ? {
+        purpose: remoteGovernanceScore.pillar_impact,
+        integrity: remoteGovernanceScore.pillar_integrity,
+        empowerment: remoteGovernanceScore.pillar_empowerment,
+        innovation: remoteGovernanceScore.pillar_innovation,
+        capacity: remoteGovernanceScore.pillar_capacity,
+        sustainability: remoteGovernanceScore.pillar_sustainability,
+      }
+    : {
+        purpose: Math.min(
+          100,
+          Math.round(
+            Math.min(100, totalBeneficiaries / 3) * 0.6 +
+              (costPerBene > 0 ? Math.min(40, (10000 / costPerBene) * 4) : 20),
+          ),
+        ),
+        integrity: Math.min(
+          100,
+          Math.round(
+            efficiency * 0.6 +
+              (totalBudget
+                ? Math.min(
+                    40,
+                    Math.max(
+                      0,
+                      1 - Math.abs(totalBudget - totalActual) / totalBudget,
+                    ) * 40,
+                  )
+                : 20),
+          ),
+        ),
+        empowerment: Math.min(
+          100,
+          Math.round(
+            totalBudget && totalBeneficiaries
+              ? Math.min(
+                  100,
+                  (totalBeneficiaries / Math.max(1, totalBudget / 10000)) * 30,
+                )
+              : 0,
+          ),
+        ),
+        innovation:
+          form.status === "مكتمل"
+            ? 95
+            : form.status === "جارٍ التنفيذ"
+              ? 70
+              : form.status === "في المرحلة التخطيطية"
+                ? 45
+                : 20,
+        capacity: Math.min(
+          100,
+          Math.round(
+            totalBudget && totalActual
+              ? totalActual <= totalBudget
+                ? 70 + ((totalBudget - totalActual) / totalBudget) * 30
+                : Math.max(
+                    10,
+                    70 - ((totalActual - totalBudget) / totalBudget) * 80,
+                  )
+              : efficiency * 0.8,
+          ),
+        ),
+        sustainability: Math.min(
+          100,
+          Math.round(
+            (quarterKeys.filter(
+              (q) =>
+                form.quarters[q].beneficiaries &&
+                form.quarters[q].programBudget,
+            ).length /
+              4) *
+              65 +
+              (form.duration
+                ? Math.min(35, (parseFloat(form.duration) / 90) * 35)
+                : 0),
+          ),
+        ),
+      };
   const govPillarIndicators: Record<string, string[]> = {
     purpose: ["عدد المستفيدين", "تكلفة المستفيد", "الأثر المباشر"],
     integrity: ["كفاءة الموارد", "الالتزام بالميزانية", "الشفافية المالية"],
@@ -497,6 +606,56 @@ export default function GovernancePage() {
     { name: "مُنفَّق", value: totalActual },
     { name: "متبقي", value: Math.max(0, totalBudget - totalActual) },
   ];
+
+  const renderPieLabel = (props: any) => {
+    const { cx, cy, midAngle, outerRadius, percent, name, value } = props;
+    const RAD = Math.PI / 180;
+    const radius = outerRadius + 28;
+    let x = cx + radius * Math.cos(-midAngle * RAD);
+    let y = cy + radius * Math.sin(-midAngle * RAD);
+
+    // clamp to chart bounds to avoid labels being drawn outside svg
+    const chartWidth = cx * 2;
+    const chartHeight = cy * 2;
+    x = Math.max(12, Math.min(chartWidth - 12, x));
+    y = Math.max(12, Math.min(chartHeight - 12, y));
+
+    const text = `${name} ${(percent * 100).toFixed(0)}%`;
+
+    return (
+      <g>
+        <text
+          x={x}
+          y={y}
+          fill="#0f172a"
+          textAnchor={x > cx ? "start" : "end"}
+          dominantBaseline="central"
+          style={{
+            fontSize: 12,
+            fontFamily: "Almarai",
+            fontWeight: 800,
+            paintOrder: "stroke",
+          }}
+          stroke="#ffffff"
+          strokeWidth={6}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {text}
+        </text>
+        <text
+          x={x}
+          y={y}
+          fill="#0f172a"
+          textAnchor={x > cx ? "start" : "end"}
+          dominantBaseline="central"
+          style={{ fontSize: 12, fontFamily: "Almarai", fontWeight: 800 }}
+        >
+          {text}
+        </text>
+      </g>
+    );
+  };
 
   const statusColor =
     form.status === "مكتمل"
@@ -837,11 +996,8 @@ export default function GovernancePage() {
                 </div>
               </div>
               <Button
-                onClick={() => {
-                  setActiveTab("form");
-                }}
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10 rounded-xl font-bold text-sm"
+                onClick={() => setActiveTab("form")}
+                className="bg-white text-brand-dark hover:bg-white/90 rounded-xl font-black text-sm px-4 py-3 shadow-lg"
               >
                 تعديل البيانات
               </Button>
@@ -963,13 +1119,12 @@ export default function GovernancePage() {
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={2}
                       dataKey="value"
-                      label={({ name, percent }) =>
-                        `${name} ${(percent * 100).toFixed(0)}%`
-                      }
-                      labelLine={false}
+                      label={renderPieLabel}
+                      labelLine={true}
                     >
                       {pieData.map((_, i) => (
                         <Cell key={i} fill={COLORS[i]} />
