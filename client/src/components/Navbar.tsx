@@ -23,7 +23,7 @@ const navItems: NavItem[] = [
       { label: "نظام التحول المؤسسي ECSTT", href: "/ecstt" },
       { label: "نظام التصويت والمبادرات", href: "/voting" },
       { label: "حوكمة المشاريع والبرامج", href: "/governance" },
-      { label: "قياس الأثر المجتمعي AI", href: "/impact" },
+      { label: "قياس الأثر المجتمعي", href: "/impact" },
       { label: "سجّل جمعيتك", href: "/register" },
     ],
   },

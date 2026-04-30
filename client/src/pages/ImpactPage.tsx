@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ProgramInfoForm } from "@/components/ProgramInfoForm";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { getRequestHeaders } from "@/lib/queryClient";
+import {
+  GOVERNANCE_PROGRAMS_ENDPOINT,
+  GOVERNANCE_STATUS_MAP,
+  validateProgramFields,
+  type ValidationErrors,
+} from "@/lib/programValidation";
 import {
   ArrowRight,
   Plus,
@@ -36,8 +43,6 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-
-type ValidationErrors = Record<string, string>;
 
 type Benefit = { name: string; value: string };
 
@@ -73,19 +78,6 @@ const initialForm: FormData = {
   status: "جارٍ التنفيذ",
   duration: "",
   benefits: [{ name: "", value: "" }],
-};
-
-const GOVERNANCE_PROGRAMS_ENDPOINT =
-  "https://gold-weasel-489740.hostingersite.com/api/governance/programs";
-
-const GOVERNANCE_STATUS_MAP: Record<
-  string,
-  "planning" | "in_progress" | "completed" | "suspended"
-> = {
-  "في المرحلة التخطيطية": "planning",
-  "جارٍ التنفيذ": "in_progress",
-  مكتمل: "completed",
-  متوقف: "suspended",
 };
 
 function GaugeMeter({
@@ -172,6 +164,7 @@ export default function ImpactPage() {
     {},
   );
   const [activeTab, setActiveTab] = useState<"form" | "results">("form");
+  const [apiResults, setApiResults] = useState<any>(null);
 
   const setField = (field: keyof Omit<FormData, "benefits">, val: string) => {
     setForm((prev) => ({ ...prev, [field]: val }));
@@ -207,42 +200,44 @@ export default function ImpactPage() {
     return !Number.isNaN(num) && num >= min;
   };
 
-  const validateProgramFields = () => {
+  const validateSocialImpactFields = () => {
     const errors: ValidationErrors = {};
 
-    if (!form.programName.trim()) {
-      errors.programName = "اسم البرنامج مطلوب";
-    }
-
-    if (!isValidNumber(form.actualCost, 0)) {
-      errors.actualCost = "أدخل تكلفة فعلية صحيحة (0 أو أكبر)";
+    if (!isValidNumber(form.beneficiaries, 0)) {
+      errors.beneficiaries = "عدد المستفيدين يجب أن يكون رقمًا صحيحًا";
     }
 
     if (
-      !isValidNumber(form.resourceEfficiency, 0) ||
-      Number(form.resourceEfficiency) > 100
+      !isValidNumber(form.satisfactionRate, 0) ||
+      Number(form.satisfactionRate) > 100
     ) {
-      errors.resourceEfficiency = "كفاءة الموارد يجب أن تكون بين 0 و 100";
+      errors.satisfactionRate = "معدل الرضا يجب أن يكون بين 0 و 100";
     }
 
-    if (!isValidNumber(form.duration, 1)) {
-      errors.duration = "مدة التنفيذ يجب أن تكون رقمًا أكبر من 0";
+    if (
+      !isValidNumber(form.improvementRate, 0) ||
+      Number(form.improvementRate) > 100
+    ) {
+      errors.improvementRate = "نسبة التحسين يجب أن تكون بين 0 و 100";
     }
 
-    if (!form.startDate) {
-      errors.startDate = "تاريخ البدء مطلوب";
+    if (
+      !isValidNumber(form.inclusionIndex, 0) ||
+      Number(form.inclusionIndex) > 100
+    ) {
+      errors.inclusionIndex = "مؤشر الشمول يجب أن يكون بين 0 و 100";
     }
 
-    if (!form.endDate) {
-      errors.endDate = "تاريخ الانتهاء مطلوب";
+    if (!isValidNumber(form.volunteerHours, 0)) {
+      errors.volunteerHours = "ساعات التطوع يجب أن تكون رقمًا صحيحًا";
     }
 
-    if (form.startDate && form.endDate && form.endDate < form.startDate) {
-      errors.endDate = "تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء";
-    }
-
-    if (!GOVERNANCE_STATUS_MAP[form.status]) {
-      errors.status = "حالة المشروع غير صحيحة";
+    // Validate benefits
+    const validBenefits = form.benefits.filter(
+      (b) => b.name.trim() && b.value.trim()
+    );
+    if (validBenefits.length === 0) {
+      errors.benefits = "أضف منفعة اجتماعية واحدة على الأقل";
     }
 
     return errors;
@@ -284,10 +279,42 @@ export default function ImpactPage() {
     localStorage.setItem("impact_program_id", normalizedProgramId);
   };
 
+  const submitSocialImpact = async (programId: string) => {
+    const validBenefits = form.benefits
+      .filter((b) => b.name.trim() && b.value.trim())
+      .map((b) => ({
+        name: b.name.trim(),
+        value: parseFloat(b.value) || 0,
+      }));
+
+    const endpoint = `https://gold-weasel-489740.hostingersite.com/api/programs/social-impact/programs/${programId}`;
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: getRequestHeaders(true),
+      body: JSON.stringify({
+        beneficiaries: parseInt(form.beneficiaries) || 0,
+        satisfaction_rate: parseFloat(form.satisfactionRate) || 0,
+        improvement_rate: parseFloat(form.improvementRate) || 0,
+        inclusion_index: parseFloat(form.inclusionIndex) || 0,
+        volunteer_hours: parseFloat(form.volunteerHours) || 0,
+        benefits: validBenefits,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("SOCIAL_IMPACT_SUBMIT_FAILED");
+    }
+
+    const result = await response.json().catch(() => ({}));
+    setApiResults(result);
+    return result;
+  };
+
   const handleProgramSubmit = async () => {
     setSubmitError(null);
 
-    const programValidationErrors = validateProgramFields();
+    const programValidationErrors = validateProgramFields(form);
     if (Object.keys(programValidationErrors).length > 0) {
       setValidationErrors(programValidationErrors);
       setSubmitError("راجع الحقول المطلوبة في بيانات البرنامج.");
@@ -313,60 +340,93 @@ export default function ImpactPage() {
 
     setSubmitError(null);
 
-    const programValidationErrors = validateProgramFields();
+    const programValidationErrors = validateProgramFields(form);
     if (Object.keys(programValidationErrors).length > 0) {
       setValidationErrors(programValidationErrors);
       setSubmitError("يرجى تصحيح أخطاء بيانات البرنامج قبل الإرسال.");
       return;
     }
 
+    const socialImpactErrors = validateSocialImpactFields();
+    if (Object.keys(socialImpactErrors).length > 0) {
+      setValidationErrors(socialImpactErrors);
+      setSubmitError("يرجى تصحيح أخطاء بيانات الأثر الاجتماعي قبل الإرسال.");
+      return;
+    }
+
     setValidationErrors({});
 
     try {
-      if (!programSaved || !createdProgramId) {
+      let programId = createdProgramId;
+
+      if (!programSaved || !programId) {
         setIsSubmitting(true);
         await createProgram();
+        programId = createdProgramId;
       }
+
+      if (!programId) {
+        setSubmitError("تعذر الحصول على معرّف البرنامج. حاول مرة أخرى.");
+        return;
+      }
+
+      // Submit social impact data
+      await submitSocialImpact(programId);
 
       setSubmitted(true);
       setActiveTab("results");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
-      setSubmitError("احفظ البرنامج أولاً ثم أكمل تحليل الأثر.");
+      setSubmitError("حدث خطأ أثناء إرسال البيانات. تأكد من صحة المدخلات وحاول مرة أخرى.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Computed
-  const n = (v: string) => parseFloat(v) || 0;
-  const beneficiaries = n(form.beneficiaries);
-  const satisfaction = n(form.satisfactionRate);
-  const improvement = n(form.improvementRate);
-  const inclusion = n(form.inclusionIndex);
-  const volunteerHours = n(form.volunteerHours);
+  // Computed - استخدم بيانات API عند توفرها
+  const n = (v: string | number) => {
+    if (typeof v === "number") return v;
+    return parseFloat(v) || 0;
+  };
+
+  // من API إذا كانت النتائج موجودة، وإلا من form
+  const beneficiaries = apiResults?.beneficiaries ?? n(form.beneficiaries);
+  const satisfaction =
+    apiResults?.satisfaction_rate ?? n(form.satisfactionRate);
+  const improvement = apiResults?.improvement_rate ?? n(form.improvementRate);
+  const inclusion = apiResults?.inclusion_index ?? n(form.inclusionIndex);
+  const volunteerHours =
+    apiResults?.volunteer_hours ?? n(form.volunteerHours);
+  const volunteerIndex = apiResults?.volunteer_index ?? 0;
   const actualCost = n(form.actualCost);
-  const totalBenefitsValue = form.benefits.reduce((s, b) => s + n(b.value), 0);
+  const totalBenefitsValue =
+    apiResults?.total_benefits_value ?? form.benefits.reduce((s, b) => s + n(b.value), 0);
   const sroi =
-    actualCost > 0 ? (totalBenefitsValue / actualCost).toFixed(2) : "—";
-  const avgScore = (
-    (satisfaction +
-      improvement +
-      inclusion +
-      (volunteerHours > 0 ? Math.min(100, volunteerHours / 10) : 0)) /
-    4
-  ).toFixed(1);
+    apiResults?.sroi !== undefined
+      ? apiResults.sroi.toFixed(4)
+      : actualCost > 0
+        ? (totalBenefitsValue / actualCost).toFixed(4)
+        : "—";
+  const avgScore =
+    apiResults?.avg_score ??
+    (
+      (satisfaction +
+        improvement +
+        inclusion +
+        (volunteerHours > 0 ? Math.min(100, volunteerHours / 10) : 0)) /
+      4
+    ).toFixed(1);
 
   const radarData = [
     { subject: "الرضا", A: satisfaction },
     { subject: "التحسين", A: improvement },
     { subject: "الشمول", A: inclusion },
-    { subject: "التطوع", A: Math.min(100, volunteerHours / 10) },
+    { subject: "التطوع", A: Math.min(100, volunteerIndex || volunteerHours / 10) },
   ];
 
-  const barData = form.benefits
-    .filter((b) => b.name && b.value)
-    .map((b) => ({
+  const barData = (apiResults?.benefits ?? form.benefits)
+    .filter((b: any) => b.name && (typeof b.value === "number" ? b.value > 0 : b.value.trim()))
+    .map((b: any) => ({
       name: b.name.length > 14 ? b.name.slice(0, 14) + "…" : b.name,
       value: n(b.value),
     }));
@@ -379,13 +439,18 @@ export default function ImpactPage() {
   ];
 
   const aiInsight = () => {
-    if (satisfaction >= 85 && improvement >= 70)
-      return "أثر مجتمعي ممتاز — البرنامج يحقق نتائج استثنائية ويُوصى باستدامته وتوسيع نطاقه.";
-    if (satisfaction >= 70)
-      return "أثر مجتمعي جيد — البرنامج يحقق نتائج إيجابية مع فرص للتحسين في مجال الشمول الاجتماعي.";
-    if (improvement < 50)
-      return "أثر محدود — يُنصح بمراجعة آليات التنفيذ والتدخل المبكر لتحسين النتائج.";
-    return "أثر متوسط — البرنامج بحاجة لتحليل أعمق لفهم أسباب محدودية الأثر والعمل على معالجتها.";
+    return (
+      apiResults?.ai_insight ??
+      (() => {
+        if (satisfaction >= 85 && improvement >= 70)
+          return "أثر مجتمعي ممتاز — البرنامج يحقق نتائج استثنائية ويُوصى باستدامته وتوسيع نطاقه.";
+        if (satisfaction >= 70)
+          return "أثر مجتمعي جيد — البرنامج يحقق نتائج إيجابية مع فرص للتحسين في مجال الشمول الاجتماعي.";
+        if (improvement < 50)
+          return "أثر محدود — يُنصح بمراجعة آليات التنفيذ والتدخل المبكر لتحسين النتائج.";
+        return "أثر متوسط — البرنامج بحاجة لتحليل أعمق لفهم أسباب محدودية الأثر والعمل على معالجتها.";
+      })()
+    );
   };
 
   return (
@@ -411,7 +476,7 @@ export default function ImpactPage() {
             </div>
             <div>
               <span className="bg-purple-500/20 text-purple-300 px-4 py-1 rounded-full text-xs font-black mb-3 inline-block">
-                قياس الأثر · AI
+                قياس الأثر
               </span>
               <h1 className="text-3xl md:text-5xl font-black leading-tight">
                 نظام قياس الأثر المجتمعي
@@ -443,154 +508,18 @@ export default function ImpactPage() {
         {activeTab === "form" && (
           <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
             {/* Program Info */}
-            <div className="bg-white rounded-3xl shadow-md p-8">
-              <h2 className="text-xl font-black text-brand-dark mb-6 flex items-center gap-2">
-                <Target className="w-5 h-5 text-purple-500" /> معلومات البرنامج
-                / المشروع
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-black text-brand-dark mb-2">
-                    اسم البرنامج / المشروع *
-                  </label>
-                  <input
-                    required
-                    value={form.programName}
-                    onChange={(e) => setField("programName", e.target.value)}
-                    placeholder="مثال: برنامج تدريب الشباب 2025"
-                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
-                  />
-                  {validationErrors.programName && (
-                    <p className="text-red-600 text-xs mt-1 font-bold">
-                      {validationErrors.programName}
-                    </p>
-                  )}
-                </div>
-
-                {[
-                  {
-                    label: "تكلفة البرنامج الفعلية (ريال)",
-                    field: "actualCost",
-                    placeholder: "0.00",
-                    type: "number",
-                  },
-                  {
-                    label: "كفاءة استخدام الموارد (%)",
-                    field: "resourceEfficiency",
-                    placeholder: "0 - 100",
-                    type: "number",
-                  },
-                  {
-                    label: "تكلفة المستفيد الفعلية (ريال)",
-                    field: "costPerBeneficiary",
-                    placeholder: "0.00",
-                    type: "number",
-                  },
-                  {
-                    label: "مدة التنفيذ (بالأيام)",
-                    field: "duration",
-                    placeholder: "0",
-                    type: "number",
-                  },
-                ].map(({ label, field, placeholder, type }) => (
-                  <div key={field}>
-                    <label className="block text-xs font-black text-brand-dark mb-2">
-                      {label}
-                    </label>
-                    <input
-                      type={type}
-                      value={(form as any)[field]}
-                      onChange={(e) => setField(field as any, e.target.value)}
-                      placeholder={placeholder}
-                      className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
-                    />
-                    {validationErrors[field] && (
-                      <p className="text-red-600 text-xs mt-1 font-bold">
-                        {validationErrors[field]}
-                      </p>
-                    )}
-                  </div>
-                ))}
-
-                <div>
-                  <label className="block text-xs font-black text-brand-dark mb-2">
-                    تاريخ البدء
-                  </label>
-                  <input
-                    required
-                    type="date"
-                    value={form.startDate}
-                    onChange={(e) => setField("startDate", e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
-                  />
-                  {validationErrors.startDate && (
-                    <p className="text-red-600 text-xs mt-1 font-bold">
-                      {validationErrors.startDate}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-black text-brand-dark mb-2">
-                    تاريخ الانتهاء
-                  </label>
-                  <input
-                    required
-                    type="date"
-                    value={form.endDate}
-                    onChange={(e) => setField("endDate", e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
-                  />
-                  {validationErrors.endDate && (
-                    <p className="text-red-600 text-xs mt-1 font-bold">
-                      {validationErrors.endDate}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-black text-brand-dark mb-2">
-                    حالة المشروع
-                  </label>
-                  <select
-                    value={form.status}
-                    onChange={(e) => setField("status", e.target.value)}
-                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm bg-white"
-                  >
-                    {[
-                      "مكتمل",
-                      "جارٍ التنفيذ",
-                      "في المرحلة التخطيطية",
-                      "متوقف",
-                    ].map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                  {validationErrors.status && (
-                    <p className="text-red-600 text-xs mt-1 font-bold">
-                      {validationErrors.status}
-                    </p>
-                  )}
-                </div>
-
-                <div className="md:col-span-2">
-                  <Button
-                    type="button"
-                    onClick={handleProgramSubmit}
-                    disabled={isSubmitting}
-                    className="w-full bg-brand-dark hover:bg-brand-dark/90 text-white py-4 rounded-2xl font-black text-base disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting
-                      ? "جارٍ حفظ البرنامج..."
-                      : "حفظ البرنامج / المشروع"}
-                  </Button>
-                </div>
-
-                {createdProgramId && (
-                  <div className="md:col-span-2 rounded-xl border border-green-200 bg-green-50 text-green-700 px-4 py-3 text-sm font-bold">
-                    تم ربط البرنامج بنجاح
-                  </div>
-                )}
-              </div>
-            </div>
+            <ProgramInfoForm
+              form={form}
+              validationErrors={validationErrors}
+              isSubmitting={isSubmitting}
+              onFieldChange={setField}
+              onSaveProgram={handleProgramSubmit}
+              showSaveButton={true}
+              savedMessage={
+                createdProgramId ? "تم ربط البرنامج بنجاح" : ""
+              }
+              colorClass="purple-500"
+            />
 
             {/* Social Impact Inputs */}
             <div className="bg-white rounded-3xl shadow-md p-8">
@@ -611,6 +540,11 @@ export default function ImpactPage() {
                     placeholder="0"
                     className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                   />
+                  {validationErrors.beneficiaries && (
+                    <p className="text-red-600 text-xs mt-1 font-bold">
+                      {validationErrors.beneficiaries}
+                    </p>
+                  )}
                 </div>
 
                 {[
@@ -649,6 +583,11 @@ export default function ImpactPage() {
                       max={field !== "volunteerHours" ? "100" : undefined}
                       className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                     />
+                    {validationErrors[field] && (
+                      <p className="text-red-600 text-xs mt-1 font-bold">
+                        {validationErrors[field]}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -714,6 +653,11 @@ export default function ImpactPage() {
                   </div>
                 ))}
               </div>
+              {validationErrors.benefits && (
+                <p className="text-red-600 text-xs mt-3 font-bold">
+                  {validationErrors.benefits}
+                </p>
+              )}
             </div>
 
             {submitError && (
@@ -727,7 +671,7 @@ export default function ImpactPage() {
               disabled={isSubmitting || !createdProgramId}
               className="w-full bg-purple-500 hover:bg-purple-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <Sparkles className="w-5 h-5" /> تحليل الأثر بالذكاء الاصطناعي
+              <Sparkles className="w-5 h-5" /> تحليل الأثر
             </Button>
           </form>
         )}
@@ -763,7 +707,7 @@ export default function ImpactPage() {
                 </div>
                 <div>
                   <p className="text-purple-200 text-xs font-black mb-2">
-                    تحليل الذكاء الاصطناعي
+                    تحليل الاثر
                   </p>
                   <p className="text-white font-bold text-lg leading-relaxed">
                     {aiInsight()}
@@ -824,11 +768,12 @@ export default function ImpactPage() {
                 label="مؤشر الأثر الكلي"
                 value={`${avgScore}%`}
                 sub={
-                  Number(avgScore) >= 75
+                  apiResults?.classification ??
+                  (Number(avgScore) >= 75
                     ? "أثر ممتاز ✅"
                     : Number(avgScore) >= 55
                       ? "أثر جيد ⚠️"
-                      : "يحتاج تحسين ❌"
+                      : "يحتاج تحسين ❌")
                 }
                 icon={Target}
                 colorClass="border-brand-gold text-brand-gold"

@@ -109,7 +109,7 @@ export const Box = (): JSX.Element => {
               },
               {
                 icon: Globe,
-                title: "قياس الأثر AI",
+                title: "قياس الأثر",
                 desc: "تحليل ذكاء اصطناعي لقياس الأثر الاجتماعي الحقيقي لبرامجك",
                 color: "bg-purple-500",
                 link: "/impact",
