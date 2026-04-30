@@ -80,12 +80,12 @@ const GOVERNANCE_PROGRAMS_ENDPOINT =
 
 const GOVERNANCE_STATUS_MAP: Record<
   string,
-  "planning" | "in_progress" | "completed" | "suspnsed"
+  "planning" | "in_progress" | "completed" | "suspended"
 > = {
   "في المرحلة التخطيطية": "planning",
   "جارٍ التنفيذ": "in_progress",
   مكتمل: "completed",
-  متوقف: "suspnsed",
+  متوقف: "suspended",
 };
 
 function GaugeMeter({

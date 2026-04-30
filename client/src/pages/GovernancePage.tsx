@@ -37,7 +37,8 @@ import {
   Legend,
 } from "recharts";
 import { PillarsAnalysis } from "@/components/PillarsAnalysis";
-import { getRequestHeaders } from "@/lib/queryClient";
+import { getRequestHeaders, getStoredAuthToken } from "@/lib/queryClient";
+import { downloadProgramPdf } from "@/lib/downloadReport";
 
 type Quarter = {
   programCost: string;
@@ -89,12 +90,51 @@ const GOVERNANCE_QUARTERS_SUFFIX = "/quarters";
 
 const GOVERNANCE_STATUS_MAP: Record<
   string,
-  "planning" | "in_progress" | "completed" | "suspnsed"
+  "planning" | "in_progress" | "completed" | "suspended"
 > = {
   "في المرحلة التخطيطية": "planning",
   "جارٍ التنفيذ": "in_progress",
   مكتمل: "completed",
-  متوقف: "suspnsed",
+  متوقف: "suspended",
+};
+
+const GOVERNANCE_STATUS_LABELS = {
+  planning: "في المرحلة التخطيطية",
+  in_progress: "جارٍ التنفيذ",
+  completed: "مكتمل",
+  suspended: "متوقف",
+} as const;
+
+const MIN_GOVERNANCE_YEAR = 2020;
+
+const normalizeGovernanceStatus = (status: string) => {
+  if (status in GOVERNANCE_STATUS_MAP) {
+    return status;
+  }
+
+  const canonicalEntry = Object.entries(GOVERNANCE_STATUS_MAP).find(
+    ([, value]) => value === status,
+  );
+
+  return canonicalEntry?.[0] ?? status;
+};
+
+const getApiValidationMessage = async (
+  response: Response,
+  fallbackMessage: string,
+) => {
+  const payload = await response.json().catch(() => null);
+  const yearMessage = payload?.errors?.year?.[0];
+
+  if (yearMessage) {
+    return "سنة التقرير يجب أن تكون 2020 أو أكبر.";
+  }
+
+  if (typeof payload?.message === "string" && payload.message.trim()) {
+    return payload.message;
+  }
+
+  return fallbackMessage;
 };
 
 function KPICard({
@@ -221,7 +261,12 @@ export default function GovernancePage() {
       errors.endDate = "تاريخ الانتهاء يجب أن يكون بعد تاريخ البدء";
     }
 
-    if (!GOVERNANCE_STATUS_MAP[form.status]) {
+    const startYear = Number(form.startDate?.split("-")[0]);
+    if (Number.isFinite(startYear) && startYear < MIN_GOVERNANCE_YEAR) {
+      errors.startDate = "سنة البدء يجب أن تكون 2020 أو أكبر";
+    }
+
+    if (!GOVERNANCE_STATUS_MAP[normalizeGovernanceStatus(form.status)]) {
       errors.status = "حالة المشروع غير صحيحة";
     }
 
@@ -259,7 +304,9 @@ export default function GovernancePage() {
       headers: getRequestHeaders(true),
       body: JSON.stringify({
         name: form.programName.trim(),
-        status: GOVERNANCE_STATUS_MAP[form.status] ?? "planning",
+        status:
+          GOVERNANCE_STATUS_MAP[normalizeGovernanceStatus(form.status)] ??
+          "planning",
         total_actual_cost: Number(form.actualCost) || 0,
         execution_duration: Number(form.duration) || 0,
         resource_efficiency: Number(form.resourceEfficiency) || 0,
@@ -269,7 +316,9 @@ export default function GovernancePage() {
     });
 
     if (!response.ok) {
-      throw new Error("PROGRAM_CREATE_FAILED");
+      throw new Error(
+        await getApiValidationMessage(response, "تعذر حفظ البرنامج حالياً."),
+      );
     }
 
     const responseData = await response.json().catch(() => ({}));
@@ -313,7 +362,12 @@ export default function GovernancePage() {
         );
 
         if (!response.ok) {
-          throw new Error(`QUARTER_CREATE_FAILED_${payload.quarter}`);
+          throw new Error(
+            await getApiValidationMessage(
+              response,
+              `تعذر حفظ بيانات ${quarterLabels[payload.quarter]} حالياً.`,
+            ),
+          );
         }
       }),
     );
@@ -334,9 +388,11 @@ export default function GovernancePage() {
 
     try {
       await createProgram();
-    } catch {
+    } catch (error) {
       setSubmitError(
-        "تعذر حفظ البرنامج حالياً. تأكد من البيانات وحاول مرة أخرى.",
+        error instanceof Error && error.message
+          ? error.message
+          : "تعذر حفظ البرنامج حالياً. تأكد من البيانات وحاول مرة أخرى.",
       );
     } finally {
       setIsSubmitting(false);
@@ -381,9 +437,11 @@ export default function GovernancePage() {
       setSubmitted(true);
       setActiveTab("results");
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
+    } catch (error) {
       setSubmitError(
-        "تعذر حفظ بيانات البرنامج أو البيانات الربعية حالياً. حاول مرة أخرى.",
+        error instanceof Error && error.message
+          ? error.message
+          : "تعذر حفظ بيانات البرنامج أو البيانات الربعية حالياً. حاول مرة أخرى.",
       );
     } finally {
       setIsSubmitting(false);
@@ -434,7 +492,7 @@ export default function GovernancePage() {
           ),
           startDate: data.start_date ?? prev.startDate,
           endDate: data.end_date ?? prev.endDate,
-          status: data.status ?? prev.status,
+          status: normalizeGovernanceStatus(data.status ?? prev.status),
           duration: String(data.execution_duration ?? prev.duration),
           quarters: {
             Q1: { ...prev.quarters.Q1 },
@@ -658,11 +716,14 @@ export default function GovernancePage() {
   };
 
   const statusColor =
-    form.status === "مكتمل"
+    normalizeGovernanceStatus(form.status) ===
+    GOVERNANCE_STATUS_LABELS.completed
       ? "text-green-600 bg-green-100"
-      : form.status === "جارٍ التنفيذ"
+      : normalizeGovernanceStatus(form.status) ===
+          GOVERNANCE_STATUS_LABELS.in_progress
         ? "text-blue-600 bg-blue-100"
-        : form.status === "متوقف"
+        : normalizeGovernanceStatus(form.status) ===
+            GOVERNANCE_STATUS_LABELS.suspended
           ? "text-red-600 bg-red-100"
           : "text-amber-600 bg-amber-100";
 
@@ -1230,11 +1291,31 @@ export default function GovernancePage() {
             />
 
             <Button
-              onClick={() => window.print()}
+              onClick={async () => {
+                const programId =
+                  createdProgramId ??
+                  localStorage.getItem("governance_program_id");
+                if (!programId) {
+                  alert(
+                    "لم يتم حفظ معرف البرنامج بعد. احفظ البرنامج أولاً ثم حاول التصدير.",
+                  );
+                  return;
+                }
+                try {
+                  const token = getStoredAuthToken();
+                  console.log(token);
+
+                  await downloadProgramPdf(programId, token ?? undefined);
+                } catch (e) {
+                  // eslint-disable-next-line no-console
+                  console.error(e);
+                  alert("فشل تحميل التقرير من الخادم.");
+                }
+              }}
               variant="outline"
               className="w-full border-2 border-brand-dark text-brand-dark py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-brand-dark hover:text-white transition-all"
             >
-              <Download className="w-4 h-4" /> تصدير التقرير
+              <Download className="w-4 h-4" /> تحميل تقرير الحوكمة
             </Button>
           </div>
         )}
