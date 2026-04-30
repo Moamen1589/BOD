@@ -37,14 +37,17 @@ export function ProgramInfoForm({
   savedMessage = "",
   colorClass = "brand-gold",
 }: ProgramInfoFormProps) {
-  const borderColor = colorClass === "purple-500" ? "focus:border-purple-500" : "focus:border-brand-gold";
-  const iconColor = colorClass === "purple-500" ? "text-purple-500" : "text-brand-gold";
-  
+  const borderColor =
+    colorClass === "purple-500"
+      ? "focus:border-purple-500"
+      : "focus:border-brand-gold";
+  const iconColor =
+    colorClass === "purple-500" ? "text-purple-500" : "text-brand-gold";
+
   return (
     <div className="bg-white rounded-3xl shadow-md p-8">
       <h2 className="text-xl font-black text-brand-dark mb-6 flex items-center gap-2">
-        <Target className={`w-5 h-5 ${iconColor}`} /> معلومات البرنامج
-        / المشروع
+        <Target className={`w-5 h-5 ${iconColor}`} /> معلومات البرنامج / المشروع
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="md:col-span-2">

@@ -28,17 +28,15 @@ export const isValidNumber = (value: string, min = 0) => {
   return !Number.isNaN(num) && num >= min;
 };
 
-export const validateProgramFields = (
-  form: {
-    programName: string;
-    actualCost: string;
-    resourceEfficiency: string;
-    duration: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-  }
-) => {
+export const validateProgramFields = (form: {
+  programName: string;
+  actualCost: string;
+  resourceEfficiency: string;
+  duration: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+}) => {
   const errors: ValidationErrors = {};
 
   if (!form.programName.trim()) {

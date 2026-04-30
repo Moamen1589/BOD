@@ -234,7 +234,7 @@ export default function ImpactPage() {
 
     // Validate benefits
     const validBenefits = form.benefits.filter(
-      (b) => b.name.trim() && b.value.trim()
+      (b) => b.name.trim() && b.value.trim(),
     );
     if (validBenefits.length === 0) {
       errors.benefits = "أضف منفعة اجتماعية واحدة على الأقل";
@@ -377,7 +377,9 @@ export default function ImpactPage() {
       setActiveTab("results");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
-      setSubmitError("حدث خطأ أثناء إرسال البيانات. تأكد من صحة المدخلات وحاول مرة أخرى.");
+      setSubmitError(
+        "حدث خطأ أثناء إرسال البيانات. تأكد من صحة المدخلات وحاول مرة أخرى.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -395,12 +397,12 @@ export default function ImpactPage() {
     apiResults?.satisfaction_rate ?? n(form.satisfactionRate);
   const improvement = apiResults?.improvement_rate ?? n(form.improvementRate);
   const inclusion = apiResults?.inclusion_index ?? n(form.inclusionIndex);
-  const volunteerHours =
-    apiResults?.volunteer_hours ?? n(form.volunteerHours);
+  const volunteerHours = apiResults?.volunteer_hours ?? n(form.volunteerHours);
   const volunteerIndex = apiResults?.volunteer_index ?? 0;
   const actualCost = n(form.actualCost);
   const totalBenefitsValue =
-    apiResults?.total_benefits_value ?? form.benefits.reduce((s, b) => s + n(b.value), 0);
+    apiResults?.total_benefits_value ??
+    form.benefits.reduce((s, b) => s + n(b.value), 0);
   const sroi =
     apiResults?.sroi !== undefined
       ? apiResults.sroi.toFixed(4)
@@ -421,11 +423,17 @@ export default function ImpactPage() {
     { subject: "الرضا", A: satisfaction },
     { subject: "التحسين", A: improvement },
     { subject: "الشمول", A: inclusion },
-    { subject: "التطوع", A: Math.min(100, volunteerIndex || volunteerHours / 10) },
+    {
+      subject: "التطوع",
+      A: Math.min(100, volunteerIndex || volunteerHours / 10),
+    },
   ];
 
   const barData = (apiResults?.benefits ?? form.benefits)
-    .filter((b: any) => b.name && (typeof b.value === "number" ? b.value > 0 : b.value.trim()))
+    .filter(
+      (b: any) =>
+        b.name && (typeof b.value === "number" ? b.value > 0 : b.value.trim()),
+    )
     .map((b: any) => ({
       name: b.name.length > 14 ? b.name.slice(0, 14) + "…" : b.name,
       value: n(b.value),
@@ -515,9 +523,7 @@ export default function ImpactPage() {
               onFieldChange={setField}
               onSaveProgram={handleProgramSubmit}
               showSaveButton={true}
-              savedMessage={
-                createdProgramId ? "تم ربط البرنامج بنجاح" : ""
-              }
+              savedMessage={createdProgramId ? "تم ربط البرنامج بنجاح" : ""}
               colorClass="purple-500"
             />
 
