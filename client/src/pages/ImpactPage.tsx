@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ProgramInfoForm } from "@/components/ProgramInfoForm";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { getRequestHeaders } from "@/lib/queryClient";
 import {
   GOVERNANCE_PROGRAMS_ENDPOINT,
-  GOVERNANCE_STATUS_MAP,
-  validateProgramFields,
-  type ValidationErrors,
 } from "@/lib/programValidation";
 import {
   ArrowRight,
@@ -19,10 +15,8 @@ import {
   Users,
   Heart,
   Target,
-  Zap,
   DollarSign,
   BarChart3,
-  Download,
   Sparkles,
   Globe,
 } from "lucide-react";
@@ -48,46 +42,34 @@ type Benefit = { name: string; value: string };
 
 type FormData = {
   programName: string;
+  actualCost: string;
+  costPerBeneficiary: string;
   beneficiaries: string;
   satisfactionRate: string;
   improvementRate: string;
   inclusionIndex: string;
   volunteerHours: string;
-  actualCost: string;
-  resourceEfficiency: string;
-  costPerBeneficiary: string;
-  startDate: string;
-  endDate: string;
-  status: string;
-  duration: string;
   benefits: Benefit[];
 };
 
 const initialForm: FormData = {
   programName: "",
+  actualCost: "",
+  costPerBeneficiary: "",
   beneficiaries: "",
   satisfactionRate: "",
   improvementRate: "",
   inclusionIndex: "",
   volunteerHours: "",
-  actualCost: "",
-  resourceEfficiency: "",
-  costPerBeneficiary: "",
-  startDate: "",
-  endDate: "",
-  status: "جارٍ التنفيذ",
-  duration: "",
   benefits: [{ name: "", value: "" }],
 };
 
 function GaugeMeter({
   value,
   label,
-  color,
 }: {
   value: number;
   label: string;
-  color: string;
 }) {
   const clamp = Math.min(100, Math.max(0, value));
   const getColor = (v: number) =>
@@ -159,22 +141,11 @@ export default function ImpactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [createdProgramId, setCreatedProgramId] = useState<string | null>(null);
-  const [programSaved, setProgramSaved] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
-    {},
-  );
-  const [activeTab, setActiveTab] = useState<"form" | "results">("form");
   const [apiResults, setApiResults] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<"form" | "results">("form");
 
-  const setField = (field: keyof Omit<FormData, "benefits">, val: string) => {
+  const setField = (field: keyof Omit<FormData, "benefits">, val: string) =>
     setForm((prev) => ({ ...prev, [field]: val }));
-    setValidationErrors((prev) => {
-      if (!prev[field]) return prev;
-      const next = { ...prev };
-      delete next[field];
-      return next;
-    });
-  };
 
   const setBenefit = (i: number, field: keyof Benefit, val: string) =>
     setForm((prev) => {
@@ -188,6 +159,7 @@ export default function ImpactPage() {
       ...prev,
       benefits: [...prev.benefits, { name: "", value: "" }],
     }));
+
   const removeBenefit = (i: number) =>
     setForm((prev) => ({
       ...prev,
@@ -200,67 +172,22 @@ export default function ImpactPage() {
     return !Number.isNaN(num) && num >= min;
   };
 
-  const validateSocialImpactFields = () => {
-    const errors: ValidationErrors = {};
-
-    if (!isValidNumber(form.beneficiaries, 0)) {
-      errors.beneficiaries = "عدد المستفيدين يجب أن يكون رقمًا صحيحًا";
-    }
-
-    if (
-      !isValidNumber(form.satisfactionRate, 0) ||
-      Number(form.satisfactionRate) > 100
-    ) {
-      errors.satisfactionRate = "معدل الرضا يجب أن يكون بين 0 و 100";
-    }
-
-    if (
-      !isValidNumber(form.improvementRate, 0) ||
-      Number(form.improvementRate) > 100
-    ) {
-      errors.improvementRate = "نسبة التحسين يجب أن تكون بين 0 و 100";
-    }
-
-    if (
-      !isValidNumber(form.inclusionIndex, 0) ||
-      Number(form.inclusionIndex) > 100
-    ) {
-      errors.inclusionIndex = "مؤشر الشمول يجب أن يكون بين 0 و 100";
-    }
-
-    if (!isValidNumber(form.volunteerHours, 0)) {
-      errors.volunteerHours = "ساعات التطوع يجب أن تكون رقمًا صحيحًا";
-    }
-
-    // Validate benefits
-    const validBenefits = form.benefits.filter(
-      (b) => b.name.trim() && b.value.trim(),
-    );
-    if (validBenefits.length === 0) {
-      errors.benefits = "أضف منفعة اجتماعية واحدة على الأقل";
-    }
-
-    return errors;
-  };
-
   const createProgram = async () => {
     const response = await fetch(GOVERNANCE_PROGRAMS_ENDPOINT, {
       method: "POST",
       headers: getRequestHeaders(true),
       body: JSON.stringify({
         name: form.programName.trim(),
-        status: GOVERNANCE_STATUS_MAP[form.status] ?? "planning",
+        status: "in_progress",
         total_actual_cost: Number(form.actualCost) || 0,
-        execution_duration: Number(form.duration) || 0,
-        resource_efficiency: Number(form.resourceEfficiency) || 0,
-        start_date: form.startDate || null,
-        end_date: form.endDate || null,
+        execution_duration: 0,
+        resource_efficiency: 0,
+        start_date: null,
+        end_date: null,
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("PROGRAM_CREATE_FAILED");
-    }
+    if (!response.ok) throw new Error("PROGRAM_CREATE_FAILED");
 
     const responseData = await response.json().catch(() => ({}));
     const apiId =
@@ -269,14 +196,12 @@ export default function ImpactPage() {
       responseData?.program?.id ??
       responseData?.project?.id;
 
-    if (!apiId) {
-      throw new Error("PROGRAM_ID_NOT_FOUND");
-    }
+    if (!apiId) throw new Error("PROGRAM_ID_NOT_FOUND");
 
     const normalizedProgramId = String(apiId);
     setCreatedProgramId(normalizedProgramId);
-    setProgramSaved(true);
     localStorage.setItem("impact_program_id", normalizedProgramId);
+    return normalizedProgramId;
   };
 
   const submitSocialImpact = async (programId: string) => {
@@ -302,77 +227,37 @@ export default function ImpactPage() {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("SOCIAL_IMPACT_SUBMIT_FAILED");
-    }
+    if (!response.ok) throw new Error("SOCIAL_IMPACT_SUBMIT_FAILED");
 
     const result = await response.json().catch(() => ({}));
     setApiResults(result);
     return result;
   };
 
-  const handleProgramSubmit = async () => {
-    setSubmitError(null);
-
-    const programValidationErrors = validateProgramFields(form);
-    if (Object.keys(programValidationErrors).length > 0) {
-      setValidationErrors(programValidationErrors);
-      setSubmitError("راجع الحقول المطلوبة في بيانات البرنامج.");
-      return;
-    }
-
-    setValidationErrors({});
-    setIsSubmitting(true);
-
-    try {
-      await createProgram();
-    } catch {
-      setSubmitError(
-        "تعذر حفظ البرنامج حالياً. تأكد من البيانات وحاول مرة أخرى.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setSubmitError(null);
 
-    const programValidationErrors = validateProgramFields(form);
-    if (Object.keys(programValidationErrors).length > 0) {
-      setValidationErrors(programValidationErrors);
-      setSubmitError("يرجى تصحيح أخطاء بيانات البرنامج قبل الإرسال.");
+    if (!form.programName.trim()) {
+      setSubmitError("اسم البرنامج مطلوب.");
+      return;
+    }
+    if (!isValidNumber(form.beneficiaries, 0)) {
+      setSubmitError("عدد المستفيدين يجب أن يكون رقمًا صحيحًا.");
       return;
     }
 
-    const socialImpactErrors = validateSocialImpactFields();
-    if (Object.keys(socialImpactErrors).length > 0) {
-      setValidationErrors(socialImpactErrors);
-      setSubmitError("يرجى تصحيح أخطاء بيانات الأثر الاجتماعي قبل الإرسال.");
-      return;
-    }
-
-    setValidationErrors({});
-
+    setIsSubmitting(true);
     try {
       let programId = createdProgramId;
-
-      if (!programSaved || !programId) {
-        setIsSubmitting(true);
-        await createProgram();
-        programId = createdProgramId;
+      if (!programId) {
+        programId = await createProgram();
       }
-
       if (!programId) {
         setSubmitError("تعذر الحصول على معرّف البرنامج. حاول مرة أخرى.");
         return;
       }
-
-      // Submit social impact data
       await submitSocialImpact(programId);
-
       setSubmitted(true);
       setActiveTab("results");
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -385,16 +270,13 @@ export default function ImpactPage() {
     }
   };
 
-  // Computed - استخدم بيانات API عند توفرها
   const n = (v: string | number) => {
     if (typeof v === "number") return v;
     return parseFloat(v) || 0;
   };
 
-  // من API إذا كانت النتائج موجودة، وإلا من form
   const beneficiaries = apiResults?.beneficiaries ?? n(form.beneficiaries);
-  const satisfaction =
-    apiResults?.satisfaction_rate ?? n(form.satisfactionRate);
+  const satisfaction = apiResults?.satisfaction_rate ?? n(form.satisfactionRate);
   const improvement = apiResults?.improvement_rate ?? n(form.improvementRate);
   const inclusion = apiResults?.inclusion_index ?? n(form.inclusionIndex);
   const volunteerHours = apiResults?.volunteer_hours ?? n(form.volunteerHours);
@@ -515,17 +397,54 @@ export default function ImpactPage() {
       <div className="container mx-auto px-6 py-10 flex-1">
         {activeTab === "form" && (
           <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
-            {/* Program Info */}
-            <ProgramInfoForm
-              form={form}
-              validationErrors={validationErrors}
-              isSubmitting={isSubmitting}
-              onFieldChange={setField}
-              onSaveProgram={handleProgramSubmit}
-              showSaveButton={true}
-              savedMessage={createdProgramId ? "تم ربط البرنامج بنجاح" : ""}
-              colorClass="purple-500"
-            />
+
+            {/* Basic Program Info */}
+            <div className="bg-white rounded-3xl shadow-md p-8">
+              <h2 className="text-xl font-black text-brand-dark mb-6 flex items-center gap-2">
+                <Target className="w-5 h-5 text-purple-500" /> معلومات البرنامج
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-black text-brand-dark mb-2">
+                    اسم البرنامج *
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={form.programName}
+                    onChange={(e) => setField("programName", e.target.value)}
+                    placeholder="مثال: برنامج تدريب الشباب 2025"
+                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-brand-dark mb-2">
+                    التكلفة الفعلية للبرنامج (ريال)
+                  </label>
+                  <input
+                    type="number"
+                    value={form.actualCost}
+                    onChange={(e) => setField("actualCost", e.target.value)}
+                    placeholder="0.00"
+                    min="0"
+                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-brand-dark mb-2">
+                    تكلفة المستفيد الواحد (ريال)
+                  </label>
+                  <input
+                    type="number"
+                    value={form.costPerBeneficiary}
+                    onChange={(e) => setField("costPerBeneficiary", e.target.value)}
+                    placeholder="0.00"
+                    min="0"
+                    className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
+                  />
+                </div>
+              </div>
+            </div>
 
             {/* Social Impact Inputs */}
             <div className="bg-white rounded-3xl shadow-md p-8">
@@ -546,11 +465,6 @@ export default function ImpactPage() {
                     placeholder="0"
                     className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                   />
-                  {validationErrors.beneficiaries && (
-                    <p className="text-red-600 text-xs mt-1 font-bold">
-                      {validationErrors.beneficiaries}
-                    </p>
-                  )}
                 </div>
 
                 {[
@@ -589,11 +503,6 @@ export default function ImpactPage() {
                       max={field !== "volunteerHours" ? "100" : undefined}
                       className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                     />
-                    {validationErrors[field] && (
-                      <p className="text-red-600 text-xs mt-1 font-bold">
-                        {validationErrors[field]}
-                      </p>
-                    )}
                   </div>
                 ))}
               </div>
@@ -625,24 +534,21 @@ export default function ImpactPage() {
                         <input
                           type="text"
                           value={benefit.name}
-                          onChange={(e) =>
-                            setBenefit(i, "name", e.target.value)
-                          }
-                          placeholder="مثال: توفير وجبات غذائية"
+                          onChange={(e) => setBenefit(i, "name", e.target.value)}
+                          placeholder="مثال: تحسين مستوى المعيشة"
                           className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-brand-gray mb-1">
-                          قيمة المنفعة الاجتماعية (ريال)
+                          القيمة الاقتصادية (ريال)
                         </label>
                         <input
                           type="number"
                           value={benefit.value}
-                          onChange={(e) =>
-                            setBenefit(i, "value", e.target.value)
-                          }
-                          placeholder="0.00"
+                          onChange={(e) => setBenefit(i, "value", e.target.value)}
+                          placeholder="0"
+                          min="0"
                           className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                         />
                       </div>
@@ -651,7 +557,7 @@ export default function ImpactPage() {
                       <button
                         type="button"
                         onClick={() => removeBenefit(i)}
-                        className="mt-6 p-2.5 bg-red-50 text-red-400 hover:bg-red-100 rounded-xl transition-colors"
+                        className="mt-7 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -659,39 +565,33 @@ export default function ImpactPage() {
                   </div>
                 ))}
               </div>
-              {validationErrors.benefits && (
-                <p className="text-red-600 text-xs mt-3 font-bold">
-                  {validationErrors.benefits}
-                </p>
-              )}
             </div>
 
             {submitError && (
-              <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm font-bold">
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-red-700 font-bold text-sm">
                 {submitError}
               </div>
             )}
 
             <Button
               type="submit"
-              disabled={isSubmitting || !createdProgramId}
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+              className="w-full bg-purple-500 hover:bg-purple-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-purple-500/30 flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              <Sparkles className="w-5 h-5" /> تحليل الأثر
+              <Sparkles className="w-5 h-5" />
+              {isSubmitting ? "جارٍ التحليل..." : "احسب الأثر المجتمعي بالذكاء الاصطناعي"}
             </Button>
           </form>
         )}
 
         {activeTab === "results" && !submitted && (
           <div className="max-w-xl mx-auto text-center py-24">
-            <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Sparkles className="w-10 h-10 text-purple-500" />
+            <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <BarChart3 className="w-10 h-10 text-purple-500" />
             </div>
-            <h3 className="text-2xl font-black text-brand-dark mb-3">
-              لا توجد بيانات للتحليل
-            </h3>
+            <h3 className="text-2xl font-black text-brand-dark mb-3">لا توجد بيانات بعد</h3>
             <p className="text-brand-gray mb-6">
-              أدخل مؤشرات الأثر لتشغيل التحليل
+              أدخل بيانات البرنامج في تبويب "إدخال مؤشرات الأثر" لعرض التقرير
             </p>
             <Button
               onClick={() => setActiveTab("form")}
@@ -704,217 +604,133 @@ export default function ImpactPage() {
 
         {activeTab === "results" && submitted && (
           <div className="max-w-5xl mx-auto space-y-8">
-            {/* AI Insight Banner */}
-            <div className="bg-gradient-to-l from-purple-600 to-purple-800 rounded-3xl p-8 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 pointer-events-none" />
-              <div className="relative z-10 flex items-start gap-4">
-                <div className="bg-white/20 w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
-                  <Sparkles className="w-6 h-6" />
-                </div>
+            {/* Summary Header */}
+            <div className="bg-brand-dark rounded-3xl p-8 text-white">
+              <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <p className="text-purple-200 text-xs font-black mb-2">
-                    تحليل الاثر
-                  </p>
-                  <p className="text-white font-bold text-lg leading-relaxed">
-                    {aiInsight()}
-                  </p>
-                  <div className="flex items-center gap-4 mt-4 flex-wrap">
-                    <span className="bg-white/20 px-4 py-1.5 rounded-full text-xs font-black">
-                      مؤشر الأثر الكلي: {avgScore}%
-                    </span>
-                    <span className="bg-white/20 px-4 py-1.5 rounded-full text-xs font-black">
-                      معدل العائد الاجتماعي: {sroi}x
-                    </span>
-                    <span className="bg-white/20 px-4 py-1.5 rounded-full text-xs font-black">
-                      {beneficiaries.toLocaleString()} مستفيد
-                    </span>
-                  </div>
+                  <p className="text-white/50 text-sm font-bold mb-1">تقرير الأثر المجتمعي</p>
+                  <h2 className="text-3xl font-black">{form.programName || "البرنامج"}</h2>
                 </div>
+                <Button
+                  onClick={() => setActiveTab("form")}
+                  className="bg-white text-brand-dark hover:bg-white/90 rounded-xl font-black text-sm px-4 py-3"
+                >
+                  تعديل البيانات
+                </Button>
               </div>
             </div>
 
             {/* KPIs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <KPICard
-                label="عدد المستفيدين"
-                value={beneficiaries.toLocaleString()}
+                label="إجمالي المستفيدين"
+                value={Number(beneficiaries).toLocaleString()}
                 icon={Users}
-                colorClass="border-blue-500 text-blue-500"
-              />
-              <KPICard
-                label="إجمالي قيمة المنافع"
-                value={`${totalBenefitsValue.toLocaleString()} ر.س`}
-                icon={Heart}
-                colorClass="border-rose-500 text-rose-500"
-              />
-              <KPICard
-                label="معدل العائد الاجتماعي (SROI)"
-                value={`${sroi}x`}
-                sub="لكل ريال يُنفَق"
-                icon={TrendingUp}
-                colorClass="border-purple-500 text-purple-500"
+                colorClass="border-purple-500"
               />
               <KPICard
                 label="التكلفة الفعلية"
                 value={`${actualCost.toLocaleString()} ر.س`}
                 icon={DollarSign}
-                colorClass="border-amber-500 text-amber-500"
+                colorClass="border-brand-gold"
               />
               <KPICard
-                label="تكلفة المستفيد الواحد"
-                value={
-                  beneficiaries > 0
-                    ? `${(actualCost / beneficiaries).toFixed(0)} ر.س`
-                    : "—"
-                }
-                icon={Zap}
-                colorClass="border-green-500 text-green-500"
+                label="معدل الرضا الاجتماعي"
+                value={`${satisfaction}%`}
+                sub={satisfaction >= 80 ? "✅ ممتاز" : satisfaction >= 60 ? "⚠️ جيد" : "❌ يحتاج تحسين"}
+                icon={TrendingUp}
+                colorClass="border-green-500"
               />
               <KPICard
-                label="مؤشر الأثر الكلي"
-                value={`${avgScore}%`}
-                sub={
-                  apiResults?.classification ??
-                  (Number(avgScore) >= 75
-                    ? "أثر ممتاز ✅"
-                    : Number(avgScore) >= 55
-                      ? "أثر جيد ⚠️"
-                      : "يحتاج تحسين ❌")
-                }
-                icon={Target}
-                colorClass="border-brand-gold text-brand-gold"
+                label="مؤشر الأثر الاجتماعي العام"
+                value={`${Number(avgScore).toFixed(1)}%`}
+                icon={BarChart3}
+                colorClass="border-blue-500"
               />
             </div>
+
+            {sroi !== "—" && (
+              <div className="bg-purple-500 rounded-3xl p-6 text-white">
+                <p className="text-white/70 text-sm font-bold mb-1">العائد الاجتماعي على الاستثمار (SROI)</p>
+                <p className="text-4xl font-black">{sroi}</p>
+                <p className="text-white/60 text-sm mt-1">لكل ريال مُنفق يعود {sroi} ريال من قيمة اجتماعية</p>
+              </div>
+            )}
 
             {/* Gauges */}
             <div className="bg-white rounded-3xl shadow-md p-8">
-              <h3 className="font-black text-brand-dark mb-8">
-                مؤشرات الأثر التفصيلية
+              <h3 className="font-black text-brand-dark text-xl mb-8 flex items-center gap-2">
+                <Target className="w-5 h-5 text-purple-500" /> مؤشرات الأثر التفصيلية
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                <GaugeMeter value={satisfaction} label="الرضا الاجتماعي" />
+                <GaugeMeter value={improvement} label="نسبة التحسين" />
+                <GaugeMeter value={inclusion} label="الشمول الاجتماعي" />
                 <GaugeMeter
-                  value={satisfaction}
-                  label="معدل الرضا الاجتماعي"
-                  color="blue"
-                />
-                <GaugeMeter
-                  value={improvement}
-                  label="نسبة التحسين"
-                  color="green"
-                />
-                <GaugeMeter
-                  value={inclusion}
-                  label="مؤشر الشمول"
-                  color="purple"
-                />
-                <GaugeMeter
-                  value={Math.min(100, volunteerHours / 10)}
-                  label="معدل التطوع"
-                  color="orange"
+                  value={Math.min(100, volunteerIndex || volunteerHours / 10)}
+                  label="مؤشر التطوع"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Radar */}
-              <div className="bg-white rounded-3xl shadow-md p-7">
-                <h3 className="font-black text-brand-dark mb-5">
-                  مخطط الأثر الشامل
-                </h3>
-                <ResponsiveContainer width="100%" height={280}>
-                  <RadarChart data={radarData}>
-                    <PolarGrid />
-                    <PolarAngleAxis
-                      dataKey="subject"
-                      tick={{ fontSize: 11, fontFamily: "Almarai" }}
-                    />
-                    <PolarRadiusAxis
-                      angle={30}
-                      domain={[0, 100]}
-                      tick={{ fontSize: 9 }}
-                    />
-                    <Radar
-                      name="الأثر"
-                      dataKey="A"
-                      stroke="#9333ea"
-                      fill="#9333ea"
-                      fillOpacity={0.25}
-                    />
-                    <Tooltip />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Area - Impact Over Time */}
-              <div className="bg-white rounded-3xl shadow-md p-7">
-                <h3 className="font-black text-brand-dark mb-2">
-                  مسار الأثر عبر الزمن
-                </h3>
-                <p className="text-brand-gray text-xs mb-4">
-                  📈 التوقع المستقبلي مبني على نماذج الذكاء الاصطناعي
-                </p>
-                <ResponsiveContainer width="100%" height={240}>
-                  <AreaChart data={areaData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 10, fontFamily: "Almarai" }}
-                    />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
-                      dataKey="تأثير"
-                      stroke="#9333ea"
-                      fill="#9333ea"
-                      fillOpacity={0.15}
-                      strokeWidth={2.5}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+            {/* Radar Chart */}
+            <div className="bg-white rounded-3xl shadow-md p-8">
+              <h3 className="font-black text-brand-dark mb-6">مخطط الأثر الشامل</h3>
+              <ResponsiveContainer width="100%" height={280}>
+                <RadarChart data={radarData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12, fontFamily: "Almarai" }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10 }} />
+                  <Radar name="الأثر" dataKey="A" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
+                </RadarChart>
+              </ResponsiveContainer>
             </div>
 
-            {/* Benefits Bar */}
+            {/* Benefits Bar Chart */}
             {barData.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-md p-7">
-                <h3 className="font-black text-brand-dark mb-5">
-                  قيمة المنافع الاجتماعية
-                </h3>
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={barData} barSize={32}>
+              <div className="bg-white rounded-3xl shadow-md p-8">
+                <h3 className="font-black text-brand-dark mb-6">المنافع الاجتماعية</h3>
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={barData} barSize={30}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 11, fontFamily: "Almarai" }}
-                    />
-                    <YAxis
-                      tickFormatter={(v) => `${v.toLocaleString()}`}
-                      tick={{ fontSize: 10 }}
-                    />
-                    <Tooltip
-                      formatter={(v: any) =>
-                        `${Number(v).toLocaleString()} ر.س`
-                      }
-                    />
-                    <Bar
-                      dataKey="value"
-                      fill="#9333ea"
-                      radius={[8, 8, 0, 0]}
-                      name="القيمة"
-                    />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: "Almarai" }} />
+                    <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => v.toLocaleString()} />
+                    <Tooltip formatter={(v: any) => `${Number(v).toLocaleString()} ر.س`} />
+                    <Bar dataKey="value" fill="#8b5cf6" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             )}
 
-            <Button
-              onClick={() => window.print()}
-              variant="outline"
-              className="w-full border-2 border-brand-dark text-brand-dark py-4 rounded-2xl font-black flex items-center justify-center gap-2 hover:bg-brand-dark hover:text-white transition-all"
-            >
-              <Download className="w-4 h-4" /> تصدير تقرير الأثر
-            </Button>
+            {/* Area Chart */}
+            <div className="bg-white rounded-3xl shadow-md p-8">
+              <h3 className="font-black text-brand-dark mb-6">مسار الأثر عبر الزمن</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={areaData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: "Almarai" }} />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="تأثير"
+                    stroke="#8b5cf6"
+                    fill="#8b5cf6"
+                    fillOpacity={0.15}
+                    strokeWidth={3}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* AI Insight */}
+            <div className="bg-gradient-to-l from-purple-600 to-purple-800 rounded-3xl p-8 text-white">
+              <div className="flex items-center gap-3 mb-4">
+                <Sparkles className="w-6 h-6 text-purple-200" />
+                <h3 className="font-black text-xl">تحليل الذكاء الاصطناعي</h3>
+              </div>
+              <p className="text-white/90 text-lg leading-relaxed font-medium">{aiInsight()}</p>
+            </div>
           </div>
         )}
       </div>

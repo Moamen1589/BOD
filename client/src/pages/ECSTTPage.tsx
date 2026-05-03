@@ -1543,13 +1543,7 @@ export default function ECSTTPage() {
                 >
                   🚀 ابدأ رحلة جمعيتك الآن
                 </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-brand-dark text-brand-dark px-8 sm:px-12 lg:px-16 py-5 sm:py-7 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black w-full sm:w-auto"
-                >
-                  📋 احصل على تقييم مجاني
-                </Button>
+
               </div>
             </div>
           )}

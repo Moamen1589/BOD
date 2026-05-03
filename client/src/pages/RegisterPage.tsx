@@ -15,11 +15,7 @@ type RegisterFormData = {
   organizationName: string;
   organizationEmail: string;
   organizationType: string;
-  assessmentPeriodYears: string;
   licenseNumber: string;
-  executingEntity: string;
-  assessmentTeam: string;
-  organizationRepresentative: string;
 };
 
 export default function RegisterPage() {
@@ -28,11 +24,7 @@ export default function RegisterPage() {
     organizationName: "",
     organizationEmail: "",
     organizationType: "",
-    assessmentPeriodYears: "",
     licenseNumber: "",
-    executingEntity: "",
-    assessmentTeam: "",
-    organizationRepresentative: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -60,10 +52,10 @@ export default function RegisterPage() {
             email: data.organizationEmail,
             type: data.organizationType,
             liscense_number: data.licenseNumber,
-            evaluation_duration: Number(data.assessmentPeriodYears) || 0,
-            evaluator_name: data.executingEntity,
-            evaluation_team: data.assessmentTeam,
-            representative_name: data.organizationRepresentative,
+            evaluation_duration: 0,
+            evaluator_name: "",
+            evaluation_team: "",
+            representative_name: "",
             evaluation_date: evaluationDate,
           }),
         },
@@ -88,10 +80,10 @@ export default function RegisterPage() {
         email: data.organizationEmail,
         type: data.organizationType,
         liscense_number: data.licenseNumber,
-        evaluation_duration: Number(data.assessmentPeriodYears) || 0,
-        evaluator_name: data.executingEntity,
-        evaluation_team: data.assessmentTeam,
-        representative_name: data.organizationRepresentative,
+        evaluation_duration: 0,
+        evaluator_name: "",
+        evaluation_team: "",
+        representative_name: "",
         evaluation_date: evaluationDate,
         registered_at: registeredAt.toISOString(),
       });
@@ -231,67 +223,6 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   required
                   placeholder="LIC-123456"
-                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-lg font-bold text-brand-dark mb-3">
-                  فترة التقييم (سنة)
-                </label>
-                <input
-                  type="number"
-                  name="assessmentPeriodYears"
-                  value={formData.assessmentPeriodYears}
-                  onChange={handleChange}
-                  min="1"
-                  required
-                  placeholder="0"
-                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-lg font-bold text-brand-dark mb-3">
-                  الجهة المنفذة للتقييم
-                </label>
-                <input
-                  type="text"
-                  name="executingEntity"
-                  value={formData.executingEntity}
-                  onChange={handleChange}
-                  required
-                  placeholder="أدخل اسم الجهة المنفذة"
-                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-lg font-bold text-brand-dark mb-3">
-                  فريق التقييم
-                </label>
-                <textarea
-                  name="assessmentTeam"
-                  value={formData.assessmentTeam}
-                  onChange={handleChange}
-                  rows={3}
-                  required
-                  placeholder="أدخل أسماء أعضاء فريق التقييم"
-                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-lg font-bold text-brand-dark mb-3">
-                  ممثل الجهة
-                </label>
-                <input
-                  type="text"
-                  name="organizationRepresentative"
-                  value={formData.organizationRepresentative}
-                  onChange={handleChange}
-                  required
-                  placeholder="أدخل اسم ممثل الجهة"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
               </div>
