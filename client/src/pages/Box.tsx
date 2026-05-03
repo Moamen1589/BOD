@@ -2,7 +2,6 @@ import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import {
   ArrowLeft,
   Globe,
@@ -10,7 +9,6 @@ import {
   Vote,
   ClipboardCheck,
   Rocket,
-  Send,
 } from "lucide-react";
 import { AboutSection } from "@/components/AboutSection";
 import { ServicesSection } from "@/components/ServicesSection";
@@ -24,85 +22,7 @@ import { PartnersSection } from "@/components/PartnersSection";
 import { ClientsSection } from "@/components/ClientsSection";
 import { NewsletterSection } from "@/components/NewsletterSection";
 
-const SAUDI_REGIONS = [
-  "الرياض",
-  "مكة المكرمة",
-  "المدينة المنورة",
-  "القصيم",
-  "المنطقة الشرقية",
-  "عسير",
-  "تبوك",
-  "حائل",
-  "الحدود الشمالية",
-  "جازان",
-  "نجران",
-  "الباحة",
-  "الجوف",
-];
-
-const STAGES = [
-  "مرحلة الفكرة",
-  "ما قبل البذرة",
-  "مرحلة البذرة",
-  "السلسلة أ",
-  "السلسلة ب",
-  "السلسلة ج",
-];
-
-const LOOKING_FOR = [
-  "مؤسس تقني مشارك",
-  "شريك تقني",
-  "فريق تطوير",
-  "تمويل استثماري",
-  "توجيه وإرشاد",
-];
-
-const CONTACT_VIA = ["الجوال", "الإيميل", "واتساب", "اجتماع مباشر"];
-
-type EntrepreneurForm = {
-  companyName: string;
-  companyWebsite: string;
-  region: string;
-  stage: string;
-  fullName: string;
-  phone: string;
-  email: string;
-  lookingFor: string;
-  contactVia: string;
-  requiredCapital: string;
-  annualRevenue: string;
-};
-
-const initialForm: EntrepreneurForm = {
-  companyName: "",
-  companyWebsite: "",
-  region: "",
-  stage: "",
-  fullName: "",
-  phone: "",
-  email: "",
-  lookingFor: "",
-  contactVia: "",
-  requiredCapital: "",
-  annualRevenue: "",
-};
-
 export const Box = (): JSX.Element => {
-  const [form, setForm] = useState<EntrepreneurForm>(initialForm);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  const setField = (field: keyof EntrepreneurForm, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSubmitted(true);
-    setSubmitting(false);
-  };
-
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Navbar />
@@ -244,214 +164,62 @@ export const Box = (): JSX.Element => {
         </div>
       </section>
 
-      {/* Social Entrepreneur Section */}
+      {/* Social Entrepreneur Section - Marketing Only */}
       <section className="py-20 bg-brand-light-gold relative overflow-hidden" dir="rtl">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-brand-gold/10 rounded-full blur-[100px] -mr-40 -mt-40 pointer-events-none" />
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              {/* Left - Content */}
-              <div>
-                <span className="bg-brand-gold text-white px-5 py-2 rounded-full text-xs font-black tracking-wider inline-block mb-6">
-                  رائد أعمال اجتماعي
-                </span>
-                <h2 className="text-3xl md:text-5xl font-black text-brand-dark mb-6 leading-tight">
-                  روّاد الأعمال يصنعون التغيير
-                </h2>
-                <div className="space-y-5 text-brand-gray text-base leading-relaxed">
-                  <p>
-                    إذا كنت تبحث عن مؤسس تقني مشارك أو شريك تقني أو فريق تطوير تقني لشركتك الناشئة فلا حاجة للبحث أكثر من ذلك! ستصبح ولادة حلم شريكك التقني وسيتكفّل فريقنا ببناء منتجك التقني من الألف إلى الياء. نحن لا نكتفي بالاستثمار في الشركة الناشئة وإرشادها ودعمها ولكن نتكفّل أيضًا بعملية التطوير التقني كاملة.
-                  </p>
-                  <p>
-                    إذا كانت لديك فكرة وتريد بناء منتج أو شركة ناشئة فيمكنك الانضمام إلى برنامج <strong>فكرة إلى منتج</strong>. تقوم ولادة حلم من خلال هذا البرنامج بدعم روّاد الأعمال في مراحل مبكّرة من خلال التحقق من الفكرة، أبحاث السوق، التطوير التقني للفكرة، والاستثمار.
-                  </p>
-                  <p>
-                    إذا كانت لديك شركة ناشئة وتريد تحسين المبيعات أو دخول أسواق جديدة، فيمكنك الانضمام إلى برنامج <strong>حسّن مبيعاتك</strong>.
-                  </p>
-                </div>
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="bg-brand-gold text-white px-5 py-2 rounded-full text-xs font-black tracking-wider inline-block mb-6">
+                رائد أعمال اجتماعي
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-brand-dark mb-6 leading-tight">
+                روّاد الأعمال يصنعون التغيير
+              </h2>
+              <p className="text-brand-gray text-lg leading-relaxed max-w-3xl mx-auto">
+                إذا كنت تبحث عن مؤسس تقني مشارك أو شريك تقني أو فريق تطوير لشركتك الناشئة — نحن شريكك المثالي. نبني معك من الفكرة إلى المنتج ونتكفّل بالتطوير التقني كاملًا.
+              </p>
+            </div>
 
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {[
-                    { icon: Rocket, label: "تأمين رأس المال", desc: "نساعدك في الحصول على التمويل اللازم" },
-                    { icon: ClipboardCheck, label: "من فكرة إلى منتج", desc: "بناء شركتك من الصفر" },
-                    { icon: Globe, label: "الشريك التقني", desc: "نغطي نصف التكاليف ونبني المنتج" },
-                  ].map(({ icon: Icon, label, desc }) => (
-                    <div key={label} className="bg-white rounded-2xl p-5 shadow-sm border border-brand-gold/10">
-                      <Icon className="w-8 h-8 text-brand-gold mb-3" />
-                      <h4 className="font-black text-brand-dark text-sm mb-1">{label}</h4>
-                      <p className="text-brand-gray text-xs">{desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right - Form */}
-              <div className="bg-white rounded-[2rem] shadow-2xl p-8 border-t-4 border-brand-gold">
-                {submitted ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Send className="w-10 h-10 text-green-600" />
-                    </div>
-                    <h3 className="text-2xl font-black text-brand-dark mb-3">تم الإرسال بنجاح!</h3>
-                    <p className="text-brand-gray">سيتواصل معك فريقنا قريبًا</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+              {[
+                {
+                  icon: Rocket,
+                  label: "تأمين رأس المال",
+                  desc: "نساعدك في الحصول على التمويل اللازم لتحويل فكرتك إلى واقع",
+                },
+                {
+                  icon: ClipboardCheck,
+                  label: "من فكرة إلى منتج",
+                  desc: "نبني شركتك من الصفر — من التحقق من الفكرة إلى الإطلاق",
+                },
+                {
+                  icon: Globe,
+                  label: "الشريك التقني",
+                  desc: "نغطي نصف التكاليف ونبني المنتج بأعلى معايير الجودة",
+                },
+              ].map(({ icon: Icon, label, desc }) => (
+                <div
+                  key={label}
+                  className="bg-white rounded-3xl p-8 shadow-md border border-brand-gold/10 text-center"
+                >
+                  <div className="w-14 h-14 bg-brand-gold/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-7 h-7 text-brand-gold" />
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <h3 className="text-xl font-black text-brand-dark mb-5">
-                      انضم الآن معنا لتكون رائد أعمال اجتماعي
-                    </h3>
-                    <p className="text-xs text-brand-gray mb-4">الحقول المشار بـ * مطلوبة</p>
+                  <h4 className="font-black text-brand-dark text-lg mb-2">{label}</h4>
+                  <p className="text-brand-gray text-sm leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">أسم الشركة *</label>
-                        <input
-                          required
-                          type="text"
-                          value={form.companyName}
-                          onChange={(e) => setField("companyName", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                          placeholder="اسم الشركة"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">موقع الشركة</label>
-                        <input
-                          type="url"
-                          value={form.companyWebsite}
-                          onChange={(e) => setField("companyWebsite", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                          placeholder="https://..."
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">المنطقة *</label>
-                        <select
-                          required
-                          value={form.region}
-                          onChange={(e) => setField("region", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none bg-white"
-                        >
-                          <option value="">اختر المنطقة</option>
-                          {SAUDI_REGIONS.map((r) => <option key={r}>{r}</option>)}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">المرحلة *</label>
-                        <select
-                          required
-                          value={form.stage}
-                          onChange={(e) => setField("stage", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none bg-white"
-                        >
-                          <option value="">اختر المرحلة</option>
-                          {STAGES.map((s) => <option key={s}>{s}</option>)}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-brand-dark mb-1">الأسم الكامل *</label>
-                      <input
-                        required
-                        type="text"
-                        value={form.fullName}
-                        onChange={(e) => setField("fullName", e.target.value)}
-                        className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                        placeholder="الاسم الكامل"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">الهاتف / الجوال *</label>
-                        <input
-                          required
-                          type="tel"
-                          value={form.phone}
-                          onChange={(e) => setField("phone", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                          placeholder="05xxxxxxxx"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">الإيميل *</label>
-                        <input
-                          required
-                          type="email"
-                          value={form.email}
-                          onChange={(e) => setField("email", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                          placeholder="example@email.com"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">أبحث عن *</label>
-                        <select
-                          required
-                          value={form.lookingFor}
-                          onChange={(e) => setField("lookingFor", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none bg-white"
-                        >
-                          <option value="">اختر</option>
-                          {LOOKING_FOR.map((l) => <option key={l}>{l}</option>)}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">أود التواصل عبر *</label>
-                        <select
-                          required
-                          value={form.contactVia}
-                          onChange={(e) => setField("contactVia", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none bg-white"
-                        >
-                          <option value="">اختر</option>
-                          {CONTACT_VIA.map((c) => <option key={c}>{c}</option>)}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">رأس المال المطلوب *</label>
-                        <input
-                          required
-                          type="text"
-                          value={form.requiredCapital}
-                          onChange={(e) => setField("requiredCapital", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                          placeholder="مثال: 500,000 ريال"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-brand-dark mb-1">الدخل السنوي *</label>
-                        <input
-                          required
-                          type="text"
-                          value={form.annualRevenue}
-                          onChange={(e) => setField("annualRevenue", e.target.value)}
-                          className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-gold focus:outline-none"
-                          placeholder="مثال: 1,000,000 ريال"
-                        />
-                      </div>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full bg-brand-gold hover:bg-brand-gold-dark text-white py-4 rounded-2xl font-black text-base shadow-lg mt-2"
-                    >
-                      {submitting ? "جارٍ الإرسال..." : "سجّل الآن"}
-                    </Button>
-                  </form>
-                )}
-              </div>
+            <div className="text-center">
+              <Link href="/social-entrepreneur">
+                <Button className="bg-brand-gold hover:bg-brand-gold-dark text-white px-14 py-6 rounded-2xl font-black text-xl shadow-2xl shadow-brand-gold/30 hover:scale-105 transition-all inline-flex items-center gap-3">
+                  <Rocket className="w-6 h-6" />
+                  انضم الآن كرائد أعمال اجتماعي
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

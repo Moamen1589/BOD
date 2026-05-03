@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -16,20 +16,20 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "الرئيسية", href: "/" },
-    {
+  {
     label: "المنظومة المجتمعية",
     href: "/ecstt",
     dropdown: [
       { label: "نظام التحول المؤسسي ECSTT", href: "/ecstt" },
       { label: "نظام التصويت والمبادرات", href: "/voting" },
-      { label: "حوكمة المشاريع والبرامج", href: "/governance" },
+      { label: "قياس الأداء المؤسسي", href: "/governance" },
       { label: "قياس الأثر المجتمعي", href: "/impact" },
       { label: "سجّل جمعيتك", href: "/register" },
     ],
   },
   {
     label: "مكتبة الأعمال",
-    href: "/work-library"
+    href: "/work-library",
   },
   {
     label: "حلولنا الرقمية",
@@ -56,11 +56,15 @@ const navItems: NavItem[] = [
     ],
   },
   { label: "المدونة", href: "/blog" },
-  { label: "عملاؤنا", href: "#testimonials" }
+  { label: "عملاؤنا", href: "#testimonials" },
 ];
 
 function isInternalLink(href: string) {
   return href.startsWith("/");
+}
+
+function isHashLink(href: string) {
+  return href.startsWith("#");
 }
 
 function isActiveHref(href: string, location: string) {
@@ -97,14 +101,27 @@ function NavLink({
   href: string;
   className: string;
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   testId?: string;
 }) {
+  if (isHashLink(href)) {
+    return (
+      <a
+        href={href}
+        onClick={onClick}
+        className={className}
+        data-testid={testId}
+      >
+        {children}
+      </a>
+    );
+  }
+
   if (isInternalLink(href)) {
     return (
       <Link
         href={href}
-        onClick={onClick}
+        onClick={onClick as any}
         className={className}
         data-testid={testId}
       >
@@ -118,7 +135,7 @@ function NavLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={onClick}
+      onClick={onClick as any}
       className={className}
       data-testid={testId}
     >
@@ -130,9 +147,11 @@ function NavLink({
 function DropdownMenu({
   items,
   onClose,
+  onHashClick,
 }: {
   items: DropdownItem[];
   onClose: () => void;
+  onHashClick: (sectionId: string) => void;
 }) {
   return (
     <div className="absolute top-full right-0 mt-2 w-64 bg-brand-dark rounded-lg shadow-xl border border-white/10 py-2 z-50 animate-fade-in">
@@ -140,7 +159,13 @@ function DropdownMenu({
         <NavLink
           key={item.label}
           href={item.href}
-          onClick={onClose}
+          onClick={(e) => {
+            if (isHashLink(item.href)) {
+              e.preventDefault();
+              onHashClick(item.href.slice(1));
+            }
+            onClose();
+          }}
           className="block px-4 py-2.5 text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors font-almarai"
           testId={`dropdown-link-${item.label}`}
         >
@@ -156,7 +181,7 @@ export function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -168,30 +193,39 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (!location.includes("#contact")) return;
-    let attempts = 0;
-    const maxAttempts = 60;
-    const interval = setInterval(() => {
-      const section = document.getElementById("contact");
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-        clearInterval(interval);
-        return;
-      }
-      attempts += 1;
-      if (attempts >= maxAttempts) clearInterval(interval);
-    }, 50);
-    return () => clearInterval(interval);
-  }, [location]);
+  const scrollToSection = (sectionId: string) => {
+    const isHome = location === "/" || location.startsWith("/#");
 
-  const handleContactClick = (e: React.MouseEvent) => {
-    setMobileOpen(false);
-    const section = document.getElementById("contact");
-    if (section) {
-      e.preventDefault();
-      section.scrollIntoView({ behavior: "smooth" });
+    const doScroll = () => {
+      let attempts = 0;
+      const maxAttempts = 60;
+      const interval = setInterval(() => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          const offset = 80;
+          const top = section.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: "smooth" });
+          clearInterval(interval);
+          return;
+        }
+        attempts += 1;
+        if (attempts >= maxAttempts) clearInterval(interval);
+      }, 50);
+    };
+
+    if (!isHome) {
+      setLocation("/");
+      setTimeout(doScroll, 200);
+    } else {
+      doScroll();
     }
+  };
+
+  const handleHashClick = (e: React.MouseEvent, sectionId: string) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    setOpenDropdown(null);
+    scrollToSection(sectionId);
   };
 
   return (
@@ -217,62 +251,67 @@ export function Navbar() {
                 "px-3 py-2 text-sm font-almarai transition-colors rounded-md";
               const activeClasses = "text-white font-bold";
               const inactiveClasses = "text-white/70 hover:text-white font-normal";
-              const itemClasses = `${baseClasses} ${
-                isActive ? activeClasses : inactiveClasses
-              }`;
+              const itemClasses = `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
 
               return (
-              <div key={item.label} className="relative">
-                {item.dropdown ? (
-                  <>
-                    <button
-                      onClick={() =>
-                        setOpenDropdown(
-                          openDropdown === item.label ? null : item.label,
-                        )
-                      }
-                      className={`flex items-center gap-1 ${itemClasses}`}
+                <div key={item.label} className="relative">
+                  {item.dropdown ? (
+                    <>
+                      <button
+                        onClick={() =>
+                          setOpenDropdown(
+                            openDropdown === item.label ? null : item.label,
+                          )
+                        }
+                        className={`flex items-center gap-1 ${itemClasses}`}
+                        data-testid={`nav-${item.label}`}
+                      >
+                        {item.label}
+                        <ChevronDown
+                          size={14}
+                          className={`transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                      {openDropdown === item.label && (
+                        <DropdownMenu
+                          items={item.dropdown}
+                          onClose={() => setOpenDropdown(null)}
+                          onHashClick={(id) => scrollToSection(id)}
+                        />
+                      )}
+                    </>
+                  ) : isHashLink(item.href) ? (
+                    <a
+                      href={item.href}
+                      onClick={(e) => handleHashClick(e, item.href.slice(1))}
+                      className={itemClasses}
                       data-testid={`nav-${item.label}`}
                     >
                       {item.label}
-                      <ChevronDown
-                        size={14}
-                        className={`transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`}
-                      />
-                    </button>
-                    {openDropdown === item.label && (
-                      <DropdownMenu
-                        items={item.dropdown}
-                        onClose={() => setOpenDropdown(null)}
-                      />
-                    )}
-                  </>
-                ) : (
-                  <NavLink
-                    href={item.href}
-                    className={itemClasses}
-                    testId={`nav-${item.label}`}
-                  >
-                    {item.label}
-                  </NavLink>
-                )}
-              </div>
+                    </a>
+                  ) : (
+                    <NavLink
+                      href={item.href}
+                      className={itemClasses}
+                      testId={`nav-${item.label}`}
+                    >
+                      {item.label}
+                    </NavLink>
+                  )}
+                </div>
               );
             })}
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Button
-              
-              className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold"
-            >
-              <Link
-                to="/#contact"
-                onClick={handleContactClick}
+            <Button className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold">
+              <a
+                href="#contact"
+                onClick={(e) => handleHashClick(e, "contact")}
                 data-testid="nav-cta"
               >
                 تواصل معنا
-              </Link>
+              </a>
             </Button>
           </div>
 
@@ -295,69 +334,87 @@ export function Navbar() {
                 "font-almarai text-sm border-b border-white/10 transition-colors";
               const activeClasses = "text-white font-bold";
               const inactiveClasses = "text-white/70 hover:text-white font-normal";
-              const itemClasses = `${baseClasses} ${
-                isActive ? activeClasses : inactiveClasses
-              }`;
+              const itemClasses = `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
 
               return (
-              <div key={item.label}>
-                {item.dropdown ? (
-                  <>
-                    <button
-                      onClick={() =>
-                        setMobileExpanded(
-                          mobileExpanded === item.label ? null : item.label,
-                        )
-                      }
-                      className={`w-full flex items-center justify-between gap-4 py-3 ${itemClasses}`}
+                <div key={item.label}>
+                  {item.dropdown ? (
+                    <>
+                      <button
+                        onClick={() =>
+                          setMobileExpanded(
+                            mobileExpanded === item.label ? null : item.label,
+                          )
+                        }
+                        className={`w-full flex items-center justify-between gap-4 py-3 ${itemClasses}`}
+                        data-testid={`mobile-nav-${item.label}`}
+                      >
+                        {item.label}
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform text-white/50 ${mobileExpanded === item.label ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                      {mobileExpanded === item.label && (
+                        <div className="pr-4 bg-white/5 rounded-md my-1">
+                          {item.dropdown.map((sub) => (
+                            <NavLink
+                              key={sub.label}
+                              href={sub.href}
+                              onClick={(e) => {
+                                if (isHashLink(sub.href)) {
+                                  e.preventDefault();
+                                  scrollToSection(sub.href.slice(1));
+                                  setMobileOpen(false);
+                                } else {
+                                  setMobileOpen(false);
+                                }
+                              }}
+                              className="block py-2.5 font-almarai text-sm text-white/60 hover:text-white border-b border-white/5 last:border-0"
+                              testId={`mobile-dropdown-${sub.label}`}
+                            >
+                              {sub.label}
+                            </NavLink>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : isHashLink(item.href) ? (
+                    <a
+                      href={item.href}
+                      onClick={(e) => {
+                        handleHashClick(e, item.href.slice(1));
+                        setMobileOpen(false);
+                      }}
+                      className={`block py-3 ${itemClasses}`}
                       data-testid={`mobile-nav-${item.label}`}
                     >
                       {item.label}
-                      <ChevronDown
-                        size={16}
-                        className={`transition-transform text-white/50 ${mobileExpanded === item.label ? "rotate-180" : ""}`}
-                      />
-                    </button>
-                    {mobileExpanded === item.label && (
-                      <div className="pr-4 bg-white/5 rounded-md my-1">
-                        {item.dropdown.map((sub) => (
-                          <NavLink
-                            key={sub.label}
-                            href={sub.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="block py-2.5 font-almarai text-sm text-white/60 hover:text-white border-b border-white/5 last:border-0"
-                            testId={`mobile-dropdown-${sub.label}`}
-                          >
-                            {sub.label}
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <NavLink
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={`block py-3 ${itemClasses}`}
-                    testId={`mobile-nav-${item.label}`}
-                  >
-                    {item.label}
-                  </NavLink>
-                )}
-              </div>
+                    </a>
+                  ) : (
+                    <NavLink
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`block py-3 ${itemClasses}`}
+                      testId={`mobile-nav-${item.label}`}
+                    >
+                      {item.label}
+                    </NavLink>
+                  )}
+                </div>
               );
             })}
             <Button
               asChild
               className="w-full mt-4 bg-brand-gold text-white font-almarai rounded-lg font-bold"
             >
-              <Link
-                to="/#contact"
-                onClick={handleContactClick}
+              <a
+                href="#contact"
+                onClick={(e) => handleHashClick(e, "contact")}
                 data-testid="mobile-nav-cta"
               >
                 تواصل معنا
-              </Link>
+              </a>
             </Button>
           </div>
         </div>

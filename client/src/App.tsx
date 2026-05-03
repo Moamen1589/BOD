@@ -23,6 +23,7 @@ import { useEffect } from "react";
 import VotingPage from "./pages/VotingPage";
 import GovernancePage from "./pages/GovernancePage";
 import ImpactPage from "./pages/ImpactPage";
+import SocialEntrepreneurPage from "./pages/SocialEntrepreneurPage";
 import { hasCompletedRegistration } from "@/lib/registration";
 
 function RegistrationGuard({
@@ -83,6 +84,7 @@ function Router() {
         component={CaseStudyDetailPage}
       />
       <Route path="/solutions/:slug" component={SolutionDetailPage} />
+      <Route path="/social-entrepreneur" component={SocialEntrepreneurPage} />
       <Route component={NotFound} />
     </Switch>
   );

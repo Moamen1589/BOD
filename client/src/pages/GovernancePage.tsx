@@ -280,16 +280,12 @@ export default function GovernancePage() {
 
             <div className="bg-white rounded-3xl shadow-md p-6 mb-4">
               <h3 className="text-sm font-black text-brand-gray mb-3">مقياس التصنيف</h3>
-              <div className="flex flex-wrap gap-4 text-xs font-bold">
-                <span className="flex items-center gap-2 bg-green-100 text-green-700 px-3 py-1.5 rounded-lg">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> الحد الأخضر: 85% فأعلى
-                </span>
-                <span className="flex items-center gap-2 bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg">
-                  <AlertCircle className="w-3.5 h-3.5" /> الحد الأصفر: 70% إلى أقل من 85%
-                </span>
-                <span className="flex items-center gap-2 bg-red-100 text-red-700 px-3 py-1.5 rounded-lg">
-                  <XCircle className="w-3.5 h-3.5" /> الحد الأحمر: أقل من 70%
-                </span>
+              <div className="flex flex-wrap gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full bg-green-500 inline-block shrink-0" />
+                  <span className="w-4 h-4 rounded-full bg-amber-400 inline-block shrink-0" />
+                  <span className="w-4 h-4 rounded-full bg-red-500 inline-block shrink-0" />
+                </div>
               </div>
             </div>
 
