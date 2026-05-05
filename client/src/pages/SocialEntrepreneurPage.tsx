@@ -193,10 +193,9 @@ export default function SocialEntrepreneurPage() {
 
               {/* Right - Form */}
               <div className="lg:col-span-3 bg-white rounded-[2rem] shadow-2xl p-10 border-t-4 border-brand-gold">
-                <h3 className="text-2xl font-black text-brand-dark mb-2">
+                <h3 className="text-2xl mb-5 font-black text-brand-dark mb-2">
                   سجّل بياناتك الآن
                 </h3>
-                <p className="text-brand-gray text-sm mb-8">الحقول المشار بـ * مطلوبة</p>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
