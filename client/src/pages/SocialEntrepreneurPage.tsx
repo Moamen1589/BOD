@@ -193,7 +193,7 @@ export default function SocialEntrepreneurPage() {
 
               {/* Right - Form */}
               <div className="lg:col-span-3 bg-white rounded-[2rem] shadow-2xl p-10 border-t-4 border-brand-gold">
-                <h3 className="text-2xl mb-5 font-black text-brand-dark mb-2">
+                <h3 className="text-2xl mb-5 font-black text-brand-dark">
                   سجّل بياناتك الآن
                 </h3>
 

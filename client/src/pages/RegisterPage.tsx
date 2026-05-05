@@ -16,6 +16,7 @@ type RegisterFormData = {
   organizationEmail: string;
   organizationType: string;
   licenseNumber: string;
+  phoneNumber: string;
 };
 
 export default function RegisterPage() {
@@ -25,6 +26,7 @@ export default function RegisterPage() {
     organizationEmail: "",
     organizationType: "",
     licenseNumber: "",
+    phoneNumber: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
@@ -52,6 +54,7 @@ export default function RegisterPage() {
             email: data.organizationEmail,
             type: data.organizationType,
             liscense_number: data.licenseNumber,
+            phone_number: data.phoneNumber,
             evaluation_duration: 0,
             evaluator_name: "",
             evaluation_team: "",
@@ -80,6 +83,7 @@ export default function RegisterPage() {
         email: data.organizationEmail,
         type: data.organizationType,
         liscense_number: data.licenseNumber,
+        phone_number: data.phoneNumber,
         evaluation_duration: 0,
         evaluator_name: "",
         evaluation_team: "",
@@ -223,6 +227,21 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   required
                   placeholder="LIC-123456"
+                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-lg font-bold text-brand-dark mb-3">
+                  رقم الهاتف
+                </label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                  placeholder="+966 5XXXXXXXX"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
               </div>
