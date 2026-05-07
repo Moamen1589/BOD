@@ -188,7 +188,7 @@ export function ContactSection() {
                   className="border-white/20 text-brand-gold font-almarai rounded-md w-full hover:bg-brand-gold hover:text-white"
                 >
                   <a
-                    href="https://drive.google.com/file/d/1uumhRJM4GnTlmoLR4B3KhCezHabnEaSN/view?usp=sharing"
+                    href="https://drive.google.com/file/d/10B4PY_1MZ8g_G71a5dQSlfLoKrclx8gJ/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
                     data-testid="link-report-download"

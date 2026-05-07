@@ -79,21 +79,72 @@ export default function SocialEntrepreneurPage() {
   const [form, setForm] = useState<EntrepreneurForm>(initialForm);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string>("");
 
   const setField = (field: keyof EntrepreneurForm, value: string) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSubmitted(true);
-    setSubmitting(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    try {
+      const requiredCapital = Number(form.requiredCapital);
+      const annualIncome = Number(form.annualRevenue);
+
+      if (!Number.isFinite(requiredCapital) || !Number.isFinite(annualIncome)) {
+        throw new Error("invalid_numeric_values");
+      }
+
+      const response = await fetch(
+        "https://gold-weasel-489740.hostingersite.com/api/business-registrations",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            company_name: form.companyName,
+            company_website: form.companyWebsite,
+            region: form.region,
+            stage: form.stage,
+            full_name: form.fullName,
+            phone: form.phone,
+            email: form.email,
+            looking_for: form.lookingFor,
+            preferred_contact: form.contactVia,
+            required_capital: requiredCapital,
+            annual_income: annualIncome,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("request_failed");
+      }
+
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "invalid_numeric_values"
+      ) {
+        setSubmitError(
+          "يرجى إدخال أرقام صحيحة في رأس المال المطلوب والدخل السنوي.",
+        );
+      } else {
+        setSubmitError("تعذر إرسال البيانات الآن. حاول مرة أخرى بعد قليل.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-brand-light-gold" dir="rtl">
+    <div
+      className="w-full min-h-screen flex flex-col bg-brand-light-gold"
+      dir="rtl"
+    >
       <Navbar />
 
       {/* Hero */}
@@ -132,7 +183,9 @@ export default function SocialEntrepreneurPage() {
               <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
                 <CheckCircle className="w-12 h-12 text-green-600" />
               </div>
-              <h2 className="text-3xl font-black text-brand-dark mb-4">تم الإرسال بنجاح!</h2>
+              <h2 className="text-3xl font-black text-brand-dark mb-4">
+                تم الإرسال بنجاح!
+              </h2>
               <p className="text-brand-gray text-lg mb-8">
                 شكرًا على اهتمامك. سيتواصل معك فريق ولادة حلم في أقرب وقت ممكن.
               </p>
@@ -176,8 +229,12 @@ export default function SocialEntrepreneurPage() {
                           <Icon className="w-5 h-5 text-brand-gold" />
                         </div>
                         <div>
-                          <h4 className="font-black text-brand-dark text-sm mb-1">{title}</h4>
-                          <p className="text-brand-gray text-xs leading-relaxed">{desc}</p>
+                          <h4 className="font-black text-brand-dark text-sm mb-1">
+                            {title}
+                          </h4>
+                          <p className="text-brand-gray text-xs leading-relaxed">
+                            {desc}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -185,9 +242,13 @@ export default function SocialEntrepreneurPage() {
                 </div>
 
                 <div className="bg-brand-dark rounded-2xl p-6 text-white">
-                  <p className="text-white/60 text-xs font-bold mb-2">تواصل مباشر</p>
-                  <p className="font-black text-lg mb-1">920031323</p>
-                  <p className="text-white/50 text-xs">أو تواصل معنا عبر واتساب</p>
+                  <p className="text-white/60 text-xs font-bold mb-2">
+                    تواصل مباشر
+                  </p>
+                  <p className="font-black text-lg mb-1">126544705</p>
+                  <p className="text-white/50 text-xs">
+                    أو تواصل معنا عبر واتساب
+                  </p>
                 </div>
               </div>
 
@@ -207,7 +268,9 @@ export default function SocialEntrepreneurPage() {
                         required
                         type="text"
                         value={form.companyName}
-                        onChange={(e) => setField("companyName", e.target.value)}
+                        onChange={(e) =>
+                          setField("companyName", e.target.value)
+                        }
                         className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl text-sm focus:border-brand-gold focus:outline-none text-brand-dark"
                         placeholder="اسم الشركة"
                       />
@@ -219,7 +282,9 @@ export default function SocialEntrepreneurPage() {
                       <input
                         type="url"
                         value={form.companyWebsite}
-                        onChange={(e) => setField("companyWebsite", e.target.value)}
+                        onChange={(e) =>
+                          setField("companyWebsite", e.target.value)
+                        }
                         className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl text-sm focus:border-brand-gold focus:outline-none text-brand-dark"
                         placeholder="https://..."
                       />
@@ -346,11 +411,15 @@ export default function SocialEntrepreneurPage() {
                       </label>
                       <input
                         required
-                        type="text"
+                        type="number"
+                        min="0"
+                        step="1"
                         value={form.requiredCapital}
-                        onChange={(e) => setField("requiredCapital", e.target.value)}
+                        onChange={(e) =>
+                          setField("requiredCapital", e.target.value)
+                        }
                         className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl text-sm focus:border-brand-gold focus:outline-none text-brand-dark"
-                        placeholder="مثال: 500,000 ريال"
+                        placeholder="مثال: 500000"
                       />
                     </div>
                     <div>
@@ -359,14 +428,24 @@ export default function SocialEntrepreneurPage() {
                       </label>
                       <input
                         required
-                        type="text"
+                        type="number"
+                        min="0"
+                        step="1"
                         value={form.annualRevenue}
-                        onChange={(e) => setField("annualRevenue", e.target.value)}
+                        onChange={(e) =>
+                          setField("annualRevenue", e.target.value)
+                        }
                         className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl text-sm focus:border-brand-gold focus:outline-none text-brand-dark"
-                        placeholder="مثال: 1,000,000 ريال"
+                        placeholder="مثال: 12000000"
                       />
                     </div>
                   </div>
+
+                  {submitError && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-bold">
+                      {submitError}
+                    </div>
+                  )}
 
                   <Button
                     type="submit"

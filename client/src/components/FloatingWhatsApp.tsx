@@ -11,12 +11,12 @@ export function FloatingWhatsApp() {
       >
         <FaPhoneAlt size={24} />
         <span className="pointer-events-none absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-brand-dark px-3 py-1 text-sm font-almarai text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-          920031323
+          126544705
         </span>
       </a>
 
       <a
-        href="https://wa.me/966920031323"
+        href="https://wa.me/966126544705"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="WhatsApp"
