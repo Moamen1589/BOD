@@ -296,7 +296,7 @@ export default function ECSTTPage() {
   >({});
   const [axisTitles, setAxisTitles] = useState<Record<number, string>>({});
   const [axisAnswers, setAxisAnswers] = useState<
-    Record<number, Record<string, { score: number | null; notes: string }>>
+    Record<number, Record<string, { score: number | null }>>
   >({});
   const [hasInitiatedSubmission, setHasInitiatedSubmission] = useState(false);
   const [isInitiatingSubmission, setIsInitiatingSubmission] = useState(false);
@@ -631,7 +631,7 @@ export default function ECSTTPage() {
   const updateAxisAnswer = (
     axisId: number,
     questionId: string | number,
-    nextValue: Partial<{ score: number | null; notes: string }>,
+    nextValue: Partial<{ score: number | null }>,
   ) => {
     const key = String(questionId);
 
@@ -639,7 +639,6 @@ export default function ECSTTPage() {
       const axisAnswersForAxis = prev[axisId] ?? {};
       const existingAnswer = axisAnswersForAxis[key] ?? {
         score: null,
-        notes: "",
       };
 
       return {
@@ -648,7 +647,6 @@ export default function ECSTTPage() {
           ...axisAnswersForAxis,
           [key]: {
             score: nextValue.score ?? existingAnswer.score,
-            notes: nextValue.notes ?? existingAnswer.notes,
           },
         },
       };
@@ -663,13 +661,7 @@ export default function ECSTTPage() {
     updateAxisAnswer(axisId, questionId, { score: value });
   };
 
-  const handleNotesChange = (
-    axisId: number,
-    questionId: string | number,
-    value: string,
-  ) => {
-    updateAxisAnswer(axisId, questionId, { notes: value });
-  };
+
 
   const getAxisAverage = (axisTitle: string) => {
     const axisIndex = getAxisIndexByTitle(axisTitle);
@@ -898,19 +890,10 @@ export default function ECSTTPage() {
         throw new Error("يجب أن تكون الدرجة بين 0 و 5");
       }
 
-      const payload: {
-        question_id: string | number;
-        score: number;
-        notes?: string;
-      } = {
+      const payload = {
         question_id: questionId,
         score,
       };
-
-      const notes = answer.notes.trim();
-      if (notes) {
-        payload.notes = notes;
-      }
 
       return payload;
     });
@@ -1661,30 +1644,7 @@ export default function ECSTTPage() {
                                 ))}
                               </div>
                             </div>
-                            <div className="mt-6">
-                              <label className="block text-sm font-black text-brand-dark mb-2">
-                                ملاحظات اختيارية
-                              </label>
-                              <Textarea
-                                value={selectedAnswer?.notes ?? ""}
-                                disabled={apiQuestionId == null}
-                                onChange={(event) =>
-                                  handleNotesChange(
-                                    currentAxisId,
-                                    questionKey,
-                                    event.target.value,
-                                  )
-                                }
-                                placeholder="أضف ملاحظاتك هنا إن وجدت"
-                                className="min-h-[92px] rounded-2xl border-brand-gold/20 bg-white/80 text-brand-dark placeholder:text-brand-gray/50 focus-visible:ring-brand-gold"
-                              />
-                              {apiQuestionId == null && (
-                                <p className="mt-2 text-xs font-bold text-red-600">
-                                  لا يمكن تقييم هذا السؤال لعدم وجود question_id
-                                  من جلسة initiate.
-                                </p>
-                              )}
-                            </div>
+
                           </div>
                           <div
                             className={`text-xs font-black tracking-tight shrink-0 text-right max-w-[190px] sm:max-w-[230px] leading-relaxed ${scoreDescription.color}`}

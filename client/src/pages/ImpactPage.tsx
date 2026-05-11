@@ -380,7 +380,7 @@ export default function ImpactPage() {
           <div className="flex gap-3 mt-8">
             {[
               { id: "form", label: "📝 إدخال مؤشرات الأثر" },
-              { id: "results", label: "🤖 لوحة التحليل AI" },
+              { id: "results", label: " لوحة التحليل" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -579,7 +579,7 @@ export default function ImpactPage() {
               className="w-full bg-purple-500 hover:bg-purple-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-purple-500/30 flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <Sparkles className="w-5 h-5" />
-              {isSubmitting ? "جارٍ التحليل..." : "احسب الأثر المجتمعي بالذكاء الاصطناعي"}
+              {isSubmitting ? "جارٍ التحليل..." : "احسب الأثر المجتمعي "}
             </Button>
           </form>
         )}
@@ -727,7 +727,6 @@ export default function ImpactPage() {
             <div className="bg-gradient-to-l from-purple-600 to-purple-800 rounded-3xl p-8 text-white">
               <div className="flex items-center gap-3 mb-4">
                 <Sparkles className="w-6 h-6 text-purple-200" />
-                <h3 className="font-black text-xl">تحليل الذكاء الاصطناعي</h3>
               </div>
               <p className="text-white/90 text-lg leading-relaxed font-medium">{aiInsight()}</p>
             </div>
