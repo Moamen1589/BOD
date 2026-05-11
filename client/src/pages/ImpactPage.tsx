@@ -379,7 +379,7 @@ export default function ImpactPage() {
           </div>
           <div className="flex gap-3 mt-8">
             {[
-              { id: "form", label: "📝 إدخال مؤشرات الأثر" },
+              { id: "form", label: "إدخال مؤشرات الأثر" },
               { id: "results", label: " لوحة التحليل" },
             ].map((tab) => (
               <button
