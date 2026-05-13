@@ -16,16 +16,16 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "dev-server-v3-fixed"
+args = "Start application"
 
 [[workflows.workflow]]
-name = "dev-server-v3-fixed"
-mode = "parallel"
+name = "Start application"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
@@ -37,10 +37,6 @@ externalPort = 3002
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3000
 
 [deployment]
 build = ["sh", "-c", "npm run build"]
