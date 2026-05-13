@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 
 import { Box } from "@/pages/Box";
 import ECSTTPage from "@/pages/ECSTTPage";
+import ECSTTAssessmentPage from "@/pages/ECSTTAssessmentPage";
 import FinalReportPage from "@/pages/FinalReportPage";
 import RegisterPage from "@/pages/RegisterPage";
 import ServicesPage from "@/pages/ServicesPage";
@@ -58,6 +59,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Box} />
       <Route path="/register" component={RegisterPage} />
+      <Route path="/ecstt/assessment" component={ECSTTAssessmentPage} />
       <Route path="/ecstt" component={ECSTTPage} />
       <Route path="/final-report/:submissionId" component={FinalReportPage} />
       <Route

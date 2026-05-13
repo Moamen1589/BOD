@@ -280,9 +280,19 @@ const assessmentAxes = [
   },
 ];
 
-export default function ECSTTPage() {
+type ECSTTPageProps = {
+  initialStep?: "intro" | "assessment" | "result";
+  showLandingSections?: boolean;
+};
+
+export default function ECSTTPage({
+  initialStep = "intro",
+  showLandingSections = true,
+}: ECSTTPageProps = {}) {
   const [, setLocation] = useLocation();
-  const [step, setStep] = useState<"intro" | "assessment" | "result">("intro");
+  const [step, setStep] = useState<"intro" | "assessment" | "result">(
+    initialStep,
+  );
   const [hasRegistration, setHasRegistration] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
@@ -415,6 +425,16 @@ export default function ECSTTPage() {
           );
           return next;
         });
+        setAxisAnswers((prev) => {
+          const next = { ...prev };
+          Object.entries(initResult.axisQuestionSets).forEach(
+            ([axisIdKey, axisSet]) => {
+              const axisId = Number(axisIdKey);
+              next[axisId] = buildDefaultAxisAnswers(axisSet.questions);
+            },
+          );
+          return next;
+        });
         setAxisTitles((prev) => {
           const next = { ...prev };
           Object.entries(initResult.axisQuestionSets).forEach(
@@ -482,6 +502,10 @@ export default function ECSTTPage() {
         setAxisQuestions((prev) => ({
           ...prev,
           [axisId]: axisSet.questions,
+        }));
+        setAxisAnswers((prev) => ({
+          ...prev,
+          [axisId]: buildDefaultAxisAnswers(axisSet.questions),
         }));
 
         const axisTitle = axisSet.axisTitle;
@@ -614,6 +638,20 @@ export default function ECSTTPage() {
       question.question_id ?? question.questionId ?? question.id;
     return candidate == null ? null : candidate;
   };
+
+  const buildDefaultAxisAnswers = (questions: ComplianceQuestion[]) =>
+    questions.reduce<Record<string, { score: number | null }>>(
+      (answers, question) => {
+        const questionId = getQuestionId(question);
+        if (questionId == null) {
+          return answers;
+        }
+
+        answers[String(questionId)] = { score: 0 };
+        return answers;
+      },
+      {},
+    );
 
   const getQuestionText = (question: ComplianceQuestion, fallback: string) =>
     question.question?.trim() ||
@@ -958,10 +996,7 @@ export default function ECSTTPage() {
 
   const handleAssessmentEntry = () => {
     if (hasRegistration) {
-      setStep("assessment");
-      document
-        .getElementById("assessment")
-        ?.scrollIntoView({ behavior: "smooth" });
+      setLocation("/ecstt/assessment");
       return;
     }
 
@@ -992,6 +1027,8 @@ export default function ECSTTPage() {
     >
       <Navbar />
 
+      {showLandingSections && (
+        <>
       {/* Hero Section */}
       <section
         ref={heroRef.ref}
@@ -1495,6 +1532,8 @@ export default function ECSTTPage() {
           </p>
         </div>
       </section>
+      </>
+      )}
 
       {/* Detailed Assessment Survey */}
       <section
@@ -1678,7 +1717,6 @@ export default function ECSTTPage() {
                       onClick={() => {
                         handleAxisAdvance();
                       }}
-                      // disabled={isSubmittingAxis}
                       className="flex-[2] bg-brand-dark text-white py-4 sm:py-6 lg:py-10 rounded-2xl sm:rounded-3xl text-[clamp(1rem,1.6vw,1.125rem)] lg:text-2xl font-black shadow-2xl"
                     >
                       {isSubmittingAxis
@@ -1690,7 +1728,7 @@ export default function ECSTTPage() {
 
                 {!isCurrentAxisComplete && (
                   <p className="mt-4 text-center text-sm sm:text-base font-bold text-red-600">
-                    يرجى تعبئة جميع عناصر هذا المحور قبل المتابعة. المتبقي:{" "}
+                    يرجى تعبئة جميع عناصر هذا المحور قبل المتابعة. المتبقي: {" "}
                     {missingAnswersCount}
                   </p>
                 )}
@@ -1706,6 +1744,8 @@ export default function ECSTTPage() {
         </div>
       </section>
 
+      {showLandingSections && (
+        <>
       {/* Community Platform CTA */}
       <section className="bg-brand-dark py-16 sm:py-20 lg:py-28 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
@@ -1824,6 +1864,8 @@ export default function ECSTTPage() {
           </div>
         </div>
       </section>
+      </>
+      )}
 
       <Footer />
     </div>

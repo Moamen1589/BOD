@@ -52,11 +52,16 @@ type AssessmentResult = {
 
 const LAST_ASSESSMENT_ID_STORAGE_KEY = "governance:lastAssessmentId";
 const ACTIVE_TAB_STORAGE_KEY = "governance:activeTab";
-// ─── Zod Validation Schema ────────────────────────────────────────────────────
 const performanceSchema = z.object({
   orgName: z.string().min(1, "اسم المؤسسة مطلوب"),
   assessorName: z.string().min(1, "اسم المقيم مطلوب"),
-  assessmentYear: z.string().min(1, "السنة مطلوبة"),
+  assessmentYear: z
+    .string()
+    .min(1, "السنة مطلوبة")
+    .refine((val) => {
+      const year = parseInt(val);
+      return year >= 2000;
+    }, "السنة يجب أن تكون 2000 فما فوق"),
   assessmentDate: z.string().min(1, "تاريخ التقييم مطلوب"),
   notes: z.string().optional().default(""),
   adminExpenses: z
@@ -635,7 +640,9 @@ const downloadAssessmentSummary = async (assessmentId: number) => {
 
   if (!response.ok) {
     const text = await response.text().catch(() => response.statusText);
-    throw new Error(`Failed to download summary PDF: ${response.status} ${text}`);
+    throw new Error(
+      `Failed to download summary PDF: ${response.status} ${text}`,
+    );
   }
 
   const blob = await response.blob();
@@ -850,7 +857,10 @@ export default function GovernancePage() {
   });
   const [orgName, setOrgName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [assessmentId, setAssessmentId] = useState<number | null>(() => {
     if (typeof window === "undefined") return null;
     const storedAssessmentId = Number(
@@ -860,7 +870,9 @@ export default function GovernancePage() {
       ? storedAssessmentId
       : null;
   });
-  const [assessmentData, setAssessmentData] = useState<AssessmentResult | null>(null);
+  const [assessmentData, setAssessmentData] = useState<AssessmentResult | null>(
+    null,
+  );
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const [isDownloadingReport, setIsDownloadingReport] = useState(false);
 
@@ -868,6 +880,7 @@ export default function GovernancePage() {
     register,
     handleSubmit: rhfHandleSubmit,
     formState: { errors },
+    setError,
   } = useForm<PerformanceFormData>({
     resolver: zodResolver(performanceSchema),
     defaultValues: {
@@ -1000,6 +1013,67 @@ export default function GovernancePage() {
       );
 
       if (!response.ok) {
+        let errorData: any;
+        try {
+          errorData = await response.json();
+        } catch {
+          throw new Error("فشل إرسال البيانات إلى الخادم");
+        }
+
+        // Handle structured validation errors from API
+        if (errorData.errors && typeof errorData.errors === "object") {
+          const apiFieldToFormField: Record<string, keyof PerformanceFormData> =
+            {
+              assessment_year: "assessmentYear",
+              organization_name: "orgName",
+              assessor_name: "assessorName",
+              assessment_date: "assessmentDate",
+              admin_expenses: "adminExpenses",
+              program_expenses: "programExpenses",
+              sustainable_revenue: "sustainableRevenue",
+              budget_deviation: "budgetDeviation",
+              revenue_growth: "revenueGrowth",
+              operational_plan: "operationalPlan",
+              projects_goals: "projectsGoals",
+              employee_turnover: "employeeTurnover",
+              employee_satisfaction: "employeeSatisfaction",
+              training_completion: "trainingCompletion",
+              performance_evaluation: "performanceEvaluation",
+              volunteer_satisfaction: "volunteerSatisfaction",
+              organized_volunteering: "organizedVolunteering",
+              approved_policies: "approvedPolicies",
+              board_meetings: "boardMeetings",
+              board_decisions: "boardDecisions",
+              gov_requirements: "govRequirements",
+              automated_processes: "automatedProcesses",
+              tech_satisfaction: "techSatisfaction",
+              digital_channels: "digitalChannels",
+              audience_growth: "audienceGrowth",
+              campaigns: "campaigns",
+              stakeholder_comm: "stakeholderComm",
+              measured_impact: "measuredImpact",
+              national_alignment: "nationalAlignment",
+            };
+
+          // Set field-level errors
+          Object.entries(errorData.errors).forEach(
+            ([apiField, messages]: [string, any]) => {
+              const formField = apiFieldToFormField[apiField];
+              if (formField && Array.isArray(messages) && messages.length > 0) {
+                setError(formField, {
+                  type: "server",
+                  message: messages[0] || "خطأ في هذا الحقل",
+                });
+              }
+            },
+          );
+
+          // Show general error message
+          throw new Error(
+            errorData.message || "فشل التحقق من البيانات المدخلة",
+          );
+        }
+
         throw new Error("فشل إرسال البيانات إلى الخادم");
       }
 
@@ -1010,7 +1084,13 @@ export default function GovernancePage() {
       // Update data with form values for display
       const newData: PerformanceData = { ...data };
       Object.keys(formData).forEach((key) => {
-        if (key !== "orgName" && key !== "assessorName" && key !== "assessmentYear" && key !== "assessmentDate" && key !== "notes") {
+        if (
+          key !== "orgName" &&
+          key !== "assessorName" &&
+          key !== "assessmentYear" &&
+          key !== "assessmentDate" &&
+          key !== "notes"
+        ) {
           newData[key] = formData[key as keyof PerformanceFormData] as string;
         }
       });
@@ -1061,7 +1141,10 @@ export default function GovernancePage() {
     } catch (error) {
       setSubmitMessage({
         type: "error",
-        text: error instanceof Error ? error.message : "حدث خطأ أثناء إرسال البيانات",
+        text:
+          error instanceof Error
+            ? error.message
+            : "حدث خطأ أثناء إرسال البيانات",
       });
     } finally {
       setIsSubmitting(false);
@@ -1106,8 +1189,10 @@ export default function GovernancePage() {
     ...p,
     score:
       toNumberOrNull(
-        getAssessmentItem(assessmentData?.pillars, pillarApiKeys[p.key] ?? p.key)
-          ?.score,
+        getAssessmentItem(
+          assessmentData?.pillars,
+          pillarApiKeys[p.key] ?? p.key,
+        )?.score,
       ) ?? getPillarScore(data, p),
     apiClassification: getAssessmentItem(
       assessmentData?.pillars,
@@ -1207,7 +1292,8 @@ export default function GovernancePage() {
 
             <div className="bg-white rounded-3xl shadow-md p-8">
               <h2 className="text-xl font-black text-brand-dark mb-5 flex items-center gap-2">
-                <Target className="w-5 h-5 text-amber-500" /> معلومات المؤسسة والتقييم
+                <Target className="w-5 h-5 text-amber-500" /> معلومات المؤسسة
+                والتقييم
               </h2>
 
               <div className="space-y-4">
@@ -1277,27 +1363,6 @@ export default function GovernancePage() {
                       </p>
                     )}
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-black text-brand-dark mb-2">
-                    تاريخ التقييم
-                  </label>
-                  <input
-                    {...register("assessmentDate")}
-                    type="date"
-                    aria-invalid={Boolean(errors.assessmentDate)}
-                    className={`w-full px-4 py-3 border-2 rounded-xl focus:border-amber-400 focus:outline-none text-brand-dark text-sm ${
-                      errors.assessmentDate
-                        ? "border-red-300 bg-red-50/40"
-                        : "border-gray-100"
-                    }`}
-                  />
-                  {errors.assessmentDate && (
-                    <p className="mt-2 text-xs font-bold text-red-600 block">
-                      {errors.assessmentDate.message}
-                    </p>
-                  )}
                 </div>
 
                 <div>
