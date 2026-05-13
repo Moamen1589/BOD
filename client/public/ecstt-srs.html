@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SRS — ECSTT Assessment Module | مواصفات متطلبات النظام</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --gold: #FF6900;
+    --gold-dark: #E05D00;
+    --dark: #242423;
+    --gray: #73748C;
+    --light: #FCFCFC;
+    --light-gold: #FFF3E8;
+    --green: #16a34a;
+    --blue: #1d4ed8;
+    --yellow: #ca8a04;
+    --orange: #ea580c;
+    --red: #dc2626;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Almarai', 'Inter', sans-serif;
+    background: white;
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .en { font-family: 'Inter', sans-serif; direction: ltr; unicode-bidi: isolate; }
+
+  /* Print / PDF */
+  @media print {
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    body { font-size: 11px; }
+    .cover { min-height: 100vh; }
+  }
+
+  /* ── Cover ── */
+  .cover {
+    background: var(--dark);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: var(--gold);
+    opacity: 0.06;
+    border-radius: 50%;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: white;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+  }
+  .cover h1 {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: white;
+    margin-bottom: 12px;
+  }
+  .cover h1 .en-title { font-family: 'Inter'; font-size: 36px; color: var(--gold); display: block; }
+  .cover-sub {
+    font-size: 18px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 60px;
+    font-weight: 400;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .cover-meta-item {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .cover-meta-item .label { font-size: 10px; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 800; margin-bottom: 6px; }
+  .cover-meta-item .value { font-size: 16px; font-weight: 700; }
+  .cover-divider { width: 80px; height: 4px; background: var(--gold); border-radius: 4px; margin: 32px 0; }
+
+  /* ── Layout ── */
+  .page { max-width: 960px; margin: 0 auto; padding: 60px 48px; }
+
+  /* ── Section Headers ── */
+  .section-header {
+    border-right: 5px solid var(--gold);
+    padding-right: 18px;
+    margin-bottom: 32px;
+    margin-top: 60px;
+  }
+  .section-header .section-num {
+    font-family: 'Inter'; font-size: 11px; font-weight: 700;
+    color: var(--gold); letter-spacing: 2px; text-transform: uppercase;
+    display: block; margin-bottom: 4px;
+  }
+  .section-header h2 {
+    font-size: 28px; font-weight: 800; color: var(--dark); line-height: 1.2;
+  }
+  .section-header h2 .en { font-size: 18px; color: var(--gray); font-weight: 600; display: block; margin-top: 4px; }
+
+  /* ── Cards ── */
+  .card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-gold { border-right: 4px solid var(--gold); }
+  .card-dark { background: var(--dark); color: white; }
+  .card-light { background: var(--light-gold); border: 1px solid rgba(255,105,0,0.15); }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: 12px; overflow: hidden; }
+  thead { background: var(--dark); color: white; }
+  thead th { padding: 12px 16px; font-size: 12px; font-weight: 800; letter-spacing: 0.5px; text-align: right; }
+  thead th.en-th { text-align: left; font-family: 'Inter'; }
+  tbody tr:nth-child(even) { background: #f9fafb; }
+  tbody tr:hover { background: var(--light-gold); }
+  tbody td { padding: 11px 16px; font-size: 12.5px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .td-en { font-family: 'Inter'; direction: ltr; }
+  .td-code { font-family: 'Courier New', monospace; font-size: 11px; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+
+  /* ── Code block ── */
+  .code-block {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 20px 24px;
+    border-radius: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    direction: ltr;
+    text-align: left;
+    margin: 16px 0;
+  }
+  .code-block .key { color: #9cdcfe; }
+  .code-block .str { color: #ce9178; }
+  .code-block .num { color: #b5cea8; }
+  .code-block .comment { color: #6a9955; font-style: italic; }
+  .code-block .type { color: #4ec9b0; }
+  .code-block .kw { color: #c586c0; }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  .badge-gold { background: var(--light-gold); color: var(--gold-dark); border: 1px solid rgba(255,105,0,0.3); }
+  .badge-green { background: #dcfce7; color: var(--green); }
+  .badge-blue { background: #dbeafe; color: var(--blue); }
+  .badge-red { background: #fee2e2; color: var(--red); }
+  .badge-dark { background: var(--dark); color: white; }
+  .badge-method-get { background: #dcfce7; color: #166534; font-family:'Inter'; }
+  .badge-method-post { background: #dbeafe; color: #1e40af; font-family:'Inter'; }
+
+  /* ── Maturity table ── */
+  .maturity-row { display: flex; align-items: center; gap: 16px; padding: 14px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #e5e7eb; }
+  .maturity-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+  .maturity-score { font-family: 'Inter'; font-weight: 800; font-size: 15px; width: 80px; flex-shrink: 0; }
+  .maturity-label-ar { font-weight: 800; font-size: 15px; flex: 1; }
+  .maturity-label-en { font-family: 'Inter'; font-size: 12px; color: var(--gray); width: 160px; flex-shrink: 0; }
+  .maturity-action { font-size: 12px; color: var(--gray); flex: 1; }
+
+  /* ── Axis block ── */
+  .axis-block {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .axis-header {
+    background: var(--dark);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .axis-num {
+    background: var(--gold);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; flex-shrink: 0;
+    font-family: 'Inter';
+  }
+  .axis-title-ar { font-weight: 800; font-size: 15px; }
+  .axis-title-en { font-family: 'Inter'; font-size: 12px; color: rgba(255,255,255,0.6); display: block; margin-top: 2px; }
+  .axis-body { padding: 16px 20px; }
+  .axis-body table { margin: 0; }
+
+  /* ── Product pills ── */
+  .product-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    margin: 2px 4px 2px 0;
+    background: var(--light-gold);
+    color: var(--gold-dark);
+    border: 1px solid rgba(255,105,0,0.2);
+  }
+  .product-pill-dark { background: var(--dark); color: white; }
+
+  /* ── Priority block ── */
+  .priority-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+  .priority-num-box {
+    background: var(--gold);
+    color: white;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; flex-shrink: 0;
+    font-family: 'Inter';
+  }
+  .priority-content { flex: 1; }
+  .priority-title { font-weight: 800; font-size: 14px; margin-bottom: 4px; }
+  .priority-axes { font-size: 11px; color: var(--gray); margin-bottom: 6px; }
+  .priority-product { font-size: 12px; font-weight: 700; color: var(--gold-dark); }
+
+  /* ── Roadmap ── */
+  .roadmap-phases { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  .roadmap-phase { border: 1px solid #e5e7eb; border-radius: 16px; overflow: hidden; }
+  .roadmap-phase-header { padding: 14px 16px; color: white; }
+  .roadmap-phase-header.gold { background: var(--gold); }
+  .roadmap-phase-header.dark { background: var(--dark); }
+  .roadmap-phase-header.blue { background: #1d4ed8; }
+  .roadmap-phase-title { font-size: 11px; font-weight: 700; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .roadmap-phase-label { font-weight: 800; font-size: 13px; line-height: 1.3; }
+  .roadmap-phase-body { padding: 14px 16px; }
+  .roadmap-action { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+  .roadmap-action::before { content: '✓'; color: var(--gold); font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .roadmap-output { background: var(--light-gold); border-radius: 8px; padding: 8px 12px; font-size: 11px; margin-top: 10px; font-weight: 700; }
+  .roadmap-output span { color: var(--gray); font-weight: 400; }
+
+  /* ── Info box ── */
+  .info-box { background: var(--light-gold); border: 1px solid rgba(255,105,0,0.2); border-radius: 12px; padding: 16px 20px; margin: 16px 0; }
+  .info-box-label { font-size: 10px; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+
+  /* ── Misc ── */
+  h3 { font-size: 18px; font-weight: 800; margin: 20px 0 12px; }
+  h3.en { font-family: 'Inter'; font-size: 14px; color: var(--gray); }
+  p { margin-bottom: 10px; }
+  ul, ol { padding-right: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; font-size: 13px; }
+  .text-gold { color: var(--gold); }
+  .text-gray { color: var(--gray); font-size: 12px; }
+  .mt-4 { margin-top: 16px; }
+  .mt-8 { margin-top: 32px; }
+  .flex { display: flex; align-items: flex-start; gap: 12px; }
+  .toc a { color: var(--gold-dark); text-decoration: none; font-weight: 700; }
+  .toc li { padding: 4px 0; border-bottom: 1px dashed #e5e7eb; }
+  .divider { border: none; border-top: 2px solid #f0f0f0; margin: 40px 0; }
+
+  .no-print-hint {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--dark); color: white;
+    padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; z-index: 999;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+  }
+  .no-print-hint:hover { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<button class="no-print-hint no-print" onclick="window.print()">🖨 طباعة / Print as PDF</button>
+
+<!-- ═══════════════════════════════════════════
+     COVER PAGE
+═══════════════════════════════════════════ -->
+<div class="cover">
+  <div>
+    <span class="cover-badge en">SRS · v1.0 · ECSTT MODULE</span>
+    <h1>
+      مواصفات متطلبات النظام
+      <span class="en-title">System Requirements Specification</span>
+    </h1>
+    <p class="cover-sub">وحدة تقييم النضج المؤسسي الشامل (ECSTT) · منصة ولادة حلم</p>
+    <div class="cover-divider"></div>
+    <p style="color:rgba(255,255,255,0.6);font-size:14px;max-width:560px;">
+      هذه الوثيقة موجّهة لفريق التطوير الخلفي (Backend) وتحتوي على جميع مواصفات API، هياكل البيانات، منطق التقييم، ومنطق التوصيات اللازمة لبناء نظام التقييم والتقرير النهائي.
+    </p>
+    <p style="color:rgba(255,255,255,0.45);font-size:12px;font-family:'Inter';direction:ltr;margin-top:8px;">
+      This document is addressed to the Backend development team. It contains all API specifications, data structures, scoring logic, and recommendation logic required to build the assessment system and final report.
+    </p>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">الإصدار · Version</div>
+        <div class="value">1.0</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">التاريخ · Date</div>
+        <div class="value en">May 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Base API URL</div>
+        <div class="value en" style="font-size:12px;">https://gold-weasel-489740.hostingersite.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TABLE OF CONTENTS
+═══════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header" style="margin-top:0;">
+    <span class="section-num">INDEX</span>
+    <h2>فهرس المحتويات <span class="en">Table of Contents</span></h2>
+  </div>
+  <ol class="toc" style="list-style:none;padding:0;">
+    <li><a href="#sec1">1 — نظرة عامة على النظام · System Overview</a></li>
+    <li><a href="#sec2">2 — تدفق التقييم · Assessment Flow</a></li>
+    <li><a href="#sec3">3 — نقاط الـ API · API Endpoints</a></li>
+    <li><a href="#sec4">4 — هياكل البيانات · Data Structures</a></li>
+    <li><a href="#sec5">5 — منطق التقييم والنتائج · Scoring Logic</a></li>
+    <li><a href="#sec6">6 — محاور التقييم والأسئلة · Assessment Axes & Questions</a></li>
+    <li><a href="#sec7">7 — منطق مسار المعالجة والتوصيات · Treatment Path & Recommendation Logic</a></li>
+    <li><a href="#sec8">8 — الأولويات الخمس · Top 5 Priorities</a></li>
+    <li><a href="#sec9">9 — خارطة 90 يوم · 90-Day Roadmap</a></li>
+    <li><a href="#sec10">10 — فقرة التقرير والمخرجات · Report Paragraph & Outputs</a></li>
+    <li><a href="#sec11">11 — نموذج الاستجابة الكامل · Full Response Models</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — OVERVIEW
+═══════════════════════════════════════════ -->
+<div class="page" id="sec1">
+  <div class="section-header">
+    <span class="section-num">01 · OVERVIEW</span>
+    <h2>نظرة عامة على النظام <span class="en">System Overview</span></h2>
+  </div>
+
+  <div class="card card-gold">
+    <p><strong>الهدف:</strong> نظام ECSTT هو نظام تقييم النضج المؤسسي الشامل للمنظمات غير الربحية والجمعيات. يقيس النظام كفاءة المنظمة عبر 10 محاور مؤسسية باستخدام مقياس من 1 إلى 5، ويُصدر تقريراً تشخيصياً شاملاً مع توصيات مسار المعالجة.</p>
+    <p class="en text-gray"><strong>Purpose:</strong> ECSTT is a comprehensive institutional maturity assessment system for non-profit organizations. It measures organizational effectiveness across 10 axes using a 1–5 scale and produces a full diagnostic report with treatment path recommendations.</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>المكوّن · Component</th>
+        <th>التفاصيل · Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Base API URL</strong></td>
+        <td class="td-en td-code">https://gold-weasel-489740.hostingersite.com</td>
+      </tr>
+      <tr>
+        <td><strong>بادئة المسارات · API Prefix</strong></td>
+        <td class="td-en td-code">/api/compliance/</td>
+      </tr>
+      <tr>
+        <td><strong>محاور التقييم · Assessment Axes</strong></td>
+        <td>10 محاور · 10 axes</td>
+      </tr>
+      <tr>
+        <td><strong>مقياس التقييم · Score Scale</strong></td>
+        <td class="en">1 – 5 (integer or decimal per question)</td>
+      </tr>
+      <tr>
+        <td><strong>تخزين الجلسة · Session Storage</strong></td>
+        <td class="en">Submission ID stored in browser <span class="td-code">localStorage</span></td>
+      </tr>
+      <tr>
+        <td><strong>المصادقة · Auth</strong></td>
+        <td>لا يتطلب توثيق مستخدم · No user authentication required</td>
+      </tr>
+      <tr>
+        <td><strong>نوع المحتوى · Content-Type</strong></td>
+        <td class="td-en td-code">application/json</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <div class="info-box-label">ملاحظة للمطوّر · Developer Note</div>
+    <p>جميع حسابات مسار المعالجة (AXIS_META) والأولويات الخمس وخارطة 90 يوم هي <strong>بيانات ثابتة حالياً في الواجهة الأمامية</strong>. الهدف من هذه الوثيقة هو تحويلها إلى استجابات API ديناميكية مبنية على نتائج التقييم الفعلية.</p>
+    <p class="en text-gray">Currently, treatment path data (AXIS_META), Top 5 Priorities, and the 90-Day Roadmap are <strong>static constants in the frontend</strong>. The goal of this document is to migrate these into dynamic API responses based on actual assessment scores.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — ASSESSMENT FLOW
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec2">
+  <div class="section-header">
+    <span class="section-num">02 · FLOW</span>
+    <h2>تدفق التقييم <span class="en">Assessment Flow</span></h2>
+  </div>
+
+  <div class="card card-dark">
+    <p style="color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:1px;text-transform:uppercase;font-family:'Inter';margin-bottom:12px;">STEP-BY-STEP USER & API FLOW</p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="background:var(--gold);color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Inter';">1</div>
+        <div><strong>بدء جلسة التقييم</strong> — يُرسل المستخدم طلب POST لبدء جلسة جديدة ويستلم <span class="td-code" style="background:rgba(255,255,255,0.1);color:#d4d4d4;">submission_id</span> + قائمة المحاور.<br><span class="en text-gray">User triggers POST to initiate a new submission session and receives submission_id + axes list.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="background:var(--gold);color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Inter';">2</div>
+        <div><strong>تحميل أسئلة كل محور</strong> — لكل محور (axis_id 1–10) يُرسل GET لتحميل أسئلته الخاصة.<br><span class="en text-gray">For each axis (axis_id 1–10), a GET fetches that axis's questions.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="background:var(--gold);color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Inter';">3</div>
+        <div><strong>المستخدم يُجيب على كل سؤال</strong> — يختار درجة من 1 إلى 5 لكل سؤال في المحور الحالي.<br><span class="en text-gray">User selects a score (1–5) for each question in the current axis.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="background:var(--gold);color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Inter';">4</div>
+        <div><strong>تسليم إجابات المحور</strong> — يُرسل POST بمصفوفة الإجابات لهذا المحور ثم ينتقل للتالي.<br><span class="en text-gray">POST submits the answers array for the current axis, then advances to the next.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="background:var(--gold);color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Inter';">5</div>
+        <div><strong>تكرار الخطوتين 2–4</strong> لكل المحاور العشرة.<br><span class="en text-gray">Repeat steps 2–4 for all 10 axes.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="background:var(--gold);color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;font-family:'Inter';">6</div>
+        <div><strong>التقرير النهائي</strong> — بعد اكتمال جميع المحاور يُرسل GET لتحميل التقرير الكامل.<br><span class="en text-gray">After all axes are complete, GET fetches the full final report.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>مخطط التدفق · Flow Diagram</h3>
+  <div class="code-block" style="text-align:center;font-size:13px;">
+<span class="comment">// Sequence: Frontend → Backend</span>
+
+[User Opens /ecstt]
+       ↓
+POST /api/compliance/submissions/initiate
+       ↓
+  ← { submission_id, axis_breakdown[] }
+       ↓
+<span class="kw">FOR EACH</span> axis (1 → 10):
+  GET  /api/compliance/axes/<span class="type">{axisId}</span>/questions
+  ← { axis_title, questions[] }
+  [User answers each question]
+  POST /api/compliance/submissions/<span class="type">{submissionId}</span>/axes/<span class="type">{axisId}</span>/answers
+  ← { success: true }
+       ↓
+GET /api/compliance/submissions/<span class="type">{submissionId}</span>/final-report
+← { submission{}, organization{}, completion{}, axis_breakdown[], recommendations[] }
+       ↓
+[Redirect to /final-report/<span class="type">{submissionId}</span>]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — API ENDPOINTS
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec3">
+  <div class="section-header">
+    <span class="section-num">03 · API ENDPOINTS</span>
+    <h2>نقاط الـ API <span class="en">API Endpoints</span></h2>
+  </div>
+
+  <!-- Endpoint 1 -->
+  <div class="card card-gold">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <span class="badge badge-method-post">POST</span>
+      <code style="font-size:14px;font-weight:700;">/api/compliance/submissions/initiate</code>
+    </div>
+    <p><strong>الغرض:</strong> بدء جلسة تقييم جديدة وإرجاع معرّف التقديم مع بنية المحاور.</p>
+    <p class="en text-gray"><strong>Purpose:</strong> Initiate a new assessment session and return submission ID with axis structure.</p>
+
+    <h3>Request Body طلب</h3>
+    <div class="code-block">
+POST /api/compliance/submissions/initiate
+Content-Type: <span class="str">application/json</span>
+
+<span class="comment">// Body can be empty {} or contain optional org info</span>
+{
+  <span class="key">"organization_id"</span>: <span class="type">string | null</span>,     <span class="comment">// optional</span>
+  <span class="key">"organization_name"</span>: <span class="type">string | null</span>   <span class="comment">// optional</span>
+}
+    </div>
+
+    <h3>Response استجابة</h3>
+    <div class="code-block">
+{
+  <span class="key">"submission_id"</span>: <span class="str">"abc-123"</span>,          <span class="comment">// REQUIRED — unique session token</span>
+  <span class="key">"submission"</span>: {
+    <span class="key">"id"</span>: <span class="str">"abc-123"</span>,                  <span class="comment">// alias for submission_id</span>
+    <span class="key">"status"</span>: <span class="str">"in_progress"</span>
+  },
+  <span class="key">"axis_breakdown"</span>: [               <span class="comment">// array of axes</span>
+    {
+      <span class="key">"axis_id"</span>: <span class="num">1</span>,
+      <span class="key">"order"</span>: <span class="num">1</span>,
+      <span class="key">"title"</span>: <span class="str">"الحوكمة والامتثال النظامي"</span>,
+      <span class="key">"questions"</span>: []               <span class="comment">// can be empty here; loaded separately</span>
+    }
+    <span class="comment">// ... 10 items total</span>
+  ]
+}
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-label">تنبيه · Important</div>
+      <p>الواجهة الأمامية تبحث عن <code>submission_id</code> في عدة مستويات من الاستجابة. يمكن إرجاعه في أي من المسارات: <code>submission_id</code> / <code>submissionId</code> / <code>id</code> / <code>submission.id</code> / <code>data.submission_id</code></p>
+      <p class="en text-gray">The frontend searches for the ID across multiple response levels. Accept any of: <code>submission_id / submissionId / id / submission.id / data.submission_id</code></p>
+    </div>
+  </div>
+
+  <!-- Endpoint 2 -->
+  <div class="card card-gold">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <span class="badge badge-method-get">GET</span>
+      <code style="font-size:14px;font-weight:700;">/api/compliance/axes/{axisId}/questions</code>
+    </div>
+    <p><strong>الغرض:</strong> تحميل أسئلة محور معين. <code>axisId</code> من 1 إلى 10.</p>
+    <p class="en text-gray"><strong>Purpose:</strong> Load questions for a specific axis. axisId ranges 1–10.</p>
+
+    <h3>URL Parameters معاملات المسار</h3>
+    <table>
+      <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="td-code">axisId</td><td class="en">integer (1–10)</td><td><span class="badge badge-red">مطلوب</span></td><td>رقم المحور · Axis number</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Response استجابة</h3>
+    <div class="code-block">
+<span class="comment">// Format A — flat (preferred):</span>
+{
+  <span class="key">"axis_title"</span>: <span class="str">"القيادة والاستراتيجية"</span>,
+  <span class="key">"questions"</span>: [
+    {
+      <span class="key">"question_id"</span>: <span class="num">1</span>,
+      <span class="key">"title"</span>: <span class="str">"وضوح الرؤية والرسالة والقيم المؤسسية"</span>,
+      <span class="key">"weight"</span>: <span class="num">1</span>
+    }
+    <span class="comment">// ... more questions</span>
+  ]
+}
+
+<span class="comment">// Format B — nested (also accepted):</span>
+{
+  <span class="key">"data"</span>: {
+    <span class="key">"axis_id"</span>: <span class="num">2</span>,
+    <span class="key">"title"</span>: <span class="str">"القيادة والاستراتيجية"</span>,
+    <span class="key">"questions"</span>: [...]
+  }
+}
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-label">حقول السؤال المقبولة · Accepted Question Fields</div>
+      <p>الواجهة تقبل أي من هذه الحقول لمعرّف السؤال: <code>question_id / questionId / id</code></p>
+      <p>ونص السؤال من: <code>title / question_title / question / question_text / text / label</code></p>
+    </div>
+  </div>
+
+  <!-- Endpoint 3 -->
+  <div class="card card-gold">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <span class="badge badge-method-post">POST</span>
+      <code style="font-size:14px;font-weight:700;">/api/compliance/submissions/{submissionId}/axes/{axisId}/answers</code>
+    </div>
+    <p><strong>الغرض:</strong> تسليم إجابات محور كامل.</p>
+    <p class="en text-gray"><strong>Purpose:</strong> Submit all answers for a specific axis.</p>
+
+    <h3>Request Body طلب</h3>
+    <div class="code-block">
+{
+  <span class="key">"answers"</span>: [
+    {
+      <span class="key">"question_id"</span>: <span class="num">1</span>,          <span class="comment">// integer or string</span>
+      <span class="key">"score"</span>: <span class="num">4</span>,               <span class="comment">// integer 1–5</span>
+      <span class="key">"notes"</span>: <span class="str">""</span>              <span class="comment">// optional string</span>
+    },
+    {
+      <span class="key">"question_id"</span>: <span class="num">2</span>,
+      <span class="key">"score"</span>: <span class="num">3</span>,
+      <span class="key">"notes"</span>: <span class="str">"ملاحظة إضافية"</span>
+    }
+    <span class="comment">// one entry per question in the axis</span>
+  ]
+}
+    </div>
+
+    <h3>Response استجابة</h3>
+    <div class="code-block">
+<span class="comment">// Success (any 2xx)</span>
+{
+  <span class="key">"success"</span>: <span class="kw">true</span>,
+  <span class="key">"message"</span>: <span class="str">"Answers saved"</span>,
+  <span class="key">"axis_score"</span>: <span class="num">3.6</span>     <span class="comment">// optional — axis average computed by backend</span>
+}
+
+<span class="comment">// Error</span>
+{
+  <span class="key">"success"</span>: <span class="kw">false</span>,
+  <span class="key">"message"</span>: <span class="str">"Submission not found"</span>
+}
+    </div>
+  </div>
+
+  <!-- Endpoint 4 -->
+  <div class="card card-gold">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <span class="badge badge-method-get">GET</span>
+      <code style="font-size:14px;font-weight:700;">/api/compliance/submissions/{submissionId}/final-report</code>
+    </div>
+    <p><strong>الغرض:</strong> استرجاع التقرير الكامل بعد اكتمال جميع المحاور.</p>
+    <p class="en text-gray"><strong>Purpose:</strong> Retrieve the complete final report after all axes are submitted.</p>
+
+    <p style="margin-top:12px;">تفاصيل بنية الاستجابة موجودة في <strong>القسم 11</strong>.</p>
+    <p class="en text-gray">Full response structure is detailed in <strong>Section 11</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — DATA STRUCTURES
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec4">
+  <div class="section-header">
+    <span class="section-num">04 · DATA STRUCTURES</span>
+    <h2>هياكل البيانات <span class="en">Data Structures (TypeScript Types)</span></h2>
+  </div>
+
+  <h3>ComplianceQuestion — سؤال التقييم</h3>
+  <div class="code-block">
+<span class="kw">type</span> <span class="type">ComplianceQuestion</span> = {
+  <span class="comment">// ID — accept any of these field names:</span>
+  <span class="key">question_id</span>?: <span class="type">string | number</span>;
+  <span class="key">questionId</span>?:  <span class="type">string | number</span>;
+  <span class="key">id</span>?:           <span class="type">string | number</span>;
+
+  <span class="comment">// Question text — accept any of these field names:</span>
+  <span class="key">title</span>?:         <span class="type">string | null</span>;
+  <span class="key">question_title</span>?:<span class="type">string | null</span>;
+  <span class="key">question</span>?:      <span class="type">string | null</span>;
+  <span class="key">question_text</span>?: <span class="type">string | null</span>;
+  <span class="key">text</span>?:          <span class="type">string | null</span>;
+  <span class="key">label</span>?:         <span class="type">string | null</span>;
+};
+  </div>
+
+  <h3>ComplianceAnswerPayload — إجابة المستخدم</h3>
+  <div class="code-block">
+<span class="kw">type</span> <span class="type">ComplianceAnswerPayload</span> = {
+  <span class="key">question_id</span>: <span class="type">string | number</span>;  <span class="comment">// required</span>
+  <span class="key">score</span>: <span class="type">number</span>;               <span class="comment">// required — integer 1–5</span>
+  <span class="key">notes</span>?: <span class="type">string</span>;              <span class="comment">// optional</span>
+};
+  </div>
+
+  <h3>FinalReportData — بيانات التقرير النهائي</h3>
+  <div class="code-block">
+<span class="kw">type</span> <span class="type">FinalReportData</span> = {
+
+  <span class="comment">// ── Submission info ──────────────────────────────</span>
+  <span class="key">submission</span>?: {
+    <span class="key">id</span>?:                 <span class="type">string | number</span>;
+    <span class="key">status</span>?:             <span class="type">string</span>;               <span class="comment">// e.g. "completed"</span>
+    <span class="key">overall_score</span>?:      <span class="type">number</span>;               <span class="comment">// avg 1–5 (see Section 5)</span>
+    <span class="key">compliance_level</span>?:   <span class="type">string</span>;               <span class="comment">// e.g. "ضعف مؤسسي"</span>
+    <span class="key">compliance_color</span>?:   <span class="type">string</span>;               <span class="comment">// "green"|"blue"|"yellow"|"orange"|"red"</span>
+    <span class="key">compliance_message</span>?: <span class="type">string</span>;               <span class="comment">// short diagnostic message</span>
+    <span class="key">submitted_at</span>?:       <span class="type">string | null</span>;        <span class="comment">// ISO date</span>
+    <span class="key">reviewed_at</span>?:        <span class="type">string | null</span>;
+    <span class="key">evaluator_notes</span>?:    <span class="type">string | null</span>;
+    <span class="key">management_action</span>?:  <span class="type">string | null</span>;
+    <span class="key">management_decision</span>?:<span class="type">string | null</span>;
+    <span class="key">reassess_months</span>?:    <span class="type">number | null</span>;
+  };
+
+  <span class="comment">// ── Assessment metadata ──────────────────────────</span>
+  <span class="key">assessment</span>?: {
+    <span class="key">id</span>?:          <span class="type">string | number</span>;
+    <span class="key">title</span>?:       <span class="type">string</span>;
+    <span class="key">period_year</span>?: <span class="type">string</span>;
+  };
+
+  <span class="comment">// ── Organization ─────────────────────────────────</span>
+  <span class="key">organization</span>?: {
+    <span class="key">id</span>?:   <span class="type">string | number</span>;
+    <span class="key">name</span>?: <span class="type">string</span>;               <span class="comment">// displayed prominently in report</span>
+    <span class="key">type</span>?: <span class="type">string</span>;
+  };
+
+  <span class="comment">// ── Completion status ─────────────────────────────</span>
+  <span class="key">completion</span>?: {
+    <span class="key">total_questions</span>?:   <span class="type">number</span>;
+    <span class="key">answered_questions</span>?:<span class="type">number</span>;
+    <span class="key">percentage</span>?:        <span class="type">number</span>;               <span class="comment">// 0–100</span>
+    <span class="key">axes</span>?: <span class="type">Array</span>&lt;{
+      <span class="key">axis_id</span>?:    <span class="type">string | number</span>;
+      <span class="key">title</span>?:      <span class="type">string</span>;
+      <span class="key">order</span>?:      <span class="type">number</span>;
+      <span class="key">answered</span>?:   <span class="type">number</span>;
+      <span class="key">total</span>?:      <span class="type">number</span>;
+      <span class="key">complete</span>?:   <span class="type">boolean</span>;
+      <span class="key">axis_score</span>?: <span class="type">number | null</span>;
+    }&gt;;
+  };
+
+  <span class="comment">// ── Axis breakdown ────────────────────────────────</span>
+  <span class="key">axis_breakdown</span>?: <span class="type">Array</span>&lt;{
+    <span class="key">axis_id</span>?:               <span class="type">string | number</span>;
+    <span class="key">title</span>?:                 <span class="type">string</span>;
+    <span class="key">order</span>?:                 <span class="type">number</span>;
+    <span class="key">axis_score</span>?:            <span class="type">number | null</span>;     <span class="comment">// avg of questions 1–5</span>
+    <span class="key">axis_level</span>?:            <span class="type">string</span>;            <span class="comment">// maturity label</span>
+    <span class="key">axis_color</span>?:            <span class="type">string</span>;            <span class="comment">// "green"|"blue"|"yellow"|"orange"|"red"</span>
+    <span class="key">axis_message</span>?:          <span class="type">string</span>;            <span class="comment">// short diagnosis for this axis</span>
+    <span class="key">recommendation_platform</span>?:<span class="type">string</span>;           <span class="comment">// primary product name</span>
+    <span class="key">show_recommendation</span>?:   <span class="type">boolean</span>;
+    <span class="key">questions</span>?: <span class="type">Array</span>&lt;{
+      <span class="key">question_id</span>?: <span class="type">string | number</span>;
+      <span class="key">title</span>?:       <span class="type">string</span>;
+      <span class="key">weight</span>?:      <span class="type">number</span>;
+      <span class="key">score</span>?:       <span class="type">number | null</span>;
+      <span class="key">notes</span>?:       <span class="type">string | null</span>;
+    }&gt;;
+  }&gt;;
+
+  <span class="comment">// ── Recommendations (optional, for future dynamic API) ──</span>
+  <span class="key">recommendations</span>?: <span class="type">Array</span>&lt;{
+    <span class="key">id</span>?:          <span class="type">string | number</span>;
+    <span class="key">title</span>?:       <span class="type">string</span>;
+    <span class="key">description</span>?: <span class="type">string</span>;
+    <span class="key">platform</span>?:    <span class="type">string</span>;
+  }&gt;;
+
+};
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — SCORING LOGIC
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec5">
+  <div class="section-header">
+    <span class="section-num">05 · SCORING</span>
+    <h2>منطق التقييم والنتائج <span class="en">Scoring Logic & Maturity Levels</span></h2>
+  </div>
+
+  <h3>مقياس التقييم · Score Scale</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>الدرجة · Score</th>
+        <th>المعنى (عربي)</th>
+        <th class="en-th">Meaning (English)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="en" style="font-weight:800;">1</td><td>غير موجود / لا يطبق</td><td class="en td-en">Not present / Not applicable</td></tr>
+      <tr><td class="en" style="font-weight:800;">2</td><td>موجود لكن ضعيف</td><td class="en td-en">Exists but weak / minimal</td></tr>
+      <tr><td class="en" style="font-weight:800;">3</td><td>موجود بشكل جزئي</td><td class="en td-en">Partially present</td></tr>
+      <tr><td class="en" style="font-weight:800;">4</td><td>موجود ويُطبّق بشكل جيد</td><td class="en td-en">Present and applied well</td></tr>
+      <tr><td class="en" style="font-weight:800;">5</td><td>راسخ ومؤسّس بالكامل</td><td class="en td-en">Fully established and mature</td></tr>
+    </tbody>
+  </table>
+
+  <h3>حساب متوسط المحور · Axis Average Calculation</h3>
+  <div class="code-block">
+<span class="comment">// Frontend calculation (before backend returns axis_score):</span>
+
+<span class="kw">function</span> <span class="type">getAxisAverage</span>(questions: <span class="type">ComplianceQuestion[]</span>, scores: <span class="type">Record</span>&lt;<span class="type">string</span>, <span class="type">number</span>&gt;): <span class="type">number</span> {
+  <span class="kw">const</span> answered = questions.filter(q => scores[getId(q)] !== undefined);
+  <span class="kw">if</span> (answered.length === <span class="num">0</span>) <span class="kw">return</span> <span class="num">0</span>;
+  <span class="kw">const</span> sum = answered.reduce((total, q) => total + scores[getId(q)], <span class="num">0</span>);
+  <span class="kw">return</span> <span class="type">Math</span>.round((sum / answered.length) * <span class="num">100</span>) / <span class="num">100</span>;
+  <span class="comment">// Result: 2-decimal average e.g. 3.40</span>
+}
+
+<span class="comment">// Backend should compute the same:
+//   axis_score = SUM(scores) / COUNT(answered_questions)
+//   overall_score = SUM(all axis_scores) / 10</span>
+  </div>
+
+  <h3>مستويات النضج المؤسسي · Institutional Maturity Levels</h3>
+  <p style="margin-bottom:16px;">هذا الجدول يحدد التصنيف بناءً على متوسط الدرجة الكلي. يجب أن يُرجع الـ API قيم <code>compliance_level</code> و<code>compliance_color</code> وفق هذا الجدول.</p>
+  <p class="en text-gray">The API must return <code>compliance_level</code> and <code>compliance_color</code> per this mapping.</p>
+
+  <div style="margin-top:16px;">
+    <div class="maturity-row" style="background:#dcfce7;">
+      <div class="maturity-dot" style="background:#16a34a;"></div>
+      <div class="maturity-score en">≥ 4.5</div>
+      <div class="maturity-label-ar">تميز مؤسسي</div>
+      <div class="maturity-label-en">Institutional Excellence</div>
+      <div class="maturity-action">التدخل: استدامة وابتكار ونقل المعرفة · Sustain & innovate</div>
+    </div>
+    <div class="maturity-row" style="background:#dbeafe;">
+      <div class="maturity-dot" style="background:#1d4ed8;"></div>
+      <div class="maturity-score en">≥ 3.5</div>
+      <div class="maturity-label-ar">نضج متقدم</div>
+      <div class="maturity-label-en">Advanced Maturity</div>
+      <div class="maturity-action">التدخل: تحسين الأداء والتوسع وتعظيم الأثر · Improve & scale</div>
+    </div>
+    <div class="maturity-row" style="background:#fef9c3;">
+      <div class="maturity-dot" style="background:#ca8a04;"></div>
+      <div class="maturity-score en">≥ 2.5</div>
+      <div class="maturity-label-ar">نضج متوسط</div>
+      <div class="maturity-label-en">Medium Maturity</div>
+      <div class="maturity-action">التدخل: تطوير وتمكين ورفع الكفاءة · Develop & enable</div>
+    </div>
+    <div class="maturity-row" style="background:#ffedd5;">
+      <div class="maturity-dot" style="background:#ea580c;"></div>
+      <div class="maturity-score en">≥ 1.5</div>
+      <div class="maturity-label-ar">ضعف مؤسسي</div>
+      <div class="maturity-label-en">Institutional Weakness</div>
+      <div class="maturity-action">التدخل: ضبط الأساسيات ومعالجة الفجوات · Fix foundations</div>
+    </div>
+    <div class="maturity-row" style="background:#fee2e2;">
+      <div class="maturity-dot" style="background:#dc2626;"></div>
+      <div class="maturity-score en">&lt; 1.5</div>
+      <div class="maturity-label-ar">خطر مؤسسي</div>
+      <div class="maturity-label-en">Institutional Risk</div>
+      <div class="maturity-action">التدخل: تأسيس عاجل / إعادة بناء / تدخل إنقاذي · Emergency rebuild</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">ألوان compliance_color · Color Codes</h3>
+  <table>
+    <thead>
+      <tr><th>القيمة · Value</th><th>الحالة · State</th><th>النطاق · Range</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="td-code en">green</td><td>تميز مؤسسي</td><td class="en">≥ 4.5</td></tr>
+      <tr><td class="td-code en">blue</td><td>نضج متقدم</td><td class="en">3.5 – 4.49</td></tr>
+      <tr><td class="td-code en">yellow</td><td>نضج متوسط</td><td class="en">2.5 – 3.49</td></tr>
+      <tr><td class="td-code en">orange</td><td>ضعف مؤسسي</td><td class="en">1.5 – 2.49</td></tr>
+      <tr><td class="td-code en">red</td><td>خطر مؤسسي</td><td class="en">&lt; 1.5</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — AXES & QUESTIONS
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec6">
+  <div class="section-header">
+    <span class="section-num">06 · AXES & QUESTIONS</span>
+    <h2>محاور التقييم والأسئلة <span class="en">Assessment Axes & Questions</span></h2>
+  </div>
+
+  <p>يجب أن تُرجع الـ API هذه المحاور بنفس الترتيب ونفس الأسئلة المذكورة هنا. الأسئلة المعروضة هي الأسئلة المحدّثة بعد التعديلات الأخيرة.</p>
+  <p class="en text-gray">The API must return axes in this exact order with these updated questions. These reflect the latest edits.</p>
+
+  <!-- Axis 1 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">1</div>
+      <div>
+        <div class="axis-title-ar">الحوكمة والامتثال النظامي</div>
+        <div class="axis-title-en">Governance & Regulatory Compliance</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">مسرعة أثر وريادة</span></div>
+    </div>
+    <div class="axis-body">
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>وجود مجلس إدارة فعّال</td><td class="en td-en">Active board of directors</td></tr>
+          <tr><td class="en">Q2</td><td>سياسات ولوائح معتمدة</td><td class="en td-en">Approved policies and regulations</td></tr>
+          <tr><td class="en">Q3</td><td>الامتثال للمتطلبات النظامية</td><td class="en td-en">Compliance with regulatory requirements</td></tr>
+          <tr><td class="en">Q4</td><td>إدارة المخاطر المؤسسية</td><td class="en td-en">Institutional risk management</td></tr>
+          <tr><td class="en">Q5</td><td>فعالية اللجان</td><td class="en td-en">Committee effectiveness</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 2 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">2</div>
+      <div>
+        <div class="axis-title-ar">القيادة والاستراتيجية</div>
+        <div class="axis-title-en">Leadership & Strategy</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">مسرعة أثر وريادة</span></div>
+    </div>
+    <div class="axis-body">
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>وضوح الرؤية والرسالة والقيم المؤسسية</td><td class="en td-en">Clarity of vision, mission and values</td></tr>
+          <tr><td class="en">Q2</td><td>ربط الاستراتيجية بالأثر</td><td class="en td-en">Linking strategy to impact</td></tr>
+          <tr><td class="en">Q3</td><td>قيادة مؤسسية فعّالة</td><td class="en td-en">Effective institutional leadership</td></tr>
+          <tr><td class="en">Q4</td><td>خطة استراتيجية محدّثة</td><td class="en td-en">Updated strategic plan</td></tr>
+          <tr><td class="en">Q5</td><td>اتخاذ قرار مبني على بيانات</td><td class="en td-en">Data-driven decision making</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 3 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">3</div>
+      <div>
+        <div class="axis-title-ar">التخطيط والتشغيل</div>
+        <div class="axis-title-en">Planning & Operations</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">مسرعة أثر وريادة · منصة أداء</span></div>
+    </div>
+    <div class="axis-body">
+      <p class="text-gray" style="font-size:11px;margin-bottom:8px;">⚠ تم حذف سؤال "كفاءة العمليات" وتحديث سؤال "إدارة المهام" · "كفاءة العمليات" removed; "إدارة المهام" renamed</p>
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>خطة تشغيلية واضحة</td><td class="en td-en">Clear operational plan</td></tr>
+          <tr><td class="en">Q2</td><td>إدارة المهام والأنشطة بكفاءة <span class="badge badge-gold" style="font-size:9px;">محدّث</span></td><td class="en td-en">Efficient task and activity management <span style="color:var(--gold);font-size:10px;">(updated)</span></td></tr>
+          <tr><td class="en">Q3</td><td>تقارير تشغيلية دورية</td><td class="en td-en">Regular operational reports</td></tr>
+          <tr><td class="en">Q4</td><td>وضوح الأدوار والمسؤوليات</td><td class="en td-en">Clarity of roles and responsibilities</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 4 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">4</div>
+      <div>
+        <div class="axis-title-ar">إدارة المشاريع (مختبرات حقق)</div>
+        <div class="axis-title-en">Project Management (Haqqeq Labs)</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">مختبرات حقق · منصة أداء</span></div>
+    </div>
+    <div class="axis-body">
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>إدارة المشاريع بمنهجية واضحة</td><td class="en td-en">Project management using clear methodology</td></tr>
+          <tr><td class="en">Q2</td><td>اختبار الجاهزية قبل الإطلاق</td><td class="en td-en">Pre-launch readiness testing</td></tr>
+          <tr><td class="en">Q3</td><td>تقارير مرحلية للمشاريع</td><td class="en td-en">Milestone reports for projects</td></tr>
+          <tr><td class="en">Q4</td><td>إدارة مخاطر المشاريع</td><td class="en td-en">Project risk management</td></tr>
+          <tr><td class="en">Q5</td><td>إدارة الميزانية والموارد</td><td class="en td-en">Budget and resource management</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 5 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">5</div>
+      <div>
+        <div class="axis-title-ar">قياس الأداء والأثر</div>
+        <div class="axis-title-en">Performance & Impact Measurement</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">منصة أداء</span></div>
+    </div>
+    <div class="axis-body">
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>مؤشرات أداء رئيسية واضحة</td><td class="en td-en">Clear KPIs defined</td></tr>
+          <tr><td class="en">Q2</td><td>قياس الأثر الاجتماعي</td><td class="en td-en">Social impact measurement</td></tr>
+          <tr><td class="en">Q3</td><td>تقارير أداء دورية</td><td class="en td-en">Regular performance reports</td></tr>
+          <tr><td class="en">Q4</td><td>استخدام البيانات في اتخاذ القرار</td><td class="en td-en">Data use in decision-making</td></tr>
+          <tr><td class="en">Q5</td><td>مراجعة دورية للأهداف</td><td class="en td-en">Periodic goal review</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 6 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">6</div>
+      <div>
+        <div class="axis-title-ar">الإدارة المالية والاستدامة</div>
+        <div class="axis-title-en">Financial Management & Sustainability</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">مسرعة أثر وريادة · منصة أداء</span></div>
+    </div>
+    <div class="axis-body">
+      <p class="text-gray" style="font-size:11px;margin-bottom:8px;">⚠ تم حذف سؤال "سياسات مالية معتمدة" · "Approved financial policies" question removed</p>
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>شفافية مالية</td><td class="en td-en">Financial transparency</td></tr>
+          <tr><td class="en">Q2</td><td>تنويع مصادر الدخل</td><td class="en td-en">Revenue diversification</td></tr>
+          <tr><td class="en">Q3</td><td>تقارير مالية منتظمة</td><td class="en td-en">Regular financial reporting</td></tr>
+          <tr><td class="en">Q4</td><td>جاهزية تمويلية</td><td class="en td-en">Funding readiness</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 7 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">7</div>
+      <div>
+        <div class="axis-title-ar">الموارد البشرية وبناء القدرات</div>
+        <div class="axis-title-en">HR & Capacity Building</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">أكاديمية حقق</span></div>
+    </div>
+    <div class="axis-body">
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>هيكل تنظيمي واضح</td><td class="en td-en">Clear organizational structure</td></tr>
+          <tr><td class="en">Q2</td><td>توصيف وظيفي للأدوار</td><td class="en td-en">Job descriptions for all roles</td></tr>
+          <tr><td class="en">Q3</td><td>تقييم أداء الموظفين</td><td class="en td-en">Employee performance evaluation</td></tr>
+          <tr><td class="en">Q4</td><td>خطة تدريب وتطوير</td><td class="en td-en">Training & development plan</td></tr>
+          <tr><td class="en">Q5</td><td>استقطاب المتطوعين وتفعيلهم</td><td class="en td-en">Volunteer recruitment and activation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 8 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">8</div>
+      <div>
+        <div class="axis-title-ar">التقنية والتحول الرقمي</div>
+        <div class="axis-title-en">Technology & Digital Transformation</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">أثر 360 وعباق · منصة أداء</span></div>
+    </div>
+    <div class="axis-body">
+      <p class="text-gray" style="font-size:11px;margin-bottom:8px;">⚠ تم تحديث سؤال #5 · Q5 rephrased</p>
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>استخدام أنظمة معتمدة</td><td class="en td-en">Use of approved systems</td></tr>
+          <tr><td class="en">Q2</td><td>توحيد البيانات</td><td class="en td-en">Data unification</td></tr>
+          <tr><td class="en">Q3</td><td>أمن المعلومات</td><td class="en td-en">Information security</td></tr>
+          <tr><td class="en">Q4</td><td>أتمتة العمليات</td><td class="en td-en">Process automation</td></tr>
+          <tr><td class="en">Q5</td><td>استخدام أدوات تحليل رقمية أو لوحات ذكاء أعمال لدعم القرار <span class="badge badge-gold" style="font-size:9px;">محدّث</span></td><td class="en td-en">Use of digital analytics tools or BI dashboards to support decision-making <span style="color:var(--gold);font-size:10px;">(updated)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 9 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">9</div>
+      <div>
+        <div class="axis-title-ar">الاتصال المؤسسي والسرد</div>
+        <div class="axis-title-en">Institutional Communication & Narrative</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">أكاديمية حقق · منصة أداء</span></div>
+    </div>
+    <div class="axis-body">
+      <p class="text-gray" style="font-size:11px;margin-bottom:8px;">⚠ تم حذف "سرد الأثر" ودمج "قنوات فعالة" + "تفاعل أصحاب المصلحة" في سؤال واحد · "Impact narrative" removed; channels + stakeholder engagement merged into one question</p>
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>استراتيجية اتصال</td><td class="en td-en">Communication strategy</td></tr>
+          <tr><td class="en">Q2</td><td>شفافية التواصل</td><td class="en td-en">Communication transparency</td></tr>
+          <tr><td class="en">Q3</td><td>قنوات فعالة وتفاعل أصحاب المصلحة معها <span class="badge badge-gold" style="font-size:9px;">مدمج</span></td><td class="en td-en">Effective channels and stakeholder engagement <span style="color:var(--gold);font-size:10px;">(merged)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Axis 10 -->
+  <div class="axis-block">
+    <div class="axis-header">
+      <div class="axis-num">10</div>
+      <div>
+        <div class="axis-title-ar">الإنسانية وأصحاب المصلحة</div>
+        <div class="axis-title-en">Humanitarianism & Stakeholders</div>
+      </div>
+      <div style="margin-right:auto;"><span class="badge badge-gold">مسرعة أثر وريادة · مختبرات حقق</span></div>
+    </div>
+    <div class="axis-body">
+      <table>
+        <thead><tr><th>#</th><th>السؤال (عربي)</th><th class="en-th">Question (English)</th></tr></thead>
+        <tbody>
+          <tr><td class="en">Q1</td><td>تمكين المستفيدين</td><td class="en td-en">Beneficiary empowerment</td></tr>
+          <tr><td class="en">Q2</td><td>شمولية القرار</td><td class="en td-en">Inclusive decision-making</td></tr>
+          <tr><td class="en">Q3</td><td>عدالة الإجراءات</td><td class="en td-en">Procedural fairness</td></tr>
+          <tr><td class="en">Q4</td><td>قياس الأثر الاجتماعي على المستفيدين</td><td class="en td-en">Social impact measurement for beneficiaries</td></tr>
+          <tr><td class="en">Q5</td><td>التعاون مع أصحاب المصلحة</td><td class="en td-en">Stakeholder collaboration</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 7 — TREATMENT PATH LOGIC
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec7">
+  <div class="section-header">
+    <span class="section-num">07 · TREATMENT PATH LOGIC</span>
+    <h2>منطق مسار المعالجة والتوصيات <span class="en">Treatment Path & Recommendation Logic (AXIS_META)</span></h2>
+  </div>
+
+  <p>هذا الجدول يحدد لكل محور: مسار المعالجة، المنتج الأساسي، المنتج الداعم، الفجوة الرئيسية، والمخرجات المتوقعة. يجب أن يُرجعها الـ API ضمن حقل <code>axis_breakdown[].treatment_meta</code> أو كجزء من حقل <code>axis_breakdown</code> مباشرة.</p>
+  <p class="en text-gray">This table defines per-axis: treatment path, primary product, supporting product, main gap, and expected outputs. The API should return these within <code>axis_breakdown[].treatment_meta</code> or directly in <code>axis_breakdown</code>.</p>
+
+  <div class="info-box" style="margin-bottom:20px;">
+    <div class="info-box-label">المنتجات المتاحة · Available Products</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+      <span class="product-pill product-pill-dark">مسرعة أثر وريادة</span>
+      <span class="product-pill product-pill-dark">منصة أداء</span>
+      <span class="product-pill product-pill-dark">مختبرات حقق</span>
+      <span class="product-pill product-pill-dark">أكاديمية حقق</span>
+      <span class="product-pill product-pill-dark">أثر 360 وعباق</span>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>المحور</th>
+        <th>مسار المعالجة</th>
+        <th>المنتج الأساسي</th>
+        <th>الداعم</th>
+        <th>الفجوة الرئيسية</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="en" style="font-weight:800;">1</td>
+        <td>الحوكمة والامتثال النظامي</td>
+        <td>مسار ضبط الحوكمة والامتثال</td>
+        <td><span class="badge badge-gold">مسرعة أثر وريادة</span></td>
+        <td>—</td>
+        <td>ضعف في تفعيل المجلس واللجان والسياسات وإدارة المخاطر</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">2</td>
+        <td>القيادة والاستراتيجية</td>
+        <td>مسار التأسيس الاستراتيجي</td>
+        <td><span class="badge badge-gold">مسرعة أثر وريادة</span></td>
+        <td>—</td>
+        <td>ضعف التوجه الاستراتيجي وغياب الربط بين الرؤية والأهداف والأثر</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">3</td>
+        <td>التخطيط والتشغيل</td>
+        <td>مسار التخطيط والتشغيل المؤسسي</td>
+        <td><span class="badge badge-gold">مسرعة أثر وريادة</span></td>
+        <td>منصة أداء</td>
+        <td>ضعف الخطة التشغيلية وإدارة المهام والتقارير ووضوح الأدوار</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">4</td>
+        <td>إدارة المشاريع</td>
+        <td>مسار تصميم المبادرات والجاهزية التنفيذية</td>
+        <td><span class="badge badge-gold">مختبرات حقق</span></td>
+        <td>منصة أداء</td>
+        <td>ضعف منهجية المشاريع والجاهزية والتقارير المرحلية وإدارة المخاطر</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">5</td>
+        <td>قياس الأداء والأثر</td>
+        <td>مسار قياس الأداء والأثر</td>
+        <td><span class="badge badge-gold">منصة أداء</span></td>
+        <td>—</td>
+        <td>ضعف المؤشرات والقياس الدوري وتقارير الأثر واستخدام النتائج في القرار</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">6</td>
+        <td>الإدارة المالية والاستدامة</td>
+        <td>مسار الاستدامة المالية وتنمية الموارد</td>
+        <td><span class="badge badge-gold">مسرعة أثر وريادة</span></td>
+        <td>منصة أداء</td>
+        <td>ضعف الشفافية وتنويع الدخل والتقارير والجاهزية التمويلية</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">7</td>
+        <td>الموارد البشرية وبناء القدرات</td>
+        <td>مسار بناء القدرات المؤسسية</td>
+        <td><span class="badge badge-gold">أكاديمية حقق</span></td>
+        <td>—</td>
+        <td>ضعف الهيكل والتوصيف والتقييم وخطط التدريب</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">8</td>
+        <td>التقنية والتحول الرقمي</td>
+        <td>مسار التحول الرقمي وتوحيد البيانات</td>
+        <td><span class="badge badge-gold">أثر 360 وعباق</span></td>
+        <td>منصة أداء</td>
+        <td>ضعف في الأنظمة والبيانات والأتمتة ودعم القرار الرقمي</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">9</td>
+        <td>الاتصال المؤسسي والسرد</td>
+        <td>مسار الاتصال المؤسسي وسرد الأثر</td>
+        <td><span class="badge badge-gold">أكاديمية حقق</span></td>
+        <td>منصة أداء</td>
+        <td>ضعف استراتيجية الاتصال والقنوات وتفاعل أصحاب المصلحة</td>
+      </tr>
+      <tr>
+        <td class="en" style="font-weight:800;">10</td>
+        <td>الإنسانية وأصحاب المصلحة</td>
+        <td>مسار مواءمة أصحاب المصلحة والأثر</td>
+        <td><span class="badge badge-gold">مسرعة أثر وريادة</span></td>
+        <td>مختبرات حقق</td>
+        <td>ضعف تمكين المستفيدين وشمولية القرار وعدالة الإجراءات</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:28px;">المخرجات المتوقعة لكل محور · Expected Outputs per Axis</h3>
+  <table>
+    <thead>
+      <tr><th>المحور</th><th>المخرجات المتوقعة · Expected Outputs</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>الحوكمة</td><td>خطة تصحيح حوكمي · سياسات ولوائح محدثة · تفعيل اللجان · سجل مخاطر · أرشفة للقرارات</td></tr>
+      <tr><td>القيادة</td><td>وثيقة توجه استراتيجي · أهداف مرتبطة بالأثر · نتائج قابلة للقياس · خارطة أولويات</td></tr>
+      <tr><td>التخطيط</td><td>خطة تشغيلية سنوية · توزيع مسؤوليات · مؤشرات متابعة · جداول زمنية</td></tr>
+      <tr><td>المشاريع</td><td>نماذج تصميم مشاريع · فلتر جاهزية · ملفات مبادرات قابلة للتمويل · تقارير مرحلية</td></tr>
+      <tr><td>القياس</td><td>بطاقة مؤشرات أداء · آلية قياس دورية · نماذج تقارير · لوحة متابعة للإدارة</td></tr>
+      <tr><td>المالية</td><td>خطة تنمية موارد · مستهدفات ربع سنوية · موازنة مرتبطة بالبرامج · آلية متابعة مالية</td></tr>
+      <tr><td>الموارد البشرية</td><td>خطة بناء قدرات · برنامج تأهيل للفريق · تدريب مجلس الإدارة · رفع جاهزية الأدوات</td></tr>
+      <tr><td>التقنية</td><td>قاعدة بيانات موحدة · أرشفة منظمة · لوحات رقمية · أتمتة أولية للعمليات</td></tr>
+      <tr><td>الاتصال</td><td>تأهيل الفريق على سرد الأثر · رسائل مؤسسية · تحسين القنوات · رفع جودة التواصل مع الداعمين</td></tr>
+      <tr><td>الإنسانية</td><td>مصفوفة أصحاب المصلحة · آلية جمع صوت المستفيدين · ربط الاحتياجات بالأهداف · مؤشرات أثر اجتماعي</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:28px;">بنية JSON المقترحة لـ AXIS_META في الاستجابة · Suggested JSON for treatment_meta</h3>
+  <div class="code-block">
+<span class="comment">// Within axis_breakdown[] item:</span>
+{
+  <span class="key">"axis_id"</span>: <span class="num">1</span>,
+  <span class="key">"title"</span>: <span class="str">"الحوكمة والامتثال النظامي"</span>,
+  <span class="key">"axis_score"</span>: <span class="num">2.4</span>,
+  <span class="key">"axis_level"</span>: <span class="str">"ضعف مؤسسي"</span>,
+  <span class="key">"axis_color"</span>: <span class="str">"orange"</span>,
+  <span class="key">"axis_message"</span>: <span class="str">"..."</span>,
+  <span class="key">"recommendation_platform"</span>: <span class="str">"مسرعة أثر وريادة"</span>,
+
+  <span class="comment">// NEW — recommended addition for dynamic report:</span>
+  <span class="key">"treatment_meta"</span>: {
+    <span class="key">"treatment_path"</span>: <span class="str">"مسار ضبط الحوكمة والامتثال"</span>,
+    <span class="key">"primary_product"</span>: <span class="str">"مسرعة أثر وريادة"</span>,
+    <span class="key">"supporting_product"</span>: <span class="str">""</span>,
+    <span class="key">"main_gap"</span>: <span class="str">"ضعف في تفعيل المجلس واللجان..."</span>,
+    <span class="key">"expected_outputs"</span>: [
+      <span class="str">"خطة تصحيح حوكمي"</span>,
+      <span class="str">"سياسات ولوائح محدثة"</span>,
+      <span class="str">"تفعيل اللجان"</span>
+    ]
+  }
+}
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 8 — TOP 5 PRIORITIES
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec8">
+  <div class="section-header">
+    <span class="section-num">08 · TOP 5 PRIORITIES</span>
+    <h2>الأولويات الخمس المقترحة <span class="en">Top 5 Recommended Priorities</span></h2>
+  </div>
+
+  <p>حالياً هذه القائمة ثابتة في الواجهة الأمامية. المطلوب من الـ API إرجاعها ضمن حقل <code>top_priorities</code> في استجابة التقرير النهائي، محسوبةً ديناميكياً بناءً على أدنى درجات المحاور.</p>
+  <p class="en text-gray">Currently static in frontend. API should return these dynamically in <code>top_priorities</code> field of the final report, computed based on the lowest-scoring axes.</p>
+
+  <div class="info-box" style="margin-bottom:20px;">
+    <div class="info-box-label">منطق الحساب الديناميكي · Dynamic Calculation Logic</div>
+    <p>يجب ترتيب الأولويات تنازلياً حسب الفجوة (5 — axis_score). المحاور الأقل درجةً = أولوية أعلى. يمكن مزج عدة محاور ذات صلة في أولوية واحدة.</p>
+    <p class="en text-gray">Sort by gap desc: (5 - axis_score). Lowest-scoring axes = highest priority. Multiple related axes can be merged into one priority item.</p>
+  </div>
+
+  <div class="priority-row">
+    <div class="priority-num-box">1</div>
+    <div class="priority-content">
+      <div class="priority-title">إعادة بناء التوجه الاستراتيجي · Rebuilding Strategic Direction</div>
+      <div class="priority-axes">المحاور: القيادة والاستراتيجية · التخطيط والتشغيل · الإنسانية وأصحاب المصلحة</div>
+      <div class="priority-product">الأداة المناسبة: مسرعة أثر وريادة</div>
+    </div>
+    <div style="font-size:11px;color:var(--gray);max-width:200px;">تحديد وجهة المنظمة وأولوياتها وربطها بالأثر والخطة التشغيلية</div>
+  </div>
+
+  <div class="priority-row">
+    <div class="priority-num-box">2</div>
+    <div class="priority-content">
+      <div class="priority-title">تأسيس منظومة قياس الأداء والأثر · Establishing Performance Measurement</div>
+      <div class="priority-axes">المحاور: قياس الأداء والأثر · التخطيط والتشغيل · إدارة المشاريع</div>
+      <div class="priority-product">الأداة المناسبة: منصة أداء</div>
+    </div>
+    <div style="font-size:11px;color:var(--gray);max-width:200px;">مؤشرات وتقارير ولوحات متابعة تربط التنفيذ بالنتائج</div>
+  </div>
+
+  <div class="priority-row">
+    <div class="priority-num-box">3</div>
+    <div class="priority-content">
+      <div class="priority-title">ضبط الحوكمة والامتثال والسياسات · Fixing Governance & Compliance</div>
+      <div class="priority-axes">المحاور: الحوكمة والامتثال النظامي · الإدارة المالية والاستدامة</div>
+      <div class="priority-product">الأداة المناسبة: مسرعة أثر وريادة</div>
+    </div>
+    <div style="font-size:11px;color:var(--gray);max-width:200px;">حوكمة أوضح، سياسات محدثة، لجان مفعّلة، وسجل مخاطر</div>
+  </div>
+
+  <div class="priority-row">
+    <div class="priority-num-box">4</div>
+    <div class="priority-content">
+      <div class="priority-title">توحيد البيانات وبناء بيئة متابعة رقمية · Data Unification & Digital Monitoring</div>
+      <div class="priority-axes">المحاور: التقنية والتحول الرقمي · قياس الأداء والأثر</div>
+      <div class="priority-product">الأداة المناسبة: أثر 360 وعباق</div>
+    </div>
+    <div style="font-size:11px;color:var(--gray);max-width:200px;">بيانات منظمة، أرشفة، أتمتة أولية، ولوحات متابعة</div>
+  </div>
+
+  <div class="priority-row">
+    <div class="priority-num-box">5</div>
+    <div class="priority-content">
+      <div class="priority-title">رفع جاهزية الفريق ومجلس الإدارة · Team & Board Readiness</div>
+      <div class="priority-axes">المحاور: الموارد البشرية وبناء القدرات · الاتصال المؤسسي والسرد</div>
+      <div class="priority-product">الأداة المناسبة: أكاديمية حقق</div>
+    </div>
+    <div style="font-size:11px;color:var(--gray);max-width:200px;">فريق أكثر قدرة على إدارة الخطة والقياس والتواصل المؤسسي</div>
+  </div>
+
+  <h3 style="margin-top:28px;">بنية JSON المقترحة · Suggested JSON Schema</h3>
+  <div class="code-block">
+<span class="comment">// Within final-report response — new field:</span>
+<span class="key">"top_priorities"</span>: [
+  {
+    <span class="key">"order"</span>: <span class="num">1</span>,
+    <span class="key">"intervention_ar"</span>: <span class="str">"إعادة بناء التوجه الاستراتيجي"</span>,
+    <span class="key">"intervention_en"</span>: <span class="str">"Rebuilding Strategic Direction"</span>,
+    <span class="key">"related_axes"</span>: [<span class="str">"القيادة والاستراتيجية"</span>, <span class="str">"التخطيط والتشغيل"</span>, <span class="str">"الإنسانية وأصحاب المصلحة"</span>],
+    <span class="key">"primary_product"</span>: <span class="str">"مسرعة أثر وريادة"</span>,
+    <span class="key">"expected_result_ar"</span>: <span class="str">"تحديد وجهة المنظمة وأولوياتها وربطها بالأثر والخطة التشغيلية"</span>,
+    <span class="key">"expected_result_en"</span>: <span class="str">"Define organizational direction, priorities, and link to impact and operational plan"</span>
+  }
+  <span class="comment">// ... 4 more items</span>
+]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 9 — 90-DAY ROADMAP
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec9">
+  <div class="section-header">
+    <span class="section-num">09 · 90-DAY ROADMAP</span>
+    <h2>خارطة المعالجة خلال 90 يوم <span class="en">90-Day Treatment Roadmap</span></h2>
+  </div>
+
+  <p>هذه الخارطة حالياً ثابتة في الواجهة الأمامية. يجب إرجاعها ضمن حقل <code>roadmap_90</code> في استجابة التقرير. يمكن تخصيصها مستقبلاً بناءً على الدرجات الفعلية للمحاور.</p>
+  <p class="en text-gray">Currently static in frontend. Should be returned in <code>roadmap_90</code> field in the report response, and can be dynamically adjusted per axis scores.</p>
+
+  <div class="roadmap-phases">
+    <div class="roadmap-phase">
+      <div class="roadmap-phase-header gold">
+        <div class="roadmap-phase-title">PHASE 1 · أول 30 يوم</div>
+        <div class="roadmap-phase-label">التشخيص العميق وترتيب الأولويات<br><span style="font-weight:400;font-size:11px;opacity:0.8;">Deep Diagnosis & Priority Setting</span></div>
+      </div>
+      <div class="roadmap-phase-body">
+        <div class="roadmap-action">مراجعة نتائج التقييم مع الإدارة ومجلس الإدارة</div>
+        <div class="roadmap-action">تحديد الفجوات الحرجة حسب المحاور</div>
+        <div class="roadmap-action">إعداد خطة تدخل عاجلة</div>
+        <div class="roadmap-action">تفعيل مسار الحوكمة الأساسي</div>
+        <div class="roadmap-action">تأسيس قياس الأداء الأولي وتحديد المؤشرات</div>
+        <div class="roadmap-output"><span>المخرج: </span>خطة معالجة تأسيسية وخارطة أولويات واضحة</div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;">
+          <span class="product-pill">مسرعة أثر وريادة</span>
+          <span class="product-pill">منصة أداء</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="roadmap-phase-header dark">
+        <div class="roadmap-phase-title">PHASE 2 · يوم 31 – 60</div>
+        <div class="roadmap-phase-label">بناء الخطة التشغيلية والتحول الرقمي<br><span style="font-weight:400;font-size:11px;opacity:0.8;">Operational Planning & Digital Transformation</span></div>
+      </div>
+      <div class="roadmap-phase-body">
+        <div class="roadmap-action">إعداد خطة تشغيلية سنوية وتوزيع المسؤوليات</div>
+        <div class="roadmap-action">تحديث السياسات الأساسية وتفعيل اللجان</div>
+        <div class="roadmap-action">بناء سجل مخاطر</div>
+        <div class="roadmap-action">حصر مصادر البيانات وتوحيد نماذج الإدخال</div>
+        <div class="roadmap-action">تنظيم الأرشفة وبناء لوحة متابعة أولية</div>
+        <div class="roadmap-output"><span>المخرج: </span>خطة تشغيلية وحوكمة محدثة + بيئة رقمية أولية</div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;">
+          <span class="product-pill">مسرعة أثر وريادة</span>
+          <span class="product-pill">أثر 360 وعباق</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-phase">
+      <div class="roadmap-phase-header blue">
+        <div class="roadmap-phase-title">PHASE 3 · يوم 61 – 90</div>
+        <div class="roadmap-phase-label">تصميم المشاريع وبناء القدرات<br><span style="font-weight:400;font-size:11px;opacity:0.8;">Project Design & Capacity Building</span></div>
+      </div>
+      <div class="roadmap-phase-body">
+        <div class="roadmap-action">اختيار المشاريع ذات الأولوية وتحليل المشكلة</div>
+        <div class="roadmap-action">بناء ملفات مبادرات قابلة للتمويل</div>
+        <div class="roadmap-action">تدريب الفريق على الخطة والمؤشرات</div>
+        <div class="roadmap-action">تأهيل مجلس الإدارة على المتابعة</div>
+        <div class="roadmap-action">إصدار أول تقرير متابعة دوري</div>
+        <div class="roadmap-output"><span>المخرج: </span>ملفات مشاريع قابلة للتنفيذ + فريق قادر على تشغيل المسارات</div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;">
+          <span class="product-pill">مختبرات حقق</span>
+          <span class="product-pill">أكاديمية حقق</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px;">بنية JSON المقترحة · Suggested JSON Schema</h3>
+  <div class="code-block">
+<span class="key">"roadmap_90"</span>: [
+  {
+    <span class="key">"phase"</span>: <span class="str">"أول 30 يوم"</span>,
+    <span class="key">"phase_en"</span>: <span class="str">"Days 1–30"</span>,
+    <span class="key">"label_ar"</span>: <span class="str">"التشخيص العميق وترتيب الأولويات"</span>,
+    <span class="key">"label_en"</span>: <span class="str">"Deep Diagnosis & Priority Setting"</span>,
+    <span class="key">"actions_ar"</span>: [<span class="str">"مراجعة نتائج التقييم..."</span>, <span class="str">"..."</span>],
+    <span class="key">"actions_en"</span>: [<span class="str">"Review assessment results with leadership..."</span>],
+    <span class="key">"products"</span>: [<span class="str">"مسرعة أثر وريادة"</span>, <span class="str">"منصة أداء"</span>],
+    <span class="key">"expected_output_ar"</span>: <span class="str">"خطة معالجة تأسيسية وخارطة أولويات واضحة"</span>,
+    <span class="key">"expected_output_en"</span>: <span class="str">"Foundational treatment plan and clear priority map"</span>
+  }
+  <span class="comment">// Phase 2 (days 31-60) and Phase 3 (days 61-90)...</span>
+]
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 10 — REPORT PARAGRAPH
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec10">
+  <div class="section-header">
+    <span class="section-num">10 · REPORT PARAGRAPH</span>
+    <h2>فقرة التقرير النهائي <span class="en">Report Summary Paragraph</span></h2>
+  </div>
+
+  <p>هذه الفقرة تُعرض في القسم الأخير من التقرير. يمكن توليدها من الواجهة الأمامية بناءً على البيانات، أو إرجاعها مباشرةً من الـ API ضمن حقل <code>report_paragraph</code>.</p>
+  <p class="en text-gray">This paragraph appears at the end of the report. It can be generated client-side from data, or returned directly from the API in <code>report_paragraph</code>.</p>
+
+  <h3>قالب الفقرة (عربي) · Arabic Template</h3>
+  <div class="card card-light" style="font-size:15px;line-height:2;">
+    بناءً على نتائج تقييم نضج المنظومة المجتمعية لـ<strong>[organization.name]</strong>، والتي أظهرت متوسطاً عاماً قدره <strong>[overall_score] / 5</strong> وتصنيفاً ضمن مستوى <strong>[compliance_level]</strong>، فإن المنظمة تحتاج إلى مسار معالجة مؤسسي متكامل يبدأ بإعادة بناء الأساس الاستراتيجي والتشغيلي، ثم تفعيل القياس، وتنظيم البيانات، وبناء القدرات.
+  </div>
+
+  <h3>القالب (إنجليزي) · English Template</h3>
+  <div class="card card-light" style="font-size:14px;line-height:2;direction:ltr;text-align:left;font-family:'Inter';">
+    Based on the institutional maturity assessment results for <strong>[organization.name]</strong>, which yielded an overall average of <strong>[overall_score]/5</strong> placing it at the <strong>[compliance_level]</strong> level, the organization requires a comprehensive institutional treatment path beginning with rebuilding the strategic and operational foundation, followed by activating measurement systems, organizing data, and building capacity.
+  </div>
+
+  <h3 style="margin-top:24px;">حقل JSON المقترح · Suggested JSON Field</h3>
+  <div class="code-block">
+<span class="comment">// Within final-report response — optional field:</span>
+<span class="key">"report_paragraph"</span>: {
+  <span class="key">"ar"</span>: <span class="str">"بناءً على نتائج تقييم نضج المنظومة المجتمعية لـ[اسم المنظمة]..."</span>,
+  <span class="key">"en"</span>: <span class="str">"Based on the institutional maturity assessment results for [Org Name]..."</span>
+}
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 11 — FULL RESPONSE MODEL
+═══════════════════════════════════════════ -->
+<div class="page page-break" id="sec11">
+  <div class="section-header">
+    <span class="section-num">11 · FULL RESPONSE MODEL</span>
+    <h2>نموذج الاستجابة الكاملة للتقرير <span class="en">Complete Final Report Response Model</span></h2>
+  </div>
+
+  <p>هذا هو النموذج الكامل المقترح لاستجابة <code>GET /final-report</code> يجمع الحقول الحالية مع الحقول المطلوبة الجديدة.</p>
+  <p class="en text-gray">This is the complete proposed response model for <code>GET /final-report</code>, combining existing fields with new required fields.</p>
+
+  <div class="code-block">
+<span class="comment">// GET /api/compliance/submissions/{submissionId}/final-report</span>
+<span class="comment">// HTTP 200 OK — application/json</span>
+{
+  <span class="comment">// ① Submission summary ───────────────────────────────────</span>
+  <span class="key">"submission"</span>: {
+    <span class="key">"id"</span>: <span class="str">"abc-123"</span>,
+    <span class="key">"status"</span>: <span class="str">"completed"</span>,
+    <span class="key">"overall_score"</span>: <span class="num">2.84</span>,             <span class="comment">// float, 2 decimal places</span>
+    <span class="key">"compliance_level"</span>: <span class="str">"ضعف مؤسسي"</span>,
+    <span class="key">"compliance_color"</span>: <span class="str">"orange"</span>,         <span class="comment">// green|blue|yellow|orange|red</span>
+    <span class="key">"compliance_message"</span>: <span class="str">"المنظمة في مرحلة الضعف المؤسسي وتحتاج إلى تدخل عاجل..."</span>,
+    <span class="key">"submitted_at"</span>: <span class="str">"2026-05-13T10:00:00Z"</span>,
+    <span class="key">"evaluator_notes"</span>: <span class="kw">null</span>,
+    <span class="key">"management_decision"</span>: <span class="kw">null</span>,
+    <span class="key">"reassess_months"</span>: <span class="kw">null</span>
+  },
+
+  <span class="comment">// ② Assessment metadata ──────────────────────────────────</span>
+  <span class="key">"assessment"</span>: {
+    <span class="key">"id"</span>: <span class="num">1</span>,
+    <span class="key">"title"</span>: <span class="str">"تقييم النضج المؤسسي الشامل"</span>,
+    <span class="key">"period_year"</span>: <span class="str">"2026"</span>
+  },
+
+  <span class="comment">// ③ Organization ─────────────────────────────────────────</span>
+  <span class="key">"organization"</span>: {
+    <span class="key">"id"</span>: <span class="num">42</span>,
+    <span class="key">"name"</span>: <span class="str">"جمعية البر الخيرية"</span>,
+    <span class="key">"type"</span>: <span class="str">"جمعية خيرية"</span>
+  },
+
+  <span class="comment">// ④ Completion status ────────────────────────────────────</span>
+  <span class="key">"completion"</span>: {
+    <span class="key">"total_questions"</span>: <span class="num">47</span>,
+    <span class="key">"answered_questions"</span>: <span class="num">47</span>,
+    <span class="key">"percentage"</span>: <span class="num">100.0</span>,
+    <span class="key">"axes"</span>: [
+      { <span class="key">"axis_id"</span>: <span class="num">1</span>, <span class="key">"title"</span>: <span class="str">"الحوكمة والامتثال النظامي"</span>, <span class="key">"answered"</span>: <span class="num">5</span>, <span class="key">"total"</span>: <span class="num">5</span>, <span class="key">"complete"</span>: <span class="kw">true</span>, <span class="key">"axis_score"</span>: <span class="num">2.2</span> }
+      <span class="comment">// ... 10 axes</span>
+    ]
+  },
+
+  <span class="comment">// ⑤ Axis breakdown ───────────────────────────────────────</span>
+  <span class="key">"axis_breakdown"</span>: [
+    {
+      <span class="key">"axis_id"</span>: <span class="num">1</span>,
+      <span class="key">"title"</span>: <span class="str">"الحوكمة والامتثال النظامي"</span>,
+      <span class="key">"order"</span>: <span class="num">1</span>,
+      <span class="key">"axis_score"</span>: <span class="num">2.2</span>,
+      <span class="key">"axis_level"</span>: <span class="str">"ضعف مؤسسي"</span>,
+      <span class="key">"axis_color"</span>: <span class="str">"orange"</span>,
+      <span class="key">"axis_message"</span>: <span class="str">"يحتاج المحور إلى إعادة بناء حوكمي شامل..."</span>,
+      <span class="key">"recommendation_platform"</span>: <span class="str">"مسرعة أثر وريادة"</span>,
+      <span class="key">"show_recommendation"</span>: <span class="kw">true</span>,
+      <span class="comment">// NEW recommended field:</span>
+      <span class="key">"treatment_meta"</span>: {
+        <span class="key">"treatment_path"</span>: <span class="str">"مسار ضبط الحوكمة والامتثال"</span>,
+        <span class="key">"primary_product"</span>: <span class="str">"مسرعة أثر وريادة"</span>,
+        <span class="key">"supporting_product"</span>: <span class="str">""</span>,
+        <span class="key">"main_gap"</span>: <span class="str">"ضعف في تفعيل المجلس واللجان والسياسات..."</span>,
+        <span class="key">"expected_outputs"</span>: [<span class="str">"خطة تصحيح حوكمي"</span>, <span class="str">"سياسات ولوائح محدثة"</span>]
+      },
+      <span class="key">"questions"</span>: [
+        { <span class="key">"question_id"</span>: <span class="num">1</span>, <span class="key">"title"</span>: <span class="str">"وجود مجلس إدارة فعّال"</span>, <span class="key">"weight"</span>: <span class="num">1</span>, <span class="key">"score"</span>: <span class="num">2</span>, <span class="key">"notes"</span>: <span class="kw">null</span> }
+        <span class="comment">// ... per-question scores</span>
+      ]
+    }
+    <span class="comment">// ... 10 axis items</span>
+  ],
+
+  <span class="comment">// ⑥ Recommendations (current) ───────────────────────────</span>
+  <span class="key">"recommendations"</span>: [
+    { <span class="key">"id"</span>: <span class="num">1</span>, <span class="key">"title"</span>: <span class="str">"..."</span>, <span class="key">"description"</span>: <span class="str">"..."</span>, <span class="key">"platform"</span>: <span class="str">"مسرعة أثر وريادة"</span> }
+  ],
+
+  <span class="comment">// ⑦ NEW — Top 5 priorities (see Section 8) ──────────────</span>
+  <span class="key">"top_priorities"</span>: [
+    {
+      <span class="key">"order"</span>: <span class="num">1</span>,
+      <span class="key">"intervention_ar"</span>: <span class="str">"إعادة بناء التوجه الاستراتيجي"</span>,
+      <span class="key">"intervention_en"</span>: <span class="str">"Rebuilding Strategic Direction"</span>,
+      <span class="key">"related_axes"</span>: [<span class="str">"القيادة والاستراتيجية"</span>, <span class="str">"التخطيط والتشغيل"</span>],
+      <span class="key">"primary_product"</span>: <span class="str">"مسرعة أثر وريادة"</span>,
+      <span class="key">"expected_result_ar"</span>: <span class="str">"تحديد وجهة المنظمة وأولوياتها..."</span>
+    }
+    <span class="comment">// ... 5 items total</span>
+  ],
+
+  <span class="comment">// ⑧ NEW — 90-day roadmap (see Section 9) ────────────────</span>
+  <span class="key">"roadmap_90"</span>: [
+    {
+      <span class="key">"phase"</span>: <span class="str">"أول 30 يوم"</span>, <span class="key">"phase_en"</span>: <span class="str">"Days 1–30"</span>,
+      <span class="key">"label_ar"</span>: <span class="str">"التشخيص العميق وترتيب الأولويات"</span>,
+      <span class="key">"actions_ar"</span>: [<span class="str">"..."</span>],
+      <span class="key">"products"</span>: [<span class="str">"مسرعة أثر وريادة"</span>, <span class="str">"منصة أداء"</span>],
+      <span class="key">"expected_output_ar"</span>: <span class="str">"خطة معالجة تأسيسية وخارطة أولويات واضحة"</span>
+    }
+    <span class="comment">// ... 3 phases total</span>
+  ],
+
+  <span class="comment">// ⑨ NEW — Report paragraph (see Section 10) ─────────────</span>
+  <span class="key">"report_paragraph"</span>: {
+    <span class="key">"ar"</span>: <span class="str">"بناءً على نتائج تقييم نضج المنظومة..."</span>,
+    <span class="key">"en"</span>: <span class="str">"Based on the institutional maturity assessment results..."</span>
+  }
+}
+  </div>
+
+  <hr class="divider">
+
+  <div class="card card-dark">
+    <p style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;font-family:'Inter';margin-bottom:12px;">IMPLEMENTATION PRIORITY</p>
+    <table style="width:100%;">
+      <thead><tr><th style="color:white;text-align:right;">الحقل · Field</th><th style="color:white;font-family:'Inter';">Priority</th><th style="color:white;">الحالة · Status</th></tr></thead>
+      <tbody style="color:rgba(255,255,255,0.8);">
+        <tr><td>submission, organization, completion, axis_breakdown</td><td class="en"><span class="badge badge-red">P0 — مطلوب</span></td><td>✅ موجود حالياً</td></tr>
+        <tr><td>axis_breakdown[].treatment_meta</td><td class="en"><span class="badge badge-gold">P1 — عالي</span></td><td>⚠ غير موجود — مطلوب إضافته</td></tr>
+        <tr><td>top_priorities[]</td><td class="en"><span class="badge badge-gold">P1 — عالي</span></td><td>⚠ ثابت في الواجهة — يجب نقله للـ API</td></tr>
+        <tr><td>roadmap_90[]</td><td class="en"><span class="badge badge-blue">P2 — متوسط</span></td><td>⚠ ثابت في الواجهة — يجب نقله للـ API</td></tr>
+        <tr><td>report_paragraph</td><td class="en"><span class="badge badge-blue">P2 — متوسط</span></td><td>⚠ يُولَّد من الواجهة — يمكن نقله للـ API</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="background:var(--dark);color:rgba(255,255,255,0.4);text-align:center;padding:24px;font-size:12px;font-family:'Inter';">
+  ECSTT Module · System Requirements Specification · v1.0 · ولادة حلم للاستشارات والأبحاث · Birth of a Dream Consulting &amp; Research
+  <br>
+  <span style="color:rgba(255,255,255,0.2);">Confidential — For internal development use only</span>
+</div>
+
+</body>
+</html>
