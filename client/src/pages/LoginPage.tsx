@@ -52,6 +52,7 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
+    localStorage.clear(); // clear localStorage to remove any stale tokens or data
     if (getStoredEncryptedAuthToken()) {
       setLocation(nextPath);
     }
@@ -218,15 +219,11 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="text-center pt-2">
+            <div className="text-center pt-2 mt-4">
               <p className="text-brand-gray text-sm">
                 لم تمتلك حساب ؟
                 <Link
                   to="/register"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setLocation("/register");
-                  }}
                   className="mr-2 font-bold text-brand-gold hover:text-brand-gold-dark transition-colors"
                 >
                   أنشئ حساب
