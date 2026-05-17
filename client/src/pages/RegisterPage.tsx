@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, CheckCircle } from "lucide-react";
-import { hasCompletedRegistration, saveRegistration } from "@/lib/registration";
+import { hasCompletedRegistration, REGISTRATION_STORAGE_KEY, saveRegistration } from "@/lib/registration";
 import {
   clearStoredAuthToken,
   saveEncryptedAuthToken,
