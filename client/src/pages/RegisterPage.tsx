@@ -163,22 +163,15 @@ export default function RegisterPage() {
       });
 
       // Also save the registration in sessionStorage for immediate UI updates
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const { REGISTRATION_STORAGE_KEY } = require("@/lib/registration");
-        sessionStorage.setItem(
-          REGISTRATION_STORAGE_KEY,
-          JSON.stringify({
-            id: String(generatedId),
-            name: data.organizationName,
-            email: data.organizationEmail,
-          }),
-        );
-        // notify other listeners in this window
-        window.dispatchEvent(new CustomEvent("registration:updated"));
-      } catch {
-        // ignore
-      }
+      sessionStorage.setItem(
+        REGISTRATION_STORAGE_KEY,
+        JSON.stringify({
+          id: String(generatedId),
+          name: data.organizationName,
+          email: data.organizationEmail,
+        }),
+      );
+      window.dispatchEvent(new CustomEvent("registration:updated"));
       // token handling done above
 
       return { id: String(generatedId) };
