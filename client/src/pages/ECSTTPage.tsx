@@ -922,12 +922,10 @@ export default function ECSTTPage({
 
       const answer = getAxisAnswerState(currentAxisId, questionId);
 
-      if (answer?.score === null || answer?.score === undefined) {
-        throw new Error("يرجى تعبئة جميع أسئلة هذا المحور");
-      }
+      // Treat undefined/null answers as 0 (default)
+      const score = Number(answer?.score ?? 0);
 
-      const score = Number(answer.score);
-      if (!Number.isInteger(score) || score < 0 || score > 5) {
+      if (!Number.isInteger(score) || score < 0 || score > 5 || Number.isNaN(score)) {
         throw new Error("يجب أن تكون الدرجة بين 0 و 5");
       }
 
