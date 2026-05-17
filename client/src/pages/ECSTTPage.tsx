@@ -504,10 +504,18 @@ export default function ECSTTPage({
           ...prev,
           [axisId]: axisSet.questions,
         }));
-        setAxisAnswers((prev) => ({
-          ...prev,
-          [axisId]: buildDefaultAxisAnswers(axisSet.questions),
-        }));
+
+        setAxisAnswers((prev) => {
+          const existingAnswers = prev[axisId] ?? {};
+          const defaultAnswers = buildDefaultAxisAnswers(axisSet.questions);
+          return {
+            ...prev,
+            [axisId]: {
+              ...defaultAnswers,
+              ...existingAnswers,
+            },
+          };
+        });
 
         const axisTitle = axisSet.axisTitle;
         if (typeof axisTitle === "string") {
