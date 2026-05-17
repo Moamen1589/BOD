@@ -11,6 +11,7 @@ import ECSTTPage from "@/pages/ECSTTPage";
 import ECSTTAssessmentPage from "@/pages/ECSTTAssessmentPage";
 import FinalReportPage from "@/pages/FinalReportPage";
 import RegisterPage from "@/pages/RegisterPage";
+import LoginPage from "@/pages/LoginPage";
 import ServicesPage from "@/pages/ServicesPage";
 import ServiceDetailPage from "@/pages/ServiceDetailPage";
 import BlogPage from "@/pages/BlogPage";
@@ -26,22 +27,44 @@ import GovernancePage from "./pages/GovernancePage";
 import ImpactPage from "./pages/ImpactPage";
 import SocialEntrepreneurPage from "./pages/SocialEntrepreneurPage";
 import { hasCompletedRegistration } from "@/lib/registration";
+import { getStoredEncryptedAuthToken } from "@/lib/authToken";
 
 function RegistrationGuard({
   component: Component,
 }: {
   component: React.ComponentType;
 }) {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     if (!hasCompletedRegistration()) {
-      setLocation("/register");
+      setLocation(`/login?next=${encodeURIComponent(location)}`);
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
-  }, [setLocation]);
+  }, [location, setLocation]);
 
   if (!hasCompletedRegistration()) {
+    return null;
+  }
+
+  return <Component />;
+}
+
+function AuthGuard({
+  component: Component,
+}: {
+  component: React.ComponentType;
+}) {
+  const [location, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!getStoredEncryptedAuthToken()) {
+      setLocation(`/login?next=${encodeURIComponent(location)}`);
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  }, [location, setLocation]);
+
+  if (!getStoredEncryptedAuthToken()) {
     return null;
   }
 
@@ -59,8 +82,12 @@ function Router() {
     <Switch>
       <Route path="/" component={Box} />
       <Route path="/register" component={RegisterPage} />
-      <Route path="/ecstt/assessment" component={ECSTTAssessmentPage} />
-      <Route path="/ecstt" component={ECSTTPage} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/ecstt" component={() => <ECSTTPage />} />
+      <Route
+        path="/ecstt/assessment"
+        component={() => <AuthGuard component={ECSTTAssessmentPage} />}
+      />
       <Route path="/final-report/:submissionId" component={FinalReportPage} />
       <Route
         path="/voting"

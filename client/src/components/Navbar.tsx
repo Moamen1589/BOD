@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
@@ -182,6 +182,8 @@ export function Navbar() {
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
   const [location, setLocation] = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [orgName, setOrgName] = useState<string | null>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -193,6 +195,56 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const syncAuthAndName = () => {
+      const registrationInfo = sessionStorage.getItem(
+        "organizationRegistration",
+      );
+      const bodAuthTokenEnc = sessionStorage.getItem("bodAuthTokenEnc");
+
+      let name: string | null = null;
+      if (registrationInfo) {
+        try {
+          const parsed = JSON.parse(registrationInfo) as {
+            name?: string;
+            email?: string;
+          };
+          name = parsed.name || parsed.email || null;
+        } catch {
+          name = null;
+        }
+      }
+
+      setOrgName(name);
+      setIsLoggedIn(Boolean(bodAuthTokenEnc && registrationInfo));
+    };
+
+    syncAuthAndName();
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === null) return;
+      if (e.key === "bodAuthTokenEnc" || e.key === "organizationRegistration") {
+        syncAuthAndName();
+      }
+    };
+
+    const onRegistrationUpdated = () => syncAuthAndName();
+
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(
+      "registration:updated",
+      onRegistrationUpdated as EventListener,
+    );
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(
+        "registration:updated",
+        onRegistrationUpdated as EventListener,
+      );
+    };
+  }, [location]);
+
   const scrollToSection = (sectionId: string) => {
     const isHome = location === "/" || location.startsWith("/#");
 
@@ -203,7 +255,8 @@ export function Navbar() {
         const section = document.getElementById(sectionId);
         if (section) {
           const offset = 80;
-          const top = section.getBoundingClientRect().top + window.scrollY - offset;
+          const top =
+            section.getBoundingClientRect().top + window.scrollY - offset;
           window.scrollTo({ top, behavior: "smooth" });
           clearInterval(interval);
           return;
@@ -250,7 +303,8 @@ export function Navbar() {
               const baseClasses =
                 "px-3 py-2 text-sm font-almarai transition-colors rounded-md";
               const activeClasses = "text-white font-bold";
-              const inactiveClasses = "text-white/70 hover:text-white font-normal";
+              const inactiveClasses =
+                "text-white/70 hover:text-white font-normal";
               const itemClasses = `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
 
               return (
@@ -269,7 +323,9 @@ export function Navbar() {
                         {item.label}
                         <ChevronDown
                           size={14}
-                          className={`transition-transform ${openDropdown === item.label ? "rotate-180" : ""}`}
+                          className={`transition-transform ${
+                            openDropdown === item.label ? "rotate-180" : ""
+                          }`}
                         />
                       </button>
                       {openDropdown === item.label && (
@@ -304,7 +360,10 @@ export function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Button className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold">
+            <Button
+              asChild
+              className="bg-brand-gold text-white font-almarai rounded-lg px-6 font-bold"
+            >
               <a
                 href="#contact"
                 onClick={(e) => handleHashClick(e, "contact")}
@@ -313,6 +372,19 @@ export function Navbar() {
                 تواصل معنا
               </a>
             </Button>
+
+            {isLoggedIn ? (
+              <div className="text-white/90 font-bold mr-2">
+                اهلا، {orgName || ""}
+              </div>
+            ) : (
+              <Button
+                asChild
+                className="bg-transparent border border-white/10 text-white/90 px-4"
+              >
+                <Link href="/login">تسجيل دخول</Link>
+              </Button>
+            )}
           </div>
 
           <button
@@ -333,7 +405,8 @@ export function Navbar() {
               const baseClasses =
                 "font-almarai text-sm border-b border-white/10 transition-colors";
               const activeClasses = "text-white font-bold";
-              const inactiveClasses = "text-white/70 hover:text-white font-normal";
+              const inactiveClasses =
+                "text-white/70 hover:text-white font-normal";
               const itemClasses = `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
 
               return (
@@ -352,7 +425,9 @@ export function Navbar() {
                         {item.label}
                         <ChevronDown
                           size={16}
-                          className={`transition-transform text-white/50 ${mobileExpanded === item.label ? "rotate-180" : ""}`}
+                          className={`transition-transform text-white/50 ${
+                            mobileExpanded === item.label ? "rotate-180" : ""
+                          }`}
                         />
                       </button>
                       {mobileExpanded === item.label && (
@@ -416,6 +491,21 @@ export function Navbar() {
                 تواصل معنا
               </a>
             </Button>
+
+            <div className="mt-3">
+              {isLoggedIn ? (
+                <div className="text-white/90 font-bold">
+                  اهلا، {orgName || ""}
+                </div>
+              ) : (
+                <Button
+                  asChild
+                  className="w-full mt-2 bg-transparent border border-white/10 text-white/90 font-almarai rounded-lg font-bold"
+                >
+                  <Link href="/login">تسجيل دخول</Link>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}

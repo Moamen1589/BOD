@@ -79,6 +79,34 @@ type ComplianceSubmissionResponse = {
   };
 };
 
+type ComplianceReportParagraph = {
+  ar?: string | null;
+  en?: string | null;
+};
+
+type ComplianceRoadmapItem = {
+  phase?: string | null;
+  phase_en?: string | null;
+  label_ar?: string | null;
+  label_en?: string | null;
+  actions?: string[];
+  products?: string[];
+  expectedOutput?: string | null;
+  colorClass?: string | null;
+};
+
+type ComplianceTopPriority = {
+  order?: number | string;
+  intervention_ar?: string | null;
+  intervention_en?: string | null;
+  related_axes?: string[];
+  relatedAxes?: string[];
+  primary_product?: string | null;
+  primaryProduct?: string | null;
+  expected_result?: string | null;
+  expectedResult?: string | null;
+};
+
 type ComplianceQuestionsResponse = {
   axis_title?: string | null;
   axisTitle?: string | null;
@@ -394,6 +422,12 @@ export const submitComplianceAxisAnswers = async (
 };
 
 export type FinalReportData = {
+  compliance_level?: string | null;
+  compliance_color?: string | null;
+  compliance_message?: string | null;
+  report_paragraph?: ComplianceReportParagraph;
+  roadmap_90?: ComplianceRoadmapItem[];
+  top_priorities?: ComplianceTopPriority[];
   submission?: {
     id?: string | number;
     status?: string;

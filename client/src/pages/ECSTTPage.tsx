@@ -40,6 +40,7 @@ import {
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Progress } from "@/components/ui/progress";
 import { hasCompletedRegistration } from "@/lib/registration";
+import { getStoredEncryptedAuthToken } from "@/lib/authToken";
 import {
   fetchComplianceAxisQuestions,
   getStoredComplianceSubmissionId,
@@ -838,7 +839,7 @@ export default function ECSTTPage({
   const getAxisAnswerState = (
     axisId: number,
     questionId: string | number,
-  ): { score: number | null; notes: string } | null => {
+  ): { score: number | null } | null => {
     const answersForAxis = axisAnswers[axisId] ?? {};
     return answersForAxis[String(questionId)] ?? null;
   };
@@ -993,12 +994,12 @@ export default function ECSTTPage({
   };
 
   const handleAssessmentEntry = () => {
-    if (hasRegistration) {
+    if (getStoredEncryptedAuthToken()) {
       setLocation("/ecstt/assessment");
       return;
     }
 
-    setLocation("/register");
+    setLocation("/login?next=%2Fecstt%2Fassessment");
     scroll(0, 0);
   };
 

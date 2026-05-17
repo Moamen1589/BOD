@@ -7,32 +7,91 @@ import { useMutation } from "@tanstack/react-query";
 import { Loader2, CheckCircle } from "lucide-react";
 import { hasCompletedRegistration, saveRegistration } from "@/lib/registration";
 import {
-  extractTokenFromPayload,
+  clearStoredAuthToken,
   saveEncryptedAuthToken,
+  extractTokenFromPayload,
 } from "@/lib/authToken";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 type RegisterFormData = {
   organizationName: string;
   organizationEmail: string;
+  organizationPassword: string;
+  organizationPasswordConfirmation: string;
   organizationType: string;
   licenseNumber: string;
   phoneNumber: string;
 };
 
+const registerSchema = z.object({
+  organizationEmail: z
+    .string()
+    .trim()
+    .email("من فضلك أدخل بريدًا إلكترونيًا صالحًا."),
+  organizationPassword: z
+    .string()
+    .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل."),
+});
+
+type RegisterFieldErrors = Partial<
+  Record<"organizationEmail" | "organizationPassword", string>
+>;
+
 export default function RegisterPage() {
   const [, setLocation] = useLocation();
-  const [formData, setFormData] = useState<RegisterFormData>({
-    organizationName: "",
-    organizationEmail: "",
-    organizationType: "",
-    licenseNumber: "",
-    phoneNumber: "",
-  });
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const formSchema = z
+    .object({
+      organizationName: z.string().trim().min(1, "اسم المؤسسة مطلوب."),
+      organizationEmail: z
+        .string()
+        .trim()
+        .email("من فضلك أدخل بريدًا إلكترونيًا صالحًا."),
+      organizationPassword: z
+        .string()
+        .min(8, "كلمة المرور يجب أن تكون 8 أحرف على الأقل."),
+      organizationPasswordConfirmation: z.string(),
+      organizationType: z.string().min(1, "نوع الجهة مطلوب."),
+      licenseNumber: z.string().trim().min(1, "رقم الترخيص مطلوب."),
+      phoneNumber: z.string().trim().min(1, "رقم الهاتف مطلوب."),
+    })
+    .refine(
+      (data) =>
+        data.organizationPassword === data.organizationPasswordConfirmation,
+      {
+        path: ["organizationPasswordConfirmation"],
+        message: "كلمات المرور غير متطابقة.",
+      },
+    );
+
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors },
+    watch,
+    setValue,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      organizationName: "",
+      organizationEmail: "",
+      organizationPassword: "",
+      organizationPasswordConfirmation: "",
+      organizationType: "",
+      licenseNumber: "",
+      phoneNumber: "",
+    },
+    mode: "onSubmit",
+  });
 
   useEffect(() => {
-    if (hasCompletedRegistration()) {
-      setLocation("/ecstt");
+    const hasRegistration = hasCompletedRegistration();
+    if (hasRegistration) {
+      setLocation("/login");
     }
   }, [setLocation]);
 
@@ -52,6 +111,8 @@ export default function RegisterPage() {
           body: JSON.stringify({
             name: data.organizationName,
             email: data.organizationEmail,
+            password: data.organizationPassword,
+            password_confirmation: data.organizationPasswordConfirmation,
             type: data.organizationType,
             liscense_number: data.licenseNumber,
             phone_number: data.phoneNumber,
@@ -66,9 +127,18 @@ export default function RegisterPage() {
       if (!response.ok) throw new Error("Registration failed");
 
       const responseData = await response.json();
-      const authToken = extractTokenFromPayload(responseData);
-      if (authToken) {
-        saveEncryptedAuthToken(authToken);
+
+      // If API returned a token on registration, save it into session (encrypted)
+      try {
+        const possibleToken = extractTokenFromPayload(responseData);
+        if (possibleToken) {
+          saveEncryptedAuthToken(possibleToken);
+        } else {
+          // Ensure no stale token remains
+          clearStoredAuthToken();
+        }
+      } catch {
+        clearStoredAuthToken();
       }
 
       const generatedId =
@@ -92,28 +162,40 @@ export default function RegisterPage() {
         registered_at: registeredAt.toISOString(),
       });
 
+      // Also save the registration in sessionStorage for immediate UI updates
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { REGISTRATION_STORAGE_KEY } = require("@/lib/registration");
+        sessionStorage.setItem(
+          REGISTRATION_STORAGE_KEY,
+          JSON.stringify({
+            id: String(generatedId),
+            name: data.organizationName,
+            email: data.organizationEmail,
+          }),
+        );
+        // notify other listeners in this window
+        window.dispatchEvent(new CustomEvent("registration:updated"));
+      } catch {
+        // ignore
+      }
+      // token handling done above
+
       return { id: String(generatedId) };
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setSubmitted(true);
       setTimeout(() => {
-        setLocation(`/ecstt?orgId=${data.id}`);
+        setLocation(
+          `/login?email=${encodeURIComponent(variables.organizationEmail)}`,
+        );
       }, 2000);
     },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    registerMutation.mutate(formData);
+  const handleSubmit = (data: RegisterFormData) => {
+    setSubmitError("");
+    registerMutation.mutate(data);
   };
 
   if (submitted) {
@@ -149,20 +231,25 @@ export default function RegisterPage() {
               يرجى تسجيل بيانات مؤسستكم لبدء الاختبار
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form
+              onSubmit={rhfHandleSubmit(handleSubmit)}
+              className="space-y-8"
+            >
               <div>
                 <label className="block text-lg font-bold text-brand-dark mb-3">
                   اسم المؤسسة
                 </label>
                 <input
                   type="text"
-                  name="organizationName"
-                  value={formData.organizationName}
-                  onChange={handleChange}
-                  required
+                  {...register("organizationName")}
                   placeholder="أدخل اسم مؤسستك"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
+                {errors.organizationName?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.organizationName.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -171,13 +258,53 @@ export default function RegisterPage() {
                 </label>
                 <input
                   type="email"
-                  name="organizationEmail"
-                  value={formData.organizationEmail}
-                  onChange={handleChange}
-                  required
+                  {...register("organizationEmail")}
+                  inputMode="email"
+                  autoComplete="email"
                   placeholder="example@organization.com"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
+                {errors.organizationEmail?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.organizationEmail.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-lg font-bold text-brand-dark mb-3">
+                  كلمة المرور
+                </label>
+                <input
+                  type="password"
+                  {...register("organizationPassword")}
+                  autoComplete="new-password"
+                  placeholder="أدخل كلمة المرور"
+                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
+                />
+                {errors.organizationPassword?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.organizationPassword.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-lg font-bold text-brand-dark mb-3">
+                  تأكيد كلمة المرور
+                </label>
+                <input
+                  type="password"
+                  {...register("organizationPasswordConfirmation")}
+                  autoComplete="new-password"
+                  placeholder="أعد إدخال كلمة المرور"
+                  className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
+                />
+                {errors.organizationPasswordConfirmation?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.organizationPasswordConfirmation.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -193,19 +320,17 @@ export default function RegisterPage() {
                     <label
                       key={option.value}
                       className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-brand-gold/20 rounded-2xl cursor-pointer hover:border-brand-gold transition-all"
+                      onClick={() =>
+                        setValue("organizationType", option.value, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
+                      }
                     >
                       <input
                         type="radio"
-                        name="organizationType"
-                        value={option.value}
-                        checked={formData.organizationType === option.value}
-                        onChange={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            organizationType: option.value,
-                          }))
-                        }
-                        required
+                        checked={watch("organizationType") === option.value}
+                        readOnly
                         className="w-4 h-4 accent-brand-gold"
                       />
                       <span className="font-bold text-brand-dark">
@@ -214,6 +339,11 @@ export default function RegisterPage() {
                     </label>
                   ))}
                 </div>
+                {errors.organizationType?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.organizationType.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -222,13 +352,15 @@ export default function RegisterPage() {
                 </label>
                 <input
                   type="text"
-                  name="licenseNumber"
-                  value={formData.licenseNumber}
-                  onChange={handleChange}
-                  required
+                  {...register("licenseNumber")}
                   placeholder="LIC-123456"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
+                {errors.licenseNumber?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.licenseNumber.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -237,13 +369,15 @@ export default function RegisterPage() {
                 </label>
                 <input
                   type="tel"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  required
+                  {...register("phoneNumber")}
                   placeholder="+966 5XXXXXXXX"
                   className="w-full px-6 py-4 border-2 border-brand-gold/20 rounded-2xl text-lg font-medium text-brand-dark placeholder-brand-gray/50 focus:outline-none focus:border-brand-gold transition-all"
                 />
+                {errors.phoneNumber?.message && (
+                  <p className="mt-2 text-sm font-bold text-red-600">
+                    {errors.phoneNumber.message}
+                  </p>
+                )}
               </div>
 
               <Button
@@ -257,7 +391,7 @@ export default function RegisterPage() {
                     جاري المعالجة...
                   </span>
                 ) : (
-                  "ابدأ الاختبار الآن"
+                  "تسجيل الحساب"
                 )}
               </Button>
             </form>
@@ -267,6 +401,12 @@ export default function RegisterPage() {
                 <p className="text-red-700 font-bold">
                   حدث خطأ أثناء التسجيل. يرجى المحاولة مجددًا.
                 </p>
+              </div>
+            )}
+
+            {submitError && !registerMutation.isError && (
+              <div className="mt-6 p-4 bg-red-50 border-r-4 border-red-500 rounded-lg">
+                <p className="text-red-700 font-bold">{submitError}</p>
               </div>
             )}
           </div>

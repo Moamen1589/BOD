@@ -61,7 +61,8 @@ export const saveEncryptedAuthToken = (token: string): void => {
     return;
   }
 
-  localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, encodeAuthToken(token));
+  sessionStorage.setItem(AUTH_TOKEN_STORAGE_KEY, encodeAuthToken(token));
+  localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
 };
 
 export const getStoredEncryptedAuthToken = (): string | null => {
@@ -69,12 +70,21 @@ export const getStoredEncryptedAuthToken = (): string | null => {
     return null;
   }
 
-  const stored = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  const stored = sessionStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
   if (!stored) {
     return null;
   }
 
   return decodeAuthToken(stored);
+};
+
+export const clearStoredAuthToken = (): void => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  sessionStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+  localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
 };
 
 const TOKEN_FIELDS = [
