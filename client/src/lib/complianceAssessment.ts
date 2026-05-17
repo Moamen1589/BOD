@@ -89,6 +89,7 @@ type ComplianceRoadmapItem = {
   phase_en?: string | null;
   label_ar?: string | null;
   label_en?: string | null;
+  actions_ar?: string[];
   actions?: string[];
   products?: string[];
   expectedOutput?: string | null;
@@ -144,7 +145,30 @@ export const getStoredComplianceSubmissionId = (
   }
 
   try {
-    return localStorage.getItem(getComplianceSubmissionStorageKey(orgId));
+    // Prefer sessionStorage for current flow
+    const sessionVal = sessionStorage.getItem(
+      getComplianceSubmissionStorageKey(orgId),
+    );
+    if (sessionVal) return sessionVal;
+
+    // Fall back to localStorage for backward compatibility and migrate
+    const localVal = localStorage.getItem(
+      getComplianceSubmissionStorageKey(orgId),
+    );
+    if (localVal) {
+      try {
+        sessionStorage.setItem(
+          getComplianceSubmissionStorageKey(orgId),
+          localVal,
+        );
+        localStorage.removeItem(getComplianceSubmissionStorageKey(orgId));
+      } catch {
+        // ignore
+      }
+      return localVal;
+    }
+
+    return null;
   } catch {
     return null;
   }
@@ -158,7 +182,20 @@ export const saveComplianceSubmissionId = (
     return;
   }
 
-  localStorage.setItem(getComplianceSubmissionStorageKey(orgId), submissionId);
+  try {
+    sessionStorage.setItem(
+      getComplianceSubmissionStorageKey(orgId),
+      submissionId,
+    );
+  } catch {
+    // ignore
+  }
+
+  try {
+    localStorage.removeItem(getComplianceSubmissionStorageKey(orgId));
+  } catch {
+    // ignore
+  }
 };
 
 const extractQuestions = (payload: unknown): ComplianceQuestion[] => {
@@ -418,6 +455,16 @@ export const submitComplianceAxisAnswers = async (
     "POST",
     `${COMPLIANCE_API_BASE}/api/compliance/submissions/${submissionId}/axes/${axisId}/answers`,
     { answers },
+  );
+};
+
+export const submitComplianceSubmission = async (
+  submissionId: string,
+): Promise<void> => {
+  await apiRequest(
+    "POST",
+    `${COMPLIANCE_API_BASE}/api/compliance/submissions/${submissionId}/submit`,
+    {},
   );
 };
 

@@ -890,7 +890,11 @@ export default function FinalReportPage() {
                     </div>
                     <div className="p-5">
                       <ul className="space-y-2 mb-5">
-                        {(phase.actions ?? []).map((action, idx) => (
+                        {(
+                          (phase.actions_ar?.length
+                            ? phase.actions_ar
+                            : phase.actions) ?? []
+                        ).map((action, idx) => (
                           <li key={idx} className="flex items-start gap-2">
                             <CheckCircle className="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
                             <span className="text-xs text-brand-dark font-bold leading-relaxed">

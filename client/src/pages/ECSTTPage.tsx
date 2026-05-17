@@ -47,6 +47,7 @@ import {
   initiateComplianceSubmission,
   saveComplianceSubmissionId,
   submitComplianceAxisAnswers,
+  submitComplianceSubmission,
   type ComplianceQuestion,
 } from "@/lib/complianceAssessment";
 
@@ -508,12 +509,27 @@ export default function ECSTTPage({
         setAxisAnswers((prev) => {
           const existingAnswers = prev[axisId] ?? {};
           const defaultAnswers = buildDefaultAxisAnswers(axisSet.questions);
+
+          const merged: Record<string, { score: number | null }> = {};
+
+          // Start with defaults
+          Object.entries(defaultAnswers).forEach(([k, v]) => {
+            merged[k] = { score: v.score };
+          });
+
+          // Merge existing answers but only override when existing has a non-null/defined score
+          Object.entries(existingAnswers).forEach(([k, v]) => {
+            if (v && v.score !== null && v.score !== undefined) {
+              merged[k] = { score: v.score };
+            } else if (!(k in merged)) {
+              // ensure any unexpected question keys still have a default
+              merged[k] = { score: 0 };
+            }
+          });
+
           return {
             ...prev,
-            [axisId]: {
-              ...defaultAnswers,
-              ...existingAnswers,
-            },
+            [axisId]: merged,
           };
         });
 
@@ -905,6 +921,41 @@ export default function ECSTTPage({
     }
   };
 
+  // Ensure that when questions for the current axis load, any missing answers are initialized to 0
+  useEffect(() => {
+    const axisId = activeAxisIndex + 1;
+    const questions = axisQuestions[axisId] ?? [];
+    if (!questions.length) return;
+
+    setAxisAnswers((prev) => {
+      const existing = prev[axisId] ?? {};
+      const defaults = buildDefaultAxisAnswers(questions);
+      const merged: Record<string, { score: number | null }> = {};
+
+      // For each question key, prefer existing non-null score, otherwise default 0
+      Object.entries(defaults).forEach(([k, v]) => {
+        const ex = existing[k];
+        if (ex && ex.score !== null && ex.score !== undefined) {
+          merged[k] = { score: ex.score };
+        } else {
+          merged[k] = { score: v.score };
+        }
+      });
+
+      // Also carry over any unexpected existing keys
+      Object.entries(existing).forEach(([k, v]) => {
+        if (!(k in merged)) {
+          merged[k] = { score: v.score ?? 0 };
+        }
+      });
+
+      return {
+        ...prev,
+        [axisId]: merged,
+      };
+    });
+  }, [activeAxisIndex, axisQuestions]);
+
   const submitCurrentAxis = async () => {
     const effectiveSubmissionId = await ensureSubmissionId();
 
@@ -949,6 +1000,16 @@ export default function ECSTTPage({
         currentAxisId,
         answers,
       );
+    } catch (err) {
+      // Normalize server error message to a user-friendly Arabic message
+      const raw = err instanceof Error ? err.message : String(err);
+      if (/submitted|لا يمكن تعديل تقييم/i.test(raw)) {
+        throw new Error(
+          'لا يمكن تعديل التقييم لأن هذه الجلسة مُرسلة بالفعل (حالة "submitted"). لا يمكنك تغيير الإجابات بعد الإرسال.',
+        );
+      }
+
+      throw err;
     } finally {
       setIsSubmittingAxis(false);
     }
@@ -987,12 +1048,32 @@ export default function ECSTTPage({
       setAssessmentError(null);
       await submitCurrentAxis();
 
-      if (activeAxisIndex === assessmentAxes.length - 1) {
-        if (submissionId) {
-          setLocation(`/final-report/${submissionId}`);
-        } else {
-          setStep("result");
+      // Ensure next axis has default answers ready to avoid needing a reload
+      const nextAxisId = currentAxisId + 1;
+      setAxisAnswers((prev) => {
+        if (prev[nextAxisId] && Object.keys(prev[nextAxisId]).length > 0) {
+          return prev;
         }
+
+        const questionsForNext = axisQuestions[nextAxisId] ?? [];
+        const defaults = buildDefaultAxisAnswers(questionsForNext);
+
+        return {
+          ...prev,
+          [nextAxisId]: defaults,
+        };
+      });
+
+      if (activeAxisIndex === assessmentAxes.length - 1) {
+        try {
+          const sid = (await ensureSubmissionId()) as string;
+          // submit the whole submission before navigating to final report
+          await submitComplianceSubmission(sid);
+          setLocation(`/final-report/${sid}`);
+        } catch (err) {
+          setAssessmentError(err instanceof Error ? err.message : String(err));
+        }
+
         return;
       }
 
@@ -1005,6 +1086,19 @@ export default function ECSTTPage({
   };
 
   const handleAssessmentEntry = () => {
+    // Remove any stale localStorage compliance submission ids (old flow)
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+        if (key.startsWith("complianceSubmissionId")) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch {
+      // ignore
+    }
+
     if (getStoredEncryptedAuthToken()) {
       setLocation("/ecstt/assessment");
       return;
@@ -1629,13 +1723,8 @@ export default function ECSTTPage({
                       currentAxisId,
                       questionKey,
                     );
-                    const hasSelectedScore =
-                      selectedAnswer?.score !== null &&
-                      selectedAnswer?.score !== undefined;
                     const selectedScore = selectedAnswer?.score ?? 0;
-                    const scoreDescription = hasSelectedScore
-                      ? getScoreDescription(selectedScore)
-                      : { label: "لم يتم التقييم بعد", color: "text-gray-500" };
+                    const scoreDescription = getScoreDescription(selectedScore);
                     const questionText = getQuestionText(question, "");
 
                     return (
@@ -1659,7 +1748,7 @@ export default function ECSTTPage({
                             </label>
                           </div>
                           <div className="bg-brand-dark text-brand-gold w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center text-[clamp(1.6rem,2.4vw,2.5rem)] font-black shadow-xl shrink-0">
-                            {hasSelectedScore ? selectedScore : "-"}
+                            {selectedScore}
                           </div>
                         </div>
                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 lg:gap-8">
