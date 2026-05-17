@@ -925,7 +925,12 @@ export default function ECSTTPage({
       // Treat undefined/null answers as 0 (default)
       const score = Number(answer?.score ?? 0);
 
-      if (!Number.isInteger(score) || score < 0 || score > 5 || Number.isNaN(score)) {
+      if (
+        !Number.isInteger(score) ||
+        score < 0 ||
+        score > 5 ||
+        Number.isNaN(score)
+      ) {
         throw new Error("يجب أن تكون الدرجة بين 0 و 5");
       }
 
