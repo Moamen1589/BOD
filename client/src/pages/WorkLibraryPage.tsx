@@ -9,13 +9,11 @@ import { FileText } from "lucide-react";
 import type { WorkItem } from "@shared/schema";
 
 const PROCEDURAL_EVIDENCES_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/procedural-evidences";
-const STRATEGIC_PLANS_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/strategic-plans";
-const ANNUAL_PLANS_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/annual-plans";
+  "https://api.bod.com.sa/api/procedural-evidences";
+const STRATEGIC_PLANS_API_URL = "https://api.bod.com.sa/api/strategic-plans";
+const ANNUAL_PLANS_API_URL = "https://api.bod.com.sa/api/annual-plans";
 const SOCIAL_INITIATIVES_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/social-initiatives";
+  "https://api.bod.com.sa/api/social-initiatives";
 
 const categories = [
   { key: "strategic-planning", label: "الخطط الاستراتيجية" },

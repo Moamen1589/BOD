@@ -17,14 +17,10 @@ const categoryLabels: Record<string, string> = {
 };
 
 const REMOTE_SOURCE_URLS: Record<string, string> = {
-  "strategic-planning":
-    "https://gold-weasel-489740.hostingersite.com/api/strategic-plans",
-  "procedural-guides":
-    "https://gold-weasel-489740.hostingersite.com/api/procedural-evidences",
-  "annual-plans":
-    "https://gold-weasel-489740.hostingersite.com/api/annual-plans",
-  "community-initiatives":
-    "https://gold-weasel-489740.hostingersite.com/api/social-initiatives",
+  "strategic-planning": "https://api.bod.com.sa/api/strategic-plans",
+  "procedural-guides": "https://api.bod.com.sa/api/procedural-evidences",
+  "annual-plans": "https://api.bod.com.sa/api/annual-plans",
+  "community-initiatives": "https://api.bod.com.sa/api/social-initiatives",
 };
 
 interface RemoteWorkItem {

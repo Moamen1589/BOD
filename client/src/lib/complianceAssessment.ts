@@ -1,6 +1,6 @@
 import { apiRequest, getRequestHeaders } from "@/lib/queryClient";
 
-const COMPLIANCE_API_BASE = "https://gold-weasel-489740.hostingersite.com";
+const COMPLIANCE_API_BASE = "https://api.bod.com.sa";
 const COMPLIANCE_SUBMISSION_STORAGE_PREFIX = "complianceSubmissionId";
 
 export type ComplianceQuestion = {

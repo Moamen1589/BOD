@@ -1,11 +1,4 @@
-import {
-  Mail,
-  Phone,
-  Send,
-  FileDown,
-  Loader2,
-  LocateIcon,
-} from "lucide-react";
+import { Mail, Phone, Send, FileDown, Loader2, LocateIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -86,11 +79,7 @@ export function ContactSection() {
   const onSubmit = async (data: ContactForm) => {
     setLoading(true);
     try {
-      await apiRequest(
-        "POST",
-        "https://gold-weasel-489740.hostingersite.com/api/contact-us",
-        data
-      );
+      await apiRequest("POST", "https://api.bod.com.sa/api/contact-us", data);
       setSubmitted(true);
     } catch {
       toast({

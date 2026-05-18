@@ -83,7 +83,7 @@ const categoryLabels: Record<string, string> = {
   newsletter: "نشرة بريدية",
 };
 
-const blogApiBase = "https://gold-weasel-489740.hostingersite.com";
+const blogApiBase = "https://api.bod.com.sa";
 
 const toImageUrl = (imagePath?: string | null): string | null => {
   if (!imagePath) return null;

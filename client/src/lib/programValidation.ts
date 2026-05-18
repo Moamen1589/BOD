@@ -18,7 +18,7 @@ export const PROGRAM_STATUS_OPTIONS = [
 ];
 
 export const GOVERNANCE_PROGRAMS_ENDPOINT =
-  "https://gold-weasel-489740.hostingersite.com/api/governance/programs";
+  "https://api.bod.com.sa/api/governance/programs";
 
 export type ValidationErrors = Record<string, string>;
 

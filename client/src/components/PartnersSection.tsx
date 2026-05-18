@@ -17,7 +17,7 @@ type PartnersResponse = {
   data?: ApiPartner[];
 };
 
-const apiBase = "https://gold-weasel-489740.hostingersite.com";
+const apiBase = "https://api.bod.com.sa";
 
 const toAssetUrl = (path?: string | null) => {
   if (!path) return null;

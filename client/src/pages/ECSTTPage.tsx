@@ -51,7 +51,7 @@ import {
   type ComplianceQuestion,
 } from "@/lib/complianceAssessment";
 
-const COMMUNITY_HERO_API_BASE = "https://gold-weasel-489740.hostingersite.com";
+const COMMUNITY_HERO_API_BASE = "https://api.bod.com.sa";
 const COMMUNITY_HERO_SLIDES_ENDPOINT = `${COMMUNITY_HERO_API_BASE}/api/hero/slides`;
 
 type CommunityHeroSlide = {

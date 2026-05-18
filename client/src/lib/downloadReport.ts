@@ -2,7 +2,7 @@ export async function downloadProgramPdf(
   programId: string,
   token?: string,
 ): Promise<void> {
-  const url = `https://gold-weasel-489740.hostingersite.com/api/governance/programs/${programId}/export-pdf`;
+  const url = `https://api.bod.com.sa/api/governance/programs/${programId}/export-pdf`;
   const headers: Record<string, string> = {};
   if (token)
     headers["Authorization"] = /^Bearer\s+/i.test(token)

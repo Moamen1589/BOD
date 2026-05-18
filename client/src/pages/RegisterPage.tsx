@@ -5,7 +5,11 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, CheckCircle } from "lucide-react";
-import { hasCompletedRegistration, REGISTRATION_STORAGE_KEY, saveRegistration } from "@/lib/registration";
+import {
+  hasCompletedRegistration,
+  REGISTRATION_STORAGE_KEY,
+  saveRegistration,
+} from "@/lib/registration";
 import {
   clearStoredAuthToken,
   saveEncryptedAuthToken,
@@ -103,27 +107,24 @@ export default function RegisterPage() {
     mutationFn: async (data) => {
       const registeredAt = new Date();
       const evaluationDate = registeredAt.toISOString().split("T")[0];
-      const response = await fetch(
-        "https://gold-weasel-489740.hostingersite.com/api/organizations",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: data.organizationName,
-            email: data.organizationEmail,
-            password: data.organizationPassword,
-            password_confirmation: data.organizationPasswordConfirmation,
-            type: data.organizationType,
-            liscense_number: data.licenseNumber,
-            phone_number: data.phoneNumber,
-            evaluation_duration: 0,
-            evaluator_name: "",
-            evaluation_team: "",
-            representative_name: "",
-            evaluation_date: evaluationDate,
-          }),
-        },
-      );
+      const response = await fetch("https://api.bod.com.sa/api/organizations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.organizationName,
+          email: data.organizationEmail,
+          password: data.organizationPassword,
+          password_confirmation: data.organizationPasswordConfirmation,
+          type: data.organizationType,
+          liscense_number: data.licenseNumber,
+          phone_number: data.phoneNumber,
+          evaluation_duration: 0,
+          evaluator_name: "",
+          evaluation_team: "",
+          representative_name: "",
+          evaluation_date: evaluationDate,
+        }),
+      });
       if (!response.ok) throw new Error("Registration failed");
 
       const responseData = await response.json();

@@ -368,7 +368,7 @@ export default function FinalReportPage() {
     setIsExporting(true);
     try {
       const response = await fetch(
-        `https://gold-weasel-489740.hostingersite.com/api/compliance/submissions/${submissionId}/export-pdf`,
+        `https://api.bod.com.sa/api/compliance/submissions/${submissionId}/export-pdf`,
         {
           method: "GET",
           headers: getRequestHeaders(),

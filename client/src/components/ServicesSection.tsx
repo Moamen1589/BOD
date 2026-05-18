@@ -12,8 +12,7 @@ import {
 } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
-const SERVICES_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/services";
+const SERVICES_API_URL = "https://api.bod.com.sa/api/services";
 
 interface LocalizedText {
   ar: string | null;

@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, ExternalLink } from "lucide-react";
 
-const CASE_STUDIES_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/case-studies";
+const CASE_STUDIES_API_URL = "https://api.bod.com.sa/api/case-studies";
 
 type ApiCaseStudy = {
   id: number;
@@ -314,8 +313,6 @@ export default function CaseStudyDetailPage() {
               )}
 
               <div className="p-6 sm:p-10 lg:p-12">
-            
-
                 <div
                   className="font-almarai text-brand-dark/80 text-[clamp(1rem,1.1vw,1.2rem)] leading-relaxed whitespace-pre-line"
                   data-testid="text-case-study-content"

@@ -98,7 +98,7 @@ export default function SocialEntrepreneurPage() {
       }
 
       const response = await fetch(
-        "https://gold-weasel-489740.hostingersite.com/api/business-registrations",
+        "https://api.bod.com.sa/api/business-registrations",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

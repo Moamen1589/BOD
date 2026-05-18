@@ -61,7 +61,7 @@ const categoryLabels: Record<string, string> = {
 
 const fallbackCardImage = "/figmaAssets/homepage.png";
 
-const blogApiBase = "https://gold-weasel-489740.hostingersite.com";
+const blogApiBase = "https://api.bod.com.sa";
 
 const mapCategory = (categoryName?: string | null): Article["category"] => {
   if (!categoryName) return "article";

@@ -68,7 +68,7 @@ export default function LoginPage() {
   >({
     mutationFn: async (data) => {
       const response = await fetch(
-        "https://gold-weasel-489740.hostingersite.com/api/organizations/login",
+        "https://api.bod.com.sa/api/organizations/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

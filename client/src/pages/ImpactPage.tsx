@@ -4,9 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { getRequestHeaders } from "@/lib/queryClient";
-import {
-  GOVERNANCE_PROGRAMS_ENDPOINT,
-} from "@/lib/programValidation";
+import { GOVERNANCE_PROGRAMS_ENDPOINT } from "@/lib/programValidation";
 import {
   ArrowRight,
   Plus,
@@ -64,13 +62,7 @@ const initialForm: FormData = {
   benefits: [{ name: "", value: "" }],
 };
 
-function GaugeMeter({
-  value,
-  label,
-}: {
-  value: number;
-  label: string;
-}) {
+function GaugeMeter({ value, label }: { value: number; label: string }) {
   const clamp = Math.min(100, Math.max(0, value));
   const getColor = (v: number) =>
     v >= 80 ? "#22c55e" : v >= 60 ? "#f59e0b" : "#ef4444";
@@ -212,7 +204,7 @@ export default function ImpactPage() {
         value: parseFloat(b.value) || 0,
       }));
 
-    const endpoint = `https://gold-weasel-489740.hostingersite.com/api/programs/social-impact/programs/${programId}`;
+    const endpoint = `https://api.bod.com.sa/api/programs/social-impact/programs/${programId}`;
 
     const response = await fetch(endpoint, {
       method: "POST",
@@ -276,7 +268,8 @@ export default function ImpactPage() {
   };
 
   const beneficiaries = apiResults?.beneficiaries ?? n(form.beneficiaries);
-  const satisfaction = apiResults?.satisfaction_rate ?? n(form.satisfactionRate);
+  const satisfaction =
+    apiResults?.satisfaction_rate ?? n(form.satisfactionRate);
   const improvement = apiResults?.improvement_rate ?? n(form.improvementRate);
   const inclusion = apiResults?.inclusion_index ?? n(form.inclusionIndex);
   const volunteerHours = apiResults?.volunteer_hours ?? n(form.volunteerHours);
@@ -397,7 +390,6 @@ export default function ImpactPage() {
       <div className="container mx-auto px-6 py-10 flex-1">
         {activeTab === "form" && (
           <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto">
-
             {/* Basic Program Info */}
             <div className="bg-white rounded-3xl shadow-md p-8">
               <h2 className="text-xl font-black text-brand-dark mb-6 flex items-center gap-2">
@@ -437,7 +429,9 @@ export default function ImpactPage() {
                   <input
                     type="number"
                     value={form.costPerBeneficiary}
-                    onChange={(e) => setField("costPerBeneficiary", e.target.value)}
+                    onChange={(e) =>
+                      setField("costPerBeneficiary", e.target.value)
+                    }
                     placeholder="0.00"
                     min="0"
                     className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
@@ -534,7 +528,9 @@ export default function ImpactPage() {
                         <input
                           type="text"
                           value={benefit.name}
-                          onChange={(e) => setBenefit(i, "name", e.target.value)}
+                          onChange={(e) =>
+                            setBenefit(i, "name", e.target.value)
+                          }
                           placeholder="مثال: تحسين مستوى المعيشة"
                           className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
                         />
@@ -546,7 +542,9 @@ export default function ImpactPage() {
                         <input
                           type="number"
                           value={benefit.value}
-                          onChange={(e) => setBenefit(i, "value", e.target.value)}
+                          onChange={(e) =>
+                            setBenefit(i, "value", e.target.value)
+                          }
                           placeholder="0"
                           min="0"
                           className="w-full px-4 py-3 border-2 border-gray-100 rounded-xl focus:border-purple-500 focus:outline-none text-brand-dark text-sm"
@@ -589,7 +587,9 @@ export default function ImpactPage() {
             <div className="w-20 h-20 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <BarChart3 className="w-10 h-10 text-purple-500" />
             </div>
-            <h3 className="text-2xl font-black text-brand-dark mb-3">لا توجد بيانات بعد</h3>
+            <h3 className="text-2xl font-black text-brand-dark mb-3">
+              لا توجد بيانات بعد
+            </h3>
             <p className="text-brand-gray mb-6">
               أدخل بيانات البرنامج في تبويب "إدخال مؤشرات الأثر" لعرض التقرير
             </p>
@@ -608,8 +608,12 @@ export default function ImpactPage() {
             <div className="bg-brand-dark rounded-3xl p-8 text-white">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <p className="text-white/50 text-sm font-bold mb-1">تقرير الأثر المجتمعي</p>
-                  <h2 className="text-3xl font-black">{form.programName || "البرنامج"}</h2>
+                  <p className="text-white/50 text-sm font-bold mb-1">
+                    تقرير الأثر المجتمعي
+                  </p>
+                  <h2 className="text-3xl font-black">
+                    {form.programName || "البرنامج"}
+                  </h2>
                 </div>
                 <Button
                   onClick={() => setActiveTab("form")}
@@ -637,7 +641,13 @@ export default function ImpactPage() {
               <KPICard
                 label="معدل الرضا الاجتماعي"
                 value={`${satisfaction}%`}
-                sub={satisfaction >= 80 ? "✅ ممتاز" : satisfaction >= 60 ? "⚠️ جيد" : "❌ يحتاج تحسين"}
+                sub={
+                  satisfaction >= 80
+                    ? "✅ ممتاز"
+                    : satisfaction >= 60
+                      ? "⚠️ جيد"
+                      : "❌ يحتاج تحسين"
+                }
                 icon={TrendingUp}
                 colorClass="border-green-500"
               />
@@ -651,16 +661,21 @@ export default function ImpactPage() {
 
             {sroi !== "—" && (
               <div className="bg-purple-500 rounded-3xl p-6 text-white">
-                <p className="text-white/70 text-sm font-bold mb-1">العائد الاجتماعي على الاستثمار (SROI)</p>
+                <p className="text-white/70 text-sm font-bold mb-1">
+                  العائد الاجتماعي على الاستثمار (SROI)
+                </p>
                 <p className="text-4xl font-black">{sroi}</p>
-                <p className="text-white/60 text-sm mt-1">لكل ريال مُنفق يعود {sroi} ريال من قيمة اجتماعية</p>
+                <p className="text-white/60 text-sm mt-1">
+                  لكل ريال مُنفق يعود {sroi} ريال من قيمة اجتماعية
+                </p>
               </div>
             )}
 
             {/* Gauges */}
             <div className="bg-white rounded-3xl shadow-md p-8">
               <h3 className="font-black text-brand-dark text-xl mb-8 flex items-center gap-2">
-                <Target className="w-5 h-5 text-purple-500" /> مؤشرات الأثر التفصيلية
+                <Target className="w-5 h-5 text-purple-500" /> مؤشرات الأثر
+                التفصيلية
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                 <GaugeMeter value={satisfaction} label="الرضا الاجتماعي" />
@@ -675,13 +690,28 @@ export default function ImpactPage() {
 
             {/* Radar Chart */}
             <div className="bg-white rounded-3xl shadow-md p-8">
-              <h3 className="font-black text-brand-dark mb-6">مخطط الأثر الشامل</h3>
+              <h3 className="font-black text-brand-dark mb-6">
+                مخطط الأثر الشامل
+              </h3>
               <ResponsiveContainer width="100%" height={280}>
                 <RadarChart data={radarData}>
                   <PolarGrid />
-                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12, fontFamily: "Almarai" }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 10 }} />
-                  <Radar name="الأثر" dataKey="A" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
+                  <PolarAngleAxis
+                    dataKey="subject"
+                    tick={{ fontSize: 12, fontFamily: "Almarai" }}
+                  />
+                  <PolarRadiusAxis
+                    angle={30}
+                    domain={[0, 100]}
+                    tick={{ fontSize: 10 }}
+                  />
+                  <Radar
+                    name="الأثر"
+                    dataKey="A"
+                    stroke="#8b5cf6"
+                    fill="#8b5cf6"
+                    fillOpacity={0.3}
+                  />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -689,13 +719,25 @@ export default function ImpactPage() {
             {/* Benefits Bar Chart */}
             {barData.length > 0 && (
               <div className="bg-white rounded-3xl shadow-md p-8">
-                <h3 className="font-black text-brand-dark mb-6">المنافع الاجتماعية</h3>
+                <h3 className="font-black text-brand-dark mb-6">
+                  المنافع الاجتماعية
+                </h3>
                 <ResponsiveContainer width="100%" height={240}>
                   <BarChart data={barData} barSize={30}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: "Almarai" }} />
-                    <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => v.toLocaleString()} />
-                    <Tooltip formatter={(v: any) => `${Number(v).toLocaleString()} ر.س`} />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fontFamily: "Almarai" }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 10 }}
+                      tickFormatter={(v) => v.toLocaleString()}
+                    />
+                    <Tooltip
+                      formatter={(v: any) =>
+                        `${Number(v).toLocaleString()} ر.س`
+                      }
+                    />
                     <Bar dataKey="value" fill="#8b5cf6" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -704,11 +746,16 @@ export default function ImpactPage() {
 
             {/* Area Chart */}
             <div className="bg-white rounded-3xl shadow-md p-8">
-              <h3 className="font-black text-brand-dark mb-6">مسار الأثر عبر الزمن</h3>
+              <h3 className="font-black text-brand-dark mb-6">
+                مسار الأثر عبر الزمن
+              </h3>
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={areaData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fontFamily: "Almarai" }} />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 11, fontFamily: "Almarai" }}
+                  />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
                   <Tooltip />
                   <Area
@@ -728,7 +775,9 @@ export default function ImpactPage() {
               <div className="flex items-center gap-3 mb-4">
                 <Sparkles className="w-6 h-6 text-purple-200" />
               </div>
-              <p className="text-white/90 text-lg leading-relaxed font-medium">{aiInsight()}</p>
+              <p className="text-white/90 text-lg leading-relaxed font-medium">
+                {aiInsight()}
+              </p>
             </div>
           </div>
         )}

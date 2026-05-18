@@ -4,7 +4,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useEffect, useState } from "react";
 
 const DIGITAL_SOLUTION_LINKS_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/digital-solution-links";
+  "https://api.bod.com.sa/api/digital-solution-links";
 
 type ApiDigitalSolutionLink = {
   id: number;

@@ -1,4 +1,11 @@
-﻿import { Eye, Target, Gem, Handshake, Lightbulb, ShieldCheck } from "lucide-react";
+﻿import {
+  Eye,
+  Target,
+  Gem,
+  Handshake,
+  Lightbulb,
+  ShieldCheck,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
@@ -51,9 +58,7 @@ export function AboutSection() {
 
     const loadWhoAreWe = async () => {
       try {
-        const res = await fetch(
-          "https://gold-weasel-489740.hostingersite.com/api/who-are-we",
-        );
+        const res = await fetch("https://api.bod.com.sa/api/who-are-we");
         if (!res.ok) throw new Error("Failed to fetch who-are-we");
         const payload = (await res.json()) as WhoAreWeResponse;
         if (isMounted) setWhoAreWe(payload?.data ?? null);
@@ -141,7 +146,9 @@ export function AboutSection() {
           ref={valuesAnim.ref}
           className={`text-center mb-8 scroll-hidden ${valuesAnim.isVisible ? "scroll-visible" : ""}`}
         >
-          <h3 className="font-almarai font-extrabold text-2xl text-brand-dark">قيمنا</h3>
+          <h3 className="font-almarai font-extrabold text-2xl text-brand-dark">
+            قيمنا
+          </h3>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {values.map((v, i) => (

@@ -59,7 +59,7 @@ const fallbackHeroBackgrounds = [
   "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80",
 ];
 
-const HERO_API_BASE = "https://gold-weasel-489740.hostingersite.com";
+const HERO_API_BASE = "https://api.bod.com.sa";
 const HERO_API_ENDPOINT = `${HERO_API_BASE}/api/homepage/hero`;
 
 type HeroApiData = {
@@ -106,10 +106,7 @@ export function HeroSection() {
     const playerWindow = youtubeIframeRef.current?.contentWindow;
     if (!playerWindow) return;
 
-    playerWindow.postMessage(
-      JSON.stringify({ event: "listening" }),
-      "*",
-    );
+    playerWindow.postMessage(JSON.stringify({ event: "listening" }), "*");
 
     playerWindow.postMessage(
       JSON.stringify({

@@ -9,11 +9,10 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import type { DigitalSolution } from "@shared/schema";
 
-const releasesApiBase = "https://gold-weasel-489740.hostingersite.com";
-const CASE_STUDIES_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/case-studies";
+const releasesApiBase = "https://api.bod.com.sa";
+const CASE_STUDIES_API_URL = "https://api.bod.com.sa/api/case-studies";
 const DIGITAL_SOLUTION_LINKS_API_URL =
-  "https://gold-weasel-489740.hostingersite.com/api/digital-solution-links";
+  "https://api.bod.com.sa/api/digital-solution-links";
 
 const types = [
   { key: "platform", label: "المنصات" },

@@ -631,7 +631,7 @@ const buildDataFromAssessment = (
 
 const downloadAssessmentSummary = async (assessmentId: number) => {
   const response = await fetch(
-    `https://gold-weasel-489740.hostingersite.com/api/assessments/${assessmentId}/summary`,
+    `https://api.bod.com.sa/api/assessments/${assessmentId}/summary`,
     {
       method: "GET",
       headers: getRequestHeaders(),
@@ -910,12 +910,9 @@ export default function GovernancePage() {
     let isCancelled = false;
     setIsLoadingResults(true);
 
-    fetch(
-      `https://gold-weasel-489740.hostingersite.com/api/assessments/${assessmentId}`,
-      {
-        headers: getRequestHeaders(),
-      },
-    )
+    fetch(`https://api.bod.com.sa/api/assessments/${assessmentId}`, {
+      headers: getRequestHeaders(),
+    })
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("فشل تحميل نتيجة التقييم من الخادم");
@@ -1003,14 +1000,11 @@ export default function GovernancePage() {
         national_alignment: parseFloat(formData.nationalAlignment),
       };
 
-      const response = await fetch(
-        "https://gold-weasel-489740.hostingersite.com/api/assessments",
-        {
-          method: "POST",
-          headers: getRequestHeaders(true),
-          body: JSON.stringify(apiPayload),
-        },
-      );
+      const response = await fetch("https://api.bod.com.sa/api/assessments", {
+        method: "POST",
+        headers: getRequestHeaders(true),
+        body: JSON.stringify(apiPayload),
+      });
 
       if (!response.ok) {
         let errorData: any;
@@ -1108,7 +1102,7 @@ export default function GovernancePage() {
         setIsLoadingResults(true);
         try {
           const resultsResponse = await fetch(
-            `https://gold-weasel-489740.hostingersite.com/api/assessments/${newAssessmentId}`,
+            `https://api.bod.com.sa/api/assessments/${newAssessmentId}`,
             {
               headers: getRequestHeaders(),
             },
