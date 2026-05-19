@@ -36,9 +36,12 @@ const navItems: NavItem[] = [
     href: "#solutions",
     dropdown: [
       { label: 'منصة "أداء" لقياس الأداء', href: "https://adaa.pro/" },
-      { label: "مختبرات حقّق الاجتماعية", href: "https://haqqeq-lab.com/home" },
+      { label: "مختبرات حقّق", href: "https://haqqeq-lab.com/home" },
       { label: "مسرعة أثر وريادة", href: "https://athar-riyada.com/" },
       { label: "أكاديمية حقّق 360", href: "https://www.hqq360.com/" },
+      { label: "قناة حقق", href: "https://www.haqqeq.com" },
+      { label: "أثر360", href: "https://www.athar360.net" },
+      { label: "عباق", href: "https://front.ibaaq.com" },
       { label: "بودكاست حقّق", href: "https://podcast.bod.com.sa/" },
       { label: "دراسات الحالة", href: "/solutions?type=case-study" },
       { label: "إصدارات حقّق", href: "/solutions?type=publication" },
