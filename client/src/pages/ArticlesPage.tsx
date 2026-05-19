@@ -46,11 +46,16 @@ const fetchArticles = async (page: number): Promise<ArticlesPageData> => {
 
   const payload = (await res.json()) as ArticlesApiResponse;
 
-    if (Array.isArray(payload)) {
+  if (Array.isArray(payload)) {
     const raw = payload as unknown as BlogApiItem[];
     const mappedAll = raw.map((item) => {
       const mapped = mapBlogItem(item);
-      const drive = toImageUrl(item.image_drive_link ?? item.image_drive_file_id ?? item.image ?? item.image_url);
+      const drive = toImageUrl(
+        item.image_drive_link ??
+          item.image_drive_file_id ??
+          item.image ??
+          item.image_url,
+      );
       if (drive) mapped.imageUrl = drive;
       return mapped;
     });
@@ -70,7 +75,12 @@ const fetchArticles = async (page: number): Promise<ArticlesPageData> => {
   const raw = (payload.data ?? []) as BlogApiItem[];
   const items = raw.map((item) => {
     const mapped = mapBlogItem(item);
-    const drive = toImageUrl(item.image_drive_link ?? item.image_drive_file_id ?? item.image ?? item.image_url);
+    const drive = toImageUrl(
+      item.image_drive_link ??
+        item.image_drive_file_id ??
+        item.image ??
+        item.image_url,
+    );
     if (drive) mapped.imageUrl = drive;
     return mapped;
   });

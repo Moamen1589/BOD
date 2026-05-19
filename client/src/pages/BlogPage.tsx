@@ -5,7 +5,12 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import type { Article } from "@shared/schema";
-import { blogApiBase, mapBlogItem, resolveBlogImage, type BlogApiItem } from "@/lib/blogApi";
+import {
+  blogApiBase,
+  mapBlogItem,
+  resolveBlogImage,
+  type BlogApiItem,
+} from "@/lib/blogApi";
 
 type ApiResponse = {
   data: BlogApiItem[];
@@ -127,7 +132,8 @@ export default function BlogPage() {
       content: item.content || item.excerpt || "",
       category: "news" as Article["category"],
       // news items provide a direct image URL under `image`; prefer it.
-      imageUrl: item.image?.trim() || resolveBlogImage(item as BlogApiItem) || null,
+      imageUrl:
+        item.image?.trim() || resolveBlogImage(item as BlogApiItem) || null,
       publishDate: item.published_at,
       published: true,
       createdAt: item.published_at ? new Date(item.published_at) : new Date(),

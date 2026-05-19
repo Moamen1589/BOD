@@ -7,7 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 import type { Article } from "@shared/schema";
-import { blogApiBase, mapBlogItem, resolveBlogImage, type BlogApiItem } from "@/lib/blogApi";
+import {
+  blogApiBase,
+  mapBlogItem,
+  resolveBlogImage,
+  type BlogApiItem,
+} from "@/lib/blogApi";
 
 type ApiResponse = {
   data: BlogApiItem[];
