@@ -14,10 +14,14 @@ const footerLinks = [
   {
     title: "المنصات",
     links: [
-      { label: "منصة أداء", href: "https://adaa.pro" },
+      { label: "منصة أداء", href: "https://adaa.athar-riyada.com" },
       { label: "مختبرات حقّق", href: "https://haqqeq-lab.com" },
       { label: "مسرعة أثر وريادة", href: "https://athar-riyada.com" },
       { label: "أكاديمية حقّق 360", href: "https://www.hqq360.com" },
+      { label: "قناة حقق", href: "https://www.haqqeq.com" },
+      { label: "أثر360", href: "https://www.athar360.net" },
+      { label: "عباق", href: "https://front.ibaaq.com" },
+
     ],
   },
   {
@@ -29,7 +33,7 @@ const footerLinks = [
       },
       {
         label: "التقرير السنوي",
-        href: "https://drive.google.com/file/d/1uumhRJM4GnTlmoLR4B3KhCezHabnEaSN/view?usp=sharing",
+        href: "https://drive.google.com/file/d/10B4PY_1MZ8g_G71a5dQSlfLoKrclx8gJ/view?usp=sharing",
       },
     ],
   },

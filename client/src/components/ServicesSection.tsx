@@ -270,9 +270,9 @@ export function ServicesSection() {
           className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {[
-            { icon: DollarSign, value: "15+", label: "خطة تنمية موارد مالية" },
-            { icon: FileText, value: "80+", label: "خطة سنوية" },
-            { icon: BarChart3, value: "65+", label: "استراتيجية" },
+            { icon: DollarSign, value: "18+", label: "خطة تنمية موارد مالية" },
+            { icon: FileText, value: "85+", label: "خطة سنوية" },
+            { icon: BarChart3, value: "79+", label: "استراتيجية" },
             { icon: Settings, value: "30+", label: "بناء مؤسسي" },
           ].map((item, i) => (
             <div

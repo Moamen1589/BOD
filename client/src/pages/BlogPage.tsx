@@ -5,30 +5,10 @@ import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import type { Article } from "@shared/schema";
-
-type ApiBlog = {
-  id: number;
-  title: string;
-  slug: string;
-  short_description: string | null;
-  content: string | null;
-  author: string | null;
-  blog_category_id: number | null;
-  image_path: string | null;
-  published_at: string | null;
-  is_published: boolean;
-  created_at: string;
-  updated_at: string;
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-    description: string;
-  } | null;
-};
+import { blogApiBase, mapBlogItem, resolveBlogImage, type BlogApiItem } from "@/lib/blogApi";
 
 type ApiResponse = {
-  data: ApiBlog[];
+  data: BlogApiItem[];
   current_page?: number;
   last_page?: number;
   per_page?: number;
@@ -83,8 +63,6 @@ const categoryLabels: Record<string, string> = {
   newsletter: "نشرة بريدية",
 };
 
-const blogApiBase = "https://api.bod.com.sa";
-
 const toImageUrl = (imagePath?: string | null): string | null => {
   if (!imagePath) return null;
   const trimmed = imagePath.trim();
@@ -117,18 +95,7 @@ export default function BlogPage() {
     if (!blogsRes.ok) throw new Error("Failed to fetch blogs");
 
     const blogsPayload = (await blogsRes.json()) as ApiResponse;
-    const mappedBlogs = (blogsPayload?.data ?? []).map((item) => ({
-      id: item.id,
-      title: item.title,
-      slug: item.slug,
-      excerpt: item.short_description || item.content || "",
-      content: item.content || "",
-      category: "article" as Article["category"],
-      imageUrl: item?.image_url,
-      publishDate: item.published_at,
-      published: item.is_published,
-      createdAt: new Date(item.created_at),
-    }));
+    const mappedBlogs = (blogsPayload?.data ?? []).map(mapBlogItem);
 
     const totalPages =
       blogsPayload.last_page ??
@@ -139,7 +106,6 @@ export default function BlogPage() {
             (blogsPayload.per_page ?? pageSize),
         ),
       );
-
     const result = { posts: mappedBlogs, totalPages };
     blogCacheRef.current.set(page, result);
     return result;
@@ -160,7 +126,8 @@ export default function BlogPage() {
       excerpt: item.excerpt || "",
       content: item.content || item.excerpt || "",
       category: "news" as Article["category"],
-      imageUrl: toImageUrl(item.image),
+      // news items provide a direct image URL under `image`; prefer it.
+      imageUrl: item.image?.trim() || resolveBlogImage(item as BlogApiItem) || null,
       publishDate: item.published_at,
       published: true,
       createdAt: item.published_at ? new Date(item.published_at) : new Date(),

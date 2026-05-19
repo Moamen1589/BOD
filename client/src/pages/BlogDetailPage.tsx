@@ -7,32 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 import type { Article } from "@shared/schema";
-
-type ApiCategory = {
-  id: number;
-  name: string;
-  slug: string;
-  description: string;
-};
-
-type ApiBlog = {
-  id: number;
-  title: string;
-  slug: string;
-  short_description: string | null;
-  content: string | null;
-  author: string | null;
-  blog_category_id: number | null;
-  image_path: string | null;
-  published_at: string | null;
-  is_published: boolean;
-  created_at: string;
-  updated_at: string;
-  category?: ApiCategory | null;
-};
+import { blogApiBase, mapBlogItem, resolveBlogImage, type BlogApiItem } from "@/lib/blogApi";
 
 type ApiResponse = {
-  data: ApiBlog[];
+  data: BlogApiItem[];
   last_page?: number;
 };
 
@@ -61,27 +39,6 @@ const categoryLabels: Record<string, string> = {
 
 const fallbackCardImage = "/figmaAssets/homepage.png";
 
-const blogApiBase = "https://api.bod.com.sa";
-
-const mapCategory = (categoryName?: string | null): Article["category"] => {
-  if (!categoryName) return "article";
-  const normalized = categoryName.toLowerCase();
-  if (normalized.includes("news")) return "news";
-  if (normalized.includes("newsletter")) return "newsletter";
-  return "article";
-};
-
-const toImageUrl = (imagePath?: string | null) => {
-  if (!imagePath) return null;
-  const trimmed = imagePath.trim();
-  if (!trimmed) return null;
-  const match =
-    trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
-    trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if (!match) return `${blogApiBase}/storage/${trimmed}`;
-  return `https://lh3.googleusercontent.com/d/${match[1]}=w1000`;
-};
-
 export default function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>();
 
@@ -91,19 +48,6 @@ export default function BlogDetailPage() {
   useEffect(() => {
     let isMounted = true;
 
-    const mapItem = (item: ApiBlog): Article => ({
-      id: item.id,
-      title: item.title,
-      slug: item.slug,
-      excerpt: item.short_description || item.content || "",
-      content: item.content || "",
-      category: mapCategory(item.category?.name),
-      imageUrl: toImageUrl(item.image_path),
-      publishDate: item.published_at,
-      published: item.is_published,
-      createdAt: new Date(item.created_at),
-    });
-
     const mapNewsItem = (item: ApiNewsItem): Article => ({
       id: item.id,
       title: item.title,
@@ -111,7 +55,10 @@ export default function BlogDetailPage() {
       excerpt: item.excerpt || "",
       content: item.content || item.excerpt || "",
       category: "news",
-      imageUrl: toImageUrl(item.image),
+      imageUrl: resolveBlogImage({
+        ...item,
+        category_name: "news",
+      } as unknown as BlogApiItem),
       publishDate: item.published_at,
       published: true,
       createdAt: item.published_at ? new Date(item.published_at) : new Date(),
@@ -148,7 +95,7 @@ export default function BlogDetailPage() {
         const firstFound = firstItems.find((item) => item.slug === slug);
         if (firstFound && isMounted) {
           foundInBlogs = true;
-          setPost(mapItem(firstFound));
+          setPost(mapBlogItem(firstFound));
           setIsLoading(false);
           return;
         }
@@ -163,7 +110,7 @@ export default function BlogDetailPage() {
           const found = items.find((item) => item.slug === slug);
           if (found) {
             foundInBlogs = true;
-            if (isMounted) setPost(mapItem(found));
+            if (isMounted) setPost(mapBlogItem(found));
             break;
           }
         }
