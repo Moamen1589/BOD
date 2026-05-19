@@ -60,7 +60,9 @@ const fallbackTestimonials: TestimonialCard[] = [
   },
 ];
 
-const resolveText = (value?: { ar?: string | null; en?: string | null } | null) => {
+const resolveText = (
+  value?: { ar?: string | null; en?: string | null } | null,
+) => {
   if (!value) return null;
   return value.ar?.trim() || value.en?.trim() || null;
 };
@@ -70,7 +72,9 @@ const resolveTestimonialImage = (value?: string | null) => {
   const trimmed = value.trim();
   if (!trimmed) return null;
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  const match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) || trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  const match =
+    trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+    trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (match) {
     return `https://lh3.googleusercontent.com/d/${match[1]}=w1000`;
   }
@@ -79,15 +83,20 @@ const resolveTestimonialImage = (value?: string | null) => {
 
 export function TestimonialsSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [testimonials, setTestimonials] = useState<TestimonialCard[]>(fallbackTestimonials);
+  const [testimonials, setTestimonials] =
+    useState<TestimonialCard[]>(fallbackTestimonials);
   const [autoPlaySpeed, setAutoPlaySpeed] = useState(5000);
   const scrollRef = useScrollAnimation();
 
   const next = () =>
-    setActiveIndex((prev) => (testimonials.length > 0 ? (prev + 1) % testimonials.length : 0));
+    setActiveIndex((prev) =>
+      testimonials.length > 0 ? (prev + 1) % testimonials.length : 0,
+    );
   const prev = () =>
     setActiveIndex((prev) =>
-      testimonials.length > 0 ? (prev - 1 + testimonials.length) % testimonials.length : 0,
+      testimonials.length > 0
+        ? (prev - 1 + testimonials.length) % testimonials.length
+        : 0,
     );
 
   useEffect(() => {
@@ -99,13 +108,15 @@ export function TestimonialsSection() {
         if (!res.ok) return;
 
         const payload = (await res.json()) as TestimonialsApiResponse;
-        const mapped = (payload.testimonials ?? []).map<TestimonialCard>((item) => ({
-          id: item.id,
-          text: resolveText(item.quote) || "",
-          author: resolveText(item.name) || "",
-          role: resolveText(item.organization) || "",
-          image: resolveTestimonialImage(item.image),
-        }));
+        const mapped = (payload.testimonials ?? []).map<TestimonialCard>(
+          (item) => ({
+            id: item.id,
+            text: resolveText(item.quote) || "",
+            author: resolveText(item.name) || "",
+            role: resolveText(item.organization) || "",
+            image: resolveTestimonialImage(item.image),
+          }),
+        );
 
         if (!isMounted) return;
 
@@ -142,19 +153,25 @@ export function TestimonialsSection() {
   }, [testimonials]);
 
   return (
-    <section ref={scrollRef.ref} className={`py-16 md:py-24 bg-brand-light transition-all duration-1000 ${scrollRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} id="testimonials">
+    <section
+      ref={scrollRef.ref}
+      className={`py-16 md:py-24 bg-brand-light transition-all duration-1000 ${scrollRef.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+      id="testimonials"
+    >
       <div className="container mx-auto px-4 sm:px-6">
         <div className="text-center mb-16">
           <span className="font-almarai text-sm font-bold text-brand-gold-dark bg-brand-gold/15 px-4 py-1.5 rounded-md">
             عملائنا
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-brand-dark mt-6 mb-4 font-almarai">ماذا يقول عملاؤنا</h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-brand-dark mt-6 mb-4 font-almarai">
+            ماذا يقول عملاؤنا
+          </h2>
           <div className="w-24 h-1 bg-brand-gold mx-auto rounded-full"></div>
         </div>
 
         <div className="relative max-w-4xl mx-auto overflow-hidden">
-          <div 
-            className="flex transition-transform duration-500 ease-in-out" 
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(${activeIndex * 100}%)` }}
           >
             {testimonials.map((item) => (
@@ -176,8 +193,12 @@ export function TestimonialsSection() {
                         "{item.text}"
                       </p>
                       <div className="mt-4">
-                        <h5 className="text-lg font-bold text-brand-dark font-almarai">{item.author}</h5>
-                        <p className="text-brand-gold font-medium font-almarai">{item.role}</p>
+                        <h5 className="text-lg font-bold text-brand-dark font-almarai">
+                          {item.author}
+                        </h5>
+                        <p className="text-brand-gold font-medium font-almarai">
+                          {item.role}
+                        </p>
                       </div>
                     </div>
                   </CardContent>
@@ -187,30 +208,30 @@ export function TestimonialsSection() {
           </div>
 
           <div className="flex justify-center mt-10 md:mt-12 gap-4 md:gap-6">
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               onClick={prev}
               className="rounded-full border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white w-12 h-12 md:w-14 md:h-14 shadow-lg transition-all"
             >
               <ChevronRight size={28} />
             </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               onClick={next}
               className="rounded-full border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white w-12 h-12 md:w-14 md:h-14 shadow-lg transition-all"
             >
               <ChevronLeft size={28} />
             </Button>
           </div>
-          
+
           <div className="flex justify-center mt-8 gap-3">
             {testimonials.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'bg-brand-gold w-10' : 'bg-brand-gold/20 w-2.5'}`}
+                className={`h-2.5 rounded-full transition-all duration-300 ${activeIndex === idx ? "bg-brand-gold w-10" : "bg-brand-gold/20 w-2.5"}`}
               />
             ))}
           </div>
